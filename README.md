@@ -110,12 +110,22 @@ Claude Code automatically delegates to the appropriate subagent based on:
 - Error messages or issues encountered
 
 ### Explicit Invocation
-You can explicitly request a specific subagent:
+You can explicitly request a specific subagent in two ways:
 
+#### Method 1: Natural Language
 ```
 "Use the code-reviewer to check my recent changes"
 "Have the security-auditor review this authentication code"
 "Get the performance-engineer to optimize this function"
+```
+
+#### Method 2: @ Mentions
+You can mention a subagent like tagging a person using the @ symbol, and it will jump in to help with your task:
+
+```
+"@code-reviewer please check my recent changes"
+"@security-auditor can you review this authentication code?"
+"@performance-engineer help optimize this database query"
 ```
 
 ### Examples
