@@ -10,10 +10,10 @@ This repository contains 36 specialized subagents that extend Claude Code's capa
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/claude-code-subagents.git
+git clone https://github.com/davepoon/claude-code-subagents-collection.git
 
 # Copy all subagents to Claude Code's agent directory
-cp claude-code-subagents/*.md ~/.claude/agents/
+cp claude-code-subagents-collection/*.md ~/.claude/agents/
 
 # Restart Claude Code to load the new subagents
 ```
@@ -80,8 +80,8 @@ cp claude-code-subagents/*.md ~/.claude/agents/
 
 1. **Clone this repository:**
    ```bash
-   git clone https://github.com/yourusername/claude-code-subagents.git
-   cd claude-code-subagents
+   git clone https://github.com/davepoon/claude-code-subagents-collection.git
+   cd claude-code-subagents-collection
    ```
 
 2. **Copy subagents to Claude Code's directory:**
