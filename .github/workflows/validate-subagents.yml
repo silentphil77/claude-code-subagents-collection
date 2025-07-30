@@ -2,7 +2,8 @@ name: Validate Subagents
 
 on:
   push:
-    branches: [ main ]
+    # Run on pushes to any branch
+    branches: [ '**' ]
   pull_request:
     paths:
       - '*.md'
