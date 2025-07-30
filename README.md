@@ -10,10 +10,10 @@ This repository contains 36 specialized subagents that extend Claude Code's capa
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/claude-code-subagents.git
+git clone https://github.com/davepoon/claude-code-subagents-collection.git
 
-# Copy all subagents to Claude Code's agent directory
-cp claude-code-subagents/*.md ~/.claude/agents/
+# Copy all subagent files (excluding README and CONTRIBUTING)
+find claude-code-subagents-collection -maxdepth 1 -name "*.md" -not -name "README.md" -not -name "CONTRIBUTING.md" -exec cp {} ~/.claude/agents/ \;
 
 # Restart Claude Code to load the new subagents
 ```
@@ -80,22 +80,48 @@ cp claude-code-subagents/*.md ~/.claude/agents/
 
 1. **Clone this repository:**
    ```bash
-   git clone https://github.com/yourusername/claude-code-subagents.git
-   cd claude-code-subagents
+   git clone https://github.com/davepoon/claude-code-subagents-collection.git
+   cd claude-code-subagents-collection
    ```
 
-2. **Copy subagents to Claude Code's directory:**
+2. **Option A: Install as User Subagents (available in all projects):**
    ```bash
-   # macOS/Linux
-   cp *.md ~/.claude/agents/
+   # macOS/Linux - Copy all subagent files except README and CONTRIBUTING
+   find . -maxdepth 1 -name "*.md" -not -name "README.md" -not -name "CONTRIBUTING.md" -exec cp {} ~/.claude/agents/ \;
    
-   # Windows
-   copy *.md %USERPROFILE%\.claude\agents\
+   # Alternative for macOS/Linux using bash extended globbing
+   shopt -s extglob
+   cp !(README|CONTRIBUTING).md ~/.claude/agents/
+   
+   # Windows - Copy all subagent files except README and CONTRIBUTING
+   for %f in (*.md) do if not "%f"=="README.md" if not "%f"=="CONTRIBUTING.md" copy "%f" %USERPROFILE%\.claude\agents\
    ```
+
+   **Option B: Install as Project Subagents (only for current project):**
+   ```bash
+   # Navigate to your project directory first
+   cd /path/to/your/project
+   
+   # Create the .claude/agents directory if it doesn't exist
+   mkdir -p .claude/agents
+   
+   # macOS/Linux - Copy specific subagents you need
+   find /path/to/claude-code-subagents-collection -maxdepth 1 -name "*.md" -not -name "README.md" -not -name "CONTRIBUTING.md" -exec cp {} .claude/agents/ \;
+   
+   # Windows - Copy specific subagents you need
+   mkdir .claude\agents 2>nul
+   for %f in (\path\to\claude-code-subagents-collection\*.md) do if not "%~nxf"=="README.md" if not "%~nxf"=="CONTRIBUTING.md" copy "%f" .claude\agents\
+   ```
+   
+   > **Note**: Project subagents are only available in the specific project where they're installed. Use this option when you want subagents tailored to a particular project or when testing new subagents.
 
 3. **Verify installation:**
    ```bash
+   # For user subagents
    ls ~/.claude/agents/
+   
+   # For project subagents
+   ls .claude/agents/
    ```
 
 4. **Restart Claude Code** to load the new subagents
@@ -110,12 +136,22 @@ Claude Code automatically delegates to the appropriate subagent based on:
 - Error messages or issues encountered
 
 ### Explicit Invocation
-You can explicitly request a specific subagent:
+You can explicitly request a specific subagent in two ways:
 
+#### Method 1: Natural Language
 ```
 "Use the code-reviewer to check my recent changes"
 "Have the security-auditor review this authentication code"
 "Get the performance-engineer to optimize this function"
+```
+
+#### Method 2: @ Mentions
+You can mention a subagent like tagging a person using the @ symbol, and it will jump in to help with your task:
+
+```
+"@agent-code-reviewer please check my recent changes"
+"@agent-security-auditor can you review this authentication code?"
+"@agent-performance-engineer help optimize this database query"
 ```
 
 ### Examples
