@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import {
   Tooltip,
   TooltipContent,
@@ -11,7 +10,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { ArrowLeft, Copy, Download, Check, Github } from 'lucide-react'
-import { type Subagent, generateCategoryDisplayName, getCategoryIcon } from '@/lib/subagents-types'
+import { type Subagent } from '@/lib/subagents-types'
 import { generateSubagentMarkdown } from '@/lib/utils'
 
 interface SubagentPageClientProps {
@@ -21,8 +20,6 @@ interface SubagentPageClientProps {
 export function SubagentPageClient({ subagent }: SubagentPageClientProps) {
   const [copied, setCopied] = useState(false)
   
-  const categoryName = generateCategoryDisplayName(subagent.category)
-  const categoryIcon = getCategoryIcon(subagent.category)
   
   const handleCopy = async () => {
     const markdown = generateSubagentMarkdown(subagent)

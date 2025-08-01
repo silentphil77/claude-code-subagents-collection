@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { getAllSubagents, getAllCategories } from '@/lib/subagents-server'
 import BrowsePageClient from './browse-client'
 
@@ -5,5 +6,9 @@ export default function BrowsePage() {
   const allSubagents = getAllSubagents()
   const categories = getAllCategories()
   
-  return <BrowsePageClient allSubagents={allSubagents} categories={categories} />
+  return (
+    <Suspense fallback={null}>
+      <BrowsePageClient allSubagents={allSubagents} categories={categories} />
+    </Suspense>
+  )
 }

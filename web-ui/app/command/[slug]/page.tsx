@@ -3,9 +3,9 @@ import { getCommandBySlug, getAllCommands } from '@/lib/commands-server'
 import { CommandPageClient } from './page-client'
 
 interface PageProps {
-  params: {
+  params: Promise<{
     slug: string
-  }
+  }>
 }
 
 export async function generateStaticParams() {
@@ -15,8 +15,9 @@ export async function generateStaticParams() {
   }))
 }
 
-export default function CommandPage({ params }: PageProps) {
-  const command = getCommandBySlug(params.slug)
+export default async function CommandPage({ params }: PageProps) {
+  const { slug } = await params
+  const command = getCommandBySlug(slug)
   
   if (!command) {
     notFound()

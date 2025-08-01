@@ -138,7 +138,7 @@ for %f in (\\path\\to\\claude-code-subagents-collection\\commands\\*.md) do copy
             </div>
             
             <div className="bg-card/50 rounded-lg p-4 border border-border/50">
-              <p className="text-sm font-medium mb-1">What's Included</p>
+              <p className="text-sm font-medium mb-1">What&apos;s Included</p>
               <div className="text-sm text-muted-foreground space-y-1">
                 <p>✓ 43+ AI Subagents for specialized tasks</p>
                 <p>✓ 39+ Slash Commands for automation</p>
@@ -814,7 +814,7 @@ for %f in (\\path\\to\\claude-code-subagents-collection\\commands\\*.md) do copy
               <div>
                 <p className="font-medium mb-1">Using Commands</p>
                 <p className="text-sm text-muted-foreground">
-                  Invoke commands using the / prefix, e.g., <code className="bg-background px-1 rounded">/commit</code> or <code className="bg-background px-1 rounded">/todo add "task"</code>
+                  Invoke commands using the / prefix, e.g., <code className="bg-background px-1 rounded">/commit</code> or <code className="bg-background px-1 rounded">/todo add &quot;task&quot;</code>
                 </p>
               </div>
             </div>
