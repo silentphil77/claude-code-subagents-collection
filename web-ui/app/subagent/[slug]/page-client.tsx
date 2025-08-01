@@ -11,7 +11,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { ArrowLeft, Copy, Download, Check, Github } from 'lucide-react'
-import { CATEGORIES, type CategoryKey, type Subagent } from '@/lib/subagents-types'
+import { type Subagent, generateCategoryDisplayName, getCategoryIcon } from '@/lib/subagents-types'
 import { generateSubagentMarkdown } from '@/lib/utils'
 
 interface SubagentPageClientProps {
@@ -21,8 +21,8 @@ interface SubagentPageClientProps {
 export function SubagentPageClient({ subagent }: SubagentPageClientProps) {
   const [copied, setCopied] = useState(false)
   
-  const categoryKey = subagent.category as CategoryKey
-  const categoryName = CATEGORIES[categoryKey]
+  const categoryName = generateCategoryDisplayName(subagent.category)
+  const categoryIcon = getCategoryIcon(subagent.category)
   
   const handleCopy = async () => {
     const markdown = generateSubagentMarkdown(subagent)
@@ -91,7 +91,7 @@ export function SubagentPageClient({ subagent }: SubagentPageClientProps) {
             <div className="flex items-start justify-between mb-4">
               <h1 className="text-3xl font-bold">{subagent.name}</h1>
               <div className="flex items-center gap-3">
-                <Badge variant="secondary">{categoryName}</Badge>
+                <Badge variant="secondary">{categoryIcon} {categoryName}</Badge>
                 <div className="flex gap-2">
                   <Tooltip>
                     <TooltipTrigger asChild>

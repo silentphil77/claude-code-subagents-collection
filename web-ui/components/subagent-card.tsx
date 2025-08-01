@@ -12,15 +12,15 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { Copy, Download, Check } from 'lucide-react'
-import { CATEGORIES } from '@/lib/subagents-types'
+import { generateCategoryDisplayName, getCategoryIcon } from '@/lib/subagents-types'
 import { generateSubagentMarkdown } from '@/lib/utils'
-import type { Subagent, CategoryKey } from '@/lib/subagents-types'
+import type { Subagent } from '@/lib/subagents-types'
 
 interface SubagentCardProps {
   subagent: Subagent
 }
 
-const categoryColors: Record<CategoryKey, string> = {
+const categoryColors: Record<string, string> = {
   'development-architecture': 'border-blue-500/50 text-blue-400',
   'language-specialists': 'border-green-500/50 text-green-400',
   'infrastructure-operations': 'border-orange-500/50 text-orange-400',
@@ -30,11 +30,13 @@ const categoryColors: Record<CategoryKey, string> = {
   'crypto-trading': 'border-yellow-500/50 text-yellow-400'
 }
 
+const defaultColorClass = 'border-gray-500/50 text-gray-400'
+
 export function SubagentCard({ subagent }: SubagentCardProps) {
   const [copied, setCopied] = useState(false)
-  const categoryKey = subagent.category as CategoryKey
-  const categoryName = CATEGORIES[categoryKey]
-  const colorClass = categoryColors[categoryKey]
+  const categoryName = generateCategoryDisplayName(subagent.category)
+  const categoryIcon = getCategoryIcon(subagent.category)
+  const colorClass = categoryColors[subagent.category] || defaultColorClass
   
   const handleCopy = async (e: React.MouseEvent) => {
     e.preventDefault()
@@ -75,7 +77,7 @@ export function SubagentCard({ subagent }: SubagentCardProps) {
                   className={`${colorClass} bg-transparent border font-medium`} 
                   variant="outline"
                 >
-                  {categoryName}
+                  {categoryIcon} {categoryName}
                 </Badge>
               </div>
               <CardDescription className="line-clamp-3 text-muted-foreground/80">
