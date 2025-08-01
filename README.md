@@ -12,7 +12,7 @@ Browse, search, and install subagents instantly at [buildwithclaude.com](https:/
 
 ## Overview
 
-This repository contains 36 specialized subagents that extend Claude Code's capabilities. Each subagent is an expert in a specific domain, automatically invoked based on context or explicitly called when needed.
+This repository contains 37 specialized subagents that extend Claude Code's capabilities. Each subagent is an expert in a specific domain, automatically invoked based on context or explicitly called when needed.
 
 ## Quick Start
 
@@ -70,6 +70,7 @@ find claude-code-subagents-collection -maxdepth 1 -name "*.md" -not -name "READM
 - **blockchain-developer** - Develop smart contracts, DeFi protocols, and Web3 applications
 - **game-developer** - Build games with Unity, Unreal Engine, or web technologies
 - **ui-ux-designer** - Design user interfaces and experiences with modern design principles and accessibility standards
+- **hyperledger-fabric-developer** - Develop Enterprise blockchain with Hyperledger Fabric
 
 ### 💰 Crypto Trading
 - **crypto-trader** - Build cryptocurrency trading systems and integrate with exchange APIs
