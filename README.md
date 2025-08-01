@@ -2,6 +2,14 @@
 
 A comprehensive collection of specialized AI subagents for [Claude Code](https://docs.anthropic.com/en/docs/claude-code), designed to enhance development workflows with domain-specific expertise.
 
+## 🌐 Now with a Web UI!
+
+Browse, search, and install subagents instantly at [buildwithclaude.com](https://www.buildwithclaude.com)
+
+![Claude Code Subagents Homepage](buildwithclaude-homepage.png)
+
+![Browse Subagents](buildwithclaude-subagents.png)
+
 ## Overview
 
 This repository contains 36 specialized subagents that extend Claude Code's capabilities. Each subagent is an expert in a specific domain, automatically invoked based on context or explicitly called when needed.
