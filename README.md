@@ -76,7 +76,15 @@ find claude-code-subagents-collection -maxdepth 1 -name "*.md" -not -name "READM
 - Claude Code installed and configured
 - Access to the `~/.claude/agents/` directory
 
-### Installation Steps
+### Quick Installation via Web UI
+
+Visit our [Web UI](https://claude-code-subagents.vercel.app) to browse all subagents and easily:
+- 📋 **Copy** any subagent's markdown content with one click
+- 💾 **Download** individual subagent files directly
+- 🔍 Search and filter by category
+- 📖 Preview full documentation for each subagent
+
+### Manual Installation Steps
 
 1. **Clone this repository:**
    ```bash
