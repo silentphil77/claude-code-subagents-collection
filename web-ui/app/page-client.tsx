@@ -69,7 +69,7 @@ export default function HomePageClient({ allSubagents, featuredSubagents }: Home
             <h1 className="text-display-1 font-bold mb-6 animate-fade-in relative">
               
               <br />
-              <span className="rotate-[4deg] tracking-wide static mx-auto mb-2 w-fit font-mono text-sm animate-fade-in bg-primary/40 p-2 rounded-sm block md:absolute top-[50px] right-[130px]" style={{ animationDelay: '0.1s' }}>
+              <span className="tracking-wide static mx-auto mb-2 w-fit font-mono text-sm bg-primary/40 p-2 rounded-sm inline-block md:absolute top-[50px] right-[130px] animate-wiggle" style={{ animationDelay: '0.5s' }}>
                 &quot;You&apos;re absolutely right!&quot;
               </span>
               <span className="text-gradient">Claude Code</span>
