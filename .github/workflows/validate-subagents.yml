@@ -1,4 +1,4 @@
-name: Validate Subagents
+name: Validate Subagents and Commands
 
 on:
   push:
@@ -31,13 +31,16 @@ jobs:
         npm init -y
         npm install gray-matter ajv glob chalk
         
-    - name: Run validation
+    - name: Validate subagents
       run: node scripts/validate-subagents.js
+      
+    - name: Validate commands
+      run: node scripts/validate-commands.js
       
     - name: Check for naming inconsistencies
       run: |
-        # Check if any files have mismatched names
-        for file in subagents/*.md commands/*.md; do
+        # Check if any subagent files have mismatched names (commands don't have name field)
+        for file in subagents/*.md; do
           if [[ -f "$file" ]]; then
             name=$(grep -E "^name:" "$file" | sed 's/name: //')
             basename=$(basename "$file")
@@ -48,7 +51,7 @@ jobs:
             fi
           fi
         done
-        echo "✅ All file names match their name fields"
+        echo "✅ All subagent file names match their name fields"
         
     - name: Upload validation report
       if: failure()

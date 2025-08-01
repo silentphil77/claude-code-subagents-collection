@@ -9,11 +9,13 @@ const { globSync } = require('glob');
 // Initialize AJV for JSON schema validation
 const ajv = new Ajv({ allErrors: true });
 
-// Load the schema
-const schema = require('./subagent-schema.json');
+// Load the schemas
+const subagentSchema = require('./subagent-schema.json');
+const commandSchema = require('./command-schema.json');
 
-// Compile the schema
-const validate = ajv.compile(schema);
+// Compile the schemas
+const validateSubagent = ajv.compile(subagentSchema);
+const validateCommand = ajv.compile(commandSchema);
 
 // Track validation results
 let hasErrors = false;
@@ -21,7 +23,8 @@ const errors = [];
 const warnings = [];
 
 // Find all subagent and command markdown files
-const subagentFiles = globSync(['subagents/*.md', 'commands/*.md']);
+const subagentFiles = globSync(['subagents/*.md', 'commands/*.md'])
+  .filter(file => !file.endsWith('README.md') && !file.endsWith('INDEX.md'));
 
 console.log(`\n\x1b[34mValidating ${subagentFiles.length} subagent files...\x1b[0m\n`);
 
@@ -46,20 +49,30 @@ subagentFiles.forEach(file => {
       return;
     }
     
-    // Validate against schema
-    const valid = validate(parsed.data);
+    // Validate against appropriate schema
+    const isCommand = file.startsWith('commands/');
+    const validator = isCommand ? validateCommand : validateSubagent;
+    const valid = validator(parsed.data);
     
     if (!valid) {
-      validate.errors.forEach(error => {
+      validator.errors.forEach(error => {
         let message = error.message;
         if (error.instancePath) {
           message = `Field '${error.instancePath.replace('/', '')}' ${error.message}`;
         } else if (error.schemaPath.includes('/description/')) {
           message = `Description ${error.message}`;
         } else if (error.schemaPath.includes('/category/')) {
-          message = `Category ${error.message}. Valid categories: development-architecture, language-specialists, infrastructure-operations, quality-security, data-ai, specialized-domains, crypto-trading`;
+          if (isCommand) {
+            message = `Category ${error.message}. Valid categories for commands: ci-deployment, code-analysis-testing, context-loading-priming, documentation-changelogs, project-task-management, version-control-git, miscellaneous`;
+          } else {
+            message = `Category ${error.message}. Valid categories for subagents: development-architecture, language-specialists, infrastructure-operations, quality-security, data-ai, specialized-domains, crypto-trading`;
+          }
         } else if (error.schemaPath.includes('/required') && error.params.missingProperty === 'category') {
-          message = `Missing required field 'category'. Valid categories: development-architecture, language-specialists, infrastructure-operations, quality-security, data-ai, specialized-domains, crypto-trading`;
+          if (isCommand) {
+            message = `Missing required field 'category'. Valid categories for commands: ci-deployment, code-analysis-testing, context-loading-priming, documentation-changelogs, project-task-management, version-control-git, miscellaneous`;
+          } else {
+            message = `Missing required field 'category'. Valid categories for subagents: development-architecture, language-specialists, infrastructure-operations, quality-security, data-ai, specialized-domains, crypto-trading`;
+          }
         }
         errors.push({
           file,
@@ -72,15 +85,17 @@ subagentFiles.forEach(file => {
     
     // Additional custom validations
     
-    // 1. Check file name matches name field
-    const fileName = path.basename(file);
-    const expectedFileName = `${parsed.data.name}.md`;
-    if (fileName !== expectedFileName) {
-      errors.push({
-        file,
-        message: `File name '${fileName}' doesn't match name field '${parsed.data.name}'. Expected '${expectedFileName}'`
-      });
-      hasErrors = true;
+    // 1. Check file name matches name field (only for subagents)
+    if (file.startsWith('subagents/')) {
+      const fileName = path.basename(file);
+      const expectedFileName = `${parsed.data.name}.md`;
+      if (fileName !== expectedFileName) {
+        errors.push({
+          file,
+          message: `File name '${fileName}' doesn't match name field '${parsed.data.name}'. Expected '${expectedFileName}'`
+        });
+        hasErrors = true;
+      }
     }
     
     // 2. Check description length
@@ -94,34 +109,39 @@ subagentFiles.forEach(file => {
     // 3. Check for required content sections
     const contentLower = parsed.content.toLowerCase();
     
-    if (!contentLower.includes('you are')) {
+    // Only check for "you are" in subagent files, not command files
+    if (file.startsWith('subagents/') && !contentLower.includes('you are')) {
       warnings.push({
         file,
         message: 'Missing opening statement "You are a..."'
       });
     }
     
-    // 4. Check for duplicate names across all files
-    const allNames = subagentFiles.map(f => {
-      try {
-        const content = fs.readFileSync(path.join(process.cwd(), f), 'utf8');
-        const parsed = matter(content);
-        return { file: f, name: parsed.data.name };
-      } catch (e) {
-        return null;
+    // 4. Check for duplicate names across subagent files only
+    if (file.startsWith('subagents/') && parsed.data.name) {
+      const allSubagentNames = subagentFiles
+        .filter(f => f.startsWith('subagents/'))
+        .map(f => {
+          try {
+            const content = fs.readFileSync(path.join(process.cwd(), f), 'utf8');
+            const parsed = matter(content);
+            return { file: f, name: parsed.data.name };
+          } catch (e) {
+            return null;
+          }
+        }).filter(Boolean);
+      
+      const duplicates = allSubagentNames.filter(item => 
+        item.name === parsed.data.name && item.file !== file
+      );
+      
+      if (duplicates.length > 0) {
+        errors.push({
+          file,
+          message: `Duplicate name '${parsed.data.name}' found in: ${duplicates.map(d => d.file).join(', ')}`
+        });
+        hasErrors = true;
       }
-    }).filter(Boolean);
-    
-    const duplicates = allNames.filter(item => 
-      item.name === parsed.data.name && item.file !== file
-    );
-    
-    if (duplicates.length > 0) {
-      errors.push({
-        file,
-        message: `Duplicate name '${parsed.data.name}' found in: ${duplicates.map(d => d.file).join(', ')}`
-      });
-      hasErrors = true;
     }
     
     // 5. Check tools field if present
