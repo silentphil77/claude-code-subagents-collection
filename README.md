@@ -10,6 +10,8 @@ Browse, search, and install both subagents and commands instantly at [buildwithc
 
 ![Browse Subagents](buildwithclaude-subagents.png)
 
+![Browse Commands](buildwithclaude-commands.png)
+
 ## Overview
 
 This repository contains:
