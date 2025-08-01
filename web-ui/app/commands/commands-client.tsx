@@ -2,17 +2,17 @@
 
 import { useState, useMemo, useEffect } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
-import { SubagentCard } from '@/components/subagent-card'
+import { CommandCard } from '@/components/command-card'
 import { CategoryFilter } from '@/components/category-filter'
 import { SearchBar } from '@/components/search-bar'
-import { type Subagent, type CategoryMetadata, generateCategoryDisplayName } from '@/lib/subagents-types'
+import { type Command, type CategoryMetadata, generateCategoryDisplayName } from '@/lib/commands-types'
 
-interface BrowsePageClientProps {
-  allSubagents: Subagent[]
+interface CommandsPageClientProps {
+  allCommands: Command[]
   categories: CategoryMetadata[]
 }
 
-export default function BrowsePageClient({ allSubagents, categories }: BrowsePageClientProps) {
+export default function CommandsPageClient({ allCommands, categories }: CommandsPageClientProps) {
   const searchParams = useSearchParams()
   const router = useRouter()
   const [selectedCategory, setSelectedCategory] = useState<string | 'all'>('all')
@@ -39,39 +39,39 @@ export default function BrowsePageClient({ allSubagents, categories }: BrowsePag
     }
     
     // Use replace to avoid adding to browser history for each filter change
-    const newUrl = params.toString() ? `/browse?${params.toString()}` : '/browse'
+    const newUrl = params.toString() ? `/commands?${params.toString()}` : '/commands'
     router.replace(newUrl)
   }
   
-  const filteredSubagents = useMemo(() => {
-    let filtered = allSubagents
+  const filteredCommands = useMemo(() => {
+    let filtered = allCommands
     
     // Filter by category
     if (selectedCategory !== 'all') {
-      filtered = filtered.filter(subagent => subagent.category === selectedCategory)
+      filtered = filtered.filter(command => command.category === selectedCategory)
     }
     
     // Filter by search query
     if (searchQuery) {
       const normalizedQuery = searchQuery.toLowerCase()
-      filtered = filtered.filter(subagent => 
-        subagent.name.toLowerCase().includes(normalizedQuery) ||
-        subagent.description.toLowerCase().includes(normalizedQuery) ||
-        subagent.content.toLowerCase().includes(normalizedQuery)
+      filtered = filtered.filter(command => 
+        command.slug.toLowerCase().includes(normalizedQuery) ||
+        command.description.toLowerCase().includes(normalizedQuery) ||
+        command.content.toLowerCase().includes(normalizedQuery)
       )
     }
     
     return filtered
-  }, [allSubagents, selectedCategory, searchQuery])
+  }, [allCommands, selectedCategory, searchQuery])
   
   return (
     <div className="min-h-screen">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-4">Browse AI Subagents</h1>
+          <h1 className="text-3xl font-bold mb-4">Browse Commands</h1>
           <p className="text-muted-foreground">
-            Explore our collection of {allSubagents.length} specialized AI subagents. 
+            Explore our collection of {allCommands.length} slash commands for Claude Code. 
             Hover over any card to instantly copy or download!
           </p>
         </div>
@@ -81,7 +81,7 @@ export default function BrowsePageClient({ allSubagents, categories }: BrowsePag
           <SearchBar 
             value={searchQuery}
             onChange={setSearchQuery}
-            placeholder="Search subagents by name, description, or content..."
+            placeholder="Search commands by name, description, or content..."
           />
           <CategoryFilter 
             selectedCategory={selectedCategory}
@@ -92,22 +92,22 @@ export default function BrowsePageClient({ allSubagents, categories }: BrowsePag
         
         {/* Results */}
         <div className="mb-4 text-sm text-muted-foreground">
-          Showing {filteredSubagents.length} of {allSubagents.length} subagents
+          Showing {filteredCommands.length} of {allCommands.length} commands
           {selectedCategory !== 'all' && ` in ${generateCategoryDisplayName(selectedCategory)}`}
           {searchQuery && ` matching "${searchQuery}"`}
         </div>
         
         {/* Grid */}
-        {filteredSubagents.length > 0 ? (
+        {filteredCommands.length > 0 ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredSubagents.map((subagent) => (
-              <SubagentCard key={subagent.slug} subagent={subagent} />
+            {filteredCommands.map((command) => (
+              <CommandCard key={command.slug} command={command} />
             ))}
           </div>
         ) : (
           <div className="text-center py-12">
             <p className="text-muted-foreground">
-              No subagents found matching your criteria.
+              No commands found matching your criteria.
             </p>
           </div>
         )}

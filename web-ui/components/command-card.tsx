@@ -11,38 +11,41 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { Copy, Download, Check } from 'lucide-react'
-import { generateCategoryDisplayName, getCategoryIcon } from '@/lib/subagents-types'
-import { generateSubagentMarkdown } from '@/lib/utils'
-import type { Subagent } from '@/lib/subagents-types'
+import { Copy, Download, Check, Terminal } from 'lucide-react'
+import { generateCategoryDisplayName, getCategoryIcon } from '@/lib/commands-types'
+import { generateCommandMarkdown } from '@/lib/utils'
+import type { Command } from '@/lib/commands-types'
 
-interface SubagentCardProps {
-  subagent: Subagent
+interface CommandCardProps {
+  command: Command
 }
 
 const categoryColors: Record<string, string> = {
-  'development-architecture': 'border-blue-500/50 text-blue-400',
-  'language-specialists': 'border-green-500/50 text-green-400',
-  'infrastructure-operations': 'border-orange-500/50 text-orange-400',
-  'quality-security': 'border-red-500/50 text-red-400',
-  'data-ai': 'border-purple-500/50 text-purple-400',
-  'specialized-domains': 'border-indigo-500/50 text-indigo-400',
-  'crypto-trading': 'border-yellow-500/50 text-yellow-400'
+  'ci-deployment': 'border-amber-500/50 text-amber-400',
+  'code-analysis-testing': 'border-cyan-500/50 text-cyan-400',
+  'context-loading-priming': 'border-violet-500/50 text-violet-400',
+  'documentation-changelogs': 'border-lime-500/50 text-lime-400',
+  'project-task-management': 'border-rose-500/50 text-rose-400',
+  'version-control-git': 'border-emerald-500/50 text-emerald-400',
+  'miscellaneous': 'border-slate-500/50 text-slate-400'
 }
 
 const defaultColorClass = 'border-gray-500/50 text-gray-400'
 
-export function SubagentCard({ subagent }: SubagentCardProps) {
+export function CommandCard({ command }: CommandCardProps) {
   const [copied, setCopied] = useState(false)
-  const categoryName = generateCategoryDisplayName(subagent.category)
-  const categoryIcon = getCategoryIcon(subagent.category)
-  const colorClass = categoryColors[subagent.category] || defaultColorClass
+  const categoryName = generateCategoryDisplayName(command.category)
+  const categoryIcon = getCategoryIcon(command.category)
+  const colorClass = categoryColors[command.category] || defaultColorClass
+  
+  // Format command name from slug
+  const commandName = `/${command.slug.replace(/-/g, '_')}`
   
   const handleCopy = async (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
     
-    const markdown = generateSubagentMarkdown(subagent)
+    const markdown = generateCommandMarkdown(command)
     await navigator.clipboard.writeText(markdown)
     
     setCopied(true)
@@ -53,12 +56,12 @@ export function SubagentCard({ subagent }: SubagentCardProps) {
     e.preventDefault()
     e.stopPropagation()
     
-    const markdown = generateSubagentMarkdown(subagent)
+    const markdown = generateCommandMarkdown(command)
     const blob = new Blob([markdown], { type: 'text/markdown' })
     const url = window.URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `${subagent.slug}.md`
+    a.download = `${command.slug}.md`
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
@@ -68,12 +71,13 @@ export function SubagentCard({ subagent }: SubagentCardProps) {
   return (
     <TooltipProvider>
       <div className="relative group">
-        <Link href={`/subagent/${subagent.slug}`}>
+        <Link href={`/command/${command.slug}`}>
           <Card className="h-full card-hover border-border/50 hover:border-primary/20 transition-all duration-300 cursor-pointer overflow-hidden">
             <CardHeader>
               <div className="space-y-2">
-                <div className="flex items-start justify-between gap-2">
-                  <CardTitle className="text-xl font-semibold">{subagent.name}</CardTitle>
+                <div className="flex items-center gap-2">
+                  <Terminal className="h-5 w-5 text-primary flex-shrink-0" />
+                  <CardTitle className="text-xl font-mono">{commandName}</CardTitle>
                 </div>
                 <Badge 
                   className={`${colorClass} bg-transparent border font-medium inline-flex items-center gap-1 whitespace-nowrap text-xs`} 
@@ -84,13 +88,18 @@ export function SubagentCard({ subagent }: SubagentCardProps) {
                 </Badge>
               </div>
               <CardDescription className="line-clamp-3 text-muted-foreground/80">
-                {subagent.description}
+                {command.description}
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {subagent.tools && (
+              {command.argumentHint && (
                 <div className="text-sm text-muted-foreground/60 font-mono">
-                  <span className="font-sans font-medium text-muted-foreground/80">Tools:</span> {subagent.tools}
+                  <span className="font-sans font-medium text-muted-foreground/80">Arguments:</span> {command.argumentHint}
+                </div>
+              )}
+              {command.model && (
+                <div className="text-sm text-muted-foreground/60 mt-1">
+                  <span className="font-medium text-muted-foreground/80">Model:</span> {command.model}
                 </div>
               )}
             </CardContent>

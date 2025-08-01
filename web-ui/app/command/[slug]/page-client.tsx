@@ -10,34 +10,35 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { ArrowLeft, Copy, Download, Check, Github } from 'lucide-react'
-import { type Subagent, generateCategoryDisplayName, getCategoryIcon } from '@/lib/subagents-types'
-import { generateSubagentMarkdown } from '@/lib/utils'
+import { ArrowLeft, Copy, Download, Check, Github, Terminal } from 'lucide-react'
+import { generateCommandMarkdown } from '@/lib/utils'
+import { generateCategoryDisplayName, getCategoryIcon, type Command } from '@/lib/commands-types'
 
-interface SubagentPageClientProps {
-  subagent: Subagent
+interface CommandPageClientProps {
+  command: Command
 }
 
-export function SubagentPageClient({ subagent }: SubagentPageClientProps) {
+export function CommandPageClient({ command }: CommandPageClientProps) {
   const [copied, setCopied] = useState(false)
   
-  const categoryName = generateCategoryDisplayName(subagent.category)
-  const categoryIcon = getCategoryIcon(subagent.category)
+  const categoryName = generateCategoryDisplayName(command.category)
+  const categoryIcon = getCategoryIcon(command.category)
+  const commandName = `/${command.slug.replace(/-/g, '_')}`
   
   const handleCopy = async () => {
-    const markdown = generateSubagentMarkdown(subagent)
+    const markdown = generateCommandMarkdown(command)
     await navigator.clipboard.writeText(markdown)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
   
   const handleDownload = () => {
-    const markdown = generateSubagentMarkdown(subagent)
+    const markdown = generateCommandMarkdown(command)
     const blob = new Blob([markdown], { type: 'text/markdown' })
     const url = window.URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `${subagent.slug}.md`
+    a.download = `${command.slug}.md`
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
@@ -45,7 +46,7 @@ export function SubagentPageClient({ subagent }: SubagentPageClientProps) {
   }
   
   // Format the content for display
-  const lines = subagent.content.split('\n')
+  const lines = command.content.split('\n')
   const formattedContent = lines.map((line, i) => {
     // Handle headers
     if (line.startsWith('## ')) {
@@ -53,6 +54,9 @@ export function SubagentPageClient({ subagent }: SubagentPageClientProps) {
     }
     if (line.startsWith('### ')) {
       return <h3 key={i} className="text-lg font-semibold mt-4 mb-2">{line.replace('### ', '')}</h3>
+    }
+    if (line.startsWith('# ')) {
+      return <h1 key={i} className="text-2xl font-bold mt-6 mb-3">{line.replace('# ', '')}</h1>
     }
     
     // Handle lists
@@ -68,6 +72,18 @@ export function SubagentPageClient({ subagent }: SubagentPageClientProps) {
       return <div key={i} className="font-mono text-sm bg-muted p-2 rounded my-2">{line}</div>
     }
     
+    // Handle inline code
+    if (line.includes('`')) {
+      const parts = line.split('`')
+      return (
+        <p key={i} className="mb-3">
+          {parts.map((part, j) => 
+            j % 2 === 0 ? part : <code key={j} className="bg-muted px-1 rounded text-sm">{part}</code>
+          )}
+        </p>
+      )
+    }
+    
     // Regular paragraphs
     if (line.trim()) {
       return <p key={i} className="mb-3">{line}</p>
@@ -81,16 +97,19 @@ export function SubagentPageClient({ subagent }: SubagentPageClientProps) {
       <div className="min-h-screen">
         <div className="container mx-auto px-4 py-8 max-w-4xl">
           {/* Back button */}
-          <Link href="/browse" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary mb-6">
+          <Link href="/commands" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary mb-6">
             <ArrowLeft className="h-4 w-4" />
-            Back to Browse
+            Back to Commands
           </Link>
           
           {/* Header */}
           <div className="mb-8">
             <div className="space-y-4">
               <div className="flex items-start justify-between gap-4">
-                <h1 className="text-3xl font-bold">{subagent.name}</h1>
+                <div className="flex items-center gap-3">
+                  <Terminal className="h-8 w-8 text-primary flex-shrink-0" />
+                  <h1 className="text-3xl font-mono font-bold">{commandName}</h1>
+                </div>
                 <div className="flex gap-2">
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -129,11 +148,27 @@ export function SubagentPageClient({ subagent }: SubagentPageClientProps) {
                   </Tooltip>
                 </div>
               </div>
+              <div className="flex items-start gap-2">
+                <Badge variant="secondary" className="inline-flex items-center gap-1 whitespace-nowrap text-sm">
+                  <span className="flex-shrink-0">{categoryIcon}</span>
+                  <span>{categoryName}</span>
+                </Badge>
+              </div>
+              <p className="text-lg text-muted-foreground">{command.description}</p>
             </div>
-            <p className="text-lg text-muted-foreground mb-4">{subagent.description}</p>
-            {subagent.tools && (
+            {command.argumentHint && (
+              <div className="text-sm mb-2">
+                <span className="font-medium">Arguments:</span> <code className="bg-muted px-2 py-1 rounded">{command.argumentHint}</code>
+              </div>
+            )}
+            {command.allowedTools && (
+              <div className="text-sm mb-2">
+                <span className="font-medium">Allowed Tools:</span> {command.allowedTools}
+              </div>
+            )}
+            {command.model && (
               <div className="text-sm">
-                <span className="font-medium">Available Tools:</span> {subagent.tools}
+                <span className="font-medium">Model:</span> {command.model}
               </div>
             )}
           </div>
@@ -168,7 +203,7 @@ export function SubagentPageClient({ subagent }: SubagentPageClientProps) {
                 variant="outline"
               >
                 <Download className="h-4 w-4" />
-                Download {subagent.slug}.md
+                Download {command.slug}.md
               </Button>
             </div>
           </div>
@@ -178,34 +213,34 @@ export function SubagentPageClient({ subagent }: SubagentPageClientProps) {
             <h2 className="text-lg font-semibold mb-4">Installation</h2>
             <div className="space-y-4">
               <div>
-                <h3 className="text-sm font-semibold mb-2">Option A: Install as User Subagent (available in all projects)</h3>
+                <h3 className="text-sm font-semibold mb-2">Option A: Install as User Command (available in all projects)</h3>
                 <div className="space-y-2">
                   <p className="text-sm text-muted-foreground">macOS/Linux:</p>
                   <div className="bg-background rounded p-3 font-mono text-sm">
-                    cp {subagent.slug}.md ~/.claude/agents/
+                    cp {command.slug}.md ~/.claude/commands/
                   </div>
                   <p className="text-sm text-muted-foreground mt-2">Windows:</p>
                   <div className="bg-background rounded p-3 font-mono text-sm">
-                    copy {subagent.slug}.md %USERPROFILE%\.claude\agents\
+                    copy {command.slug}.md %USERPROFILE%\.claude\commands\
                   </div>
                 </div>
               </div>
               <div>
-                <h3 className="text-sm font-semibold mb-2">Option B: Install as Project Subagent (current project only)</h3>
+                <h3 className="text-sm font-semibold mb-2">Option B: Install as Project Command (current project only)</h3>
                 <div className="space-y-2">
                   <p className="text-sm text-muted-foreground">macOS/Linux:</p>
                   <div className="bg-background rounded p-3 font-mono text-sm">
-                    mkdir -p .claude/agents && cp {subagent.slug}.md .claude/agents/
+                    mkdir -p .claude/commands && cp {command.slug}.md .claude/commands/
                   </div>
                   <p className="text-sm text-muted-foreground mt-2">Windows:</p>
                   <div className="bg-background rounded p-3 font-mono text-sm">
-                    mkdir .claude\agents 2&gt;nul && copy {subagent.slug}.md .claude\agents\
+                    mkdir .claude\commands 2&gt;nul && copy {command.slug}.md .claude\commands\
                   </div>
                 </div>
               </div>
               <div className="mt-4 p-3 bg-primary/5 rounded-md">
                 <p className="text-sm text-muted-foreground">
-                  <strong>Note:</strong> After installation, restart Claude Code to load the new subagent.
+                  <strong>Note:</strong> After installation, restart Claude Code to load the new command.
                 </p>
               </div>
             </div>
@@ -213,26 +248,16 @@ export function SubagentPageClient({ subagent }: SubagentPageClientProps) {
           
           {/* Usage Examples */}
           <div className="mb-8">
-            <h2 className="text-lg font-semibold mb-4">Usage Examples</h2>
-            <div className="space-y-3">
-              <div className="bg-muted rounded p-3">
-                <p className="text-sm font-medium mb-1">Automatic invocation:</p>
-                <code className="text-sm">Claude Code will automatically use {subagent.name} when appropriate</code>
-              </div>
-              <div className="bg-muted rounded p-3">
-                <p className="text-sm font-medium mb-1">Explicit invocation:</p>
-                <code className="text-sm">Use the {subagent.name} to help me...</code>
-              </div>
-              <div className="bg-muted rounded p-3">
-                <p className="text-sm font-medium mb-1">@ mention:</p>
-                <code className="text-sm">@agent-{subagent.slug} can you help with...</code>
-              </div>
+            <h2 className="text-lg font-semibold mb-4">Usage</h2>
+            <div className="bg-muted rounded p-3">
+              <p className="text-sm font-medium mb-1">Slash command:</p>
+              <code className="text-sm">{commandName} {command.argumentHint || ''}</code>
             </div>
           </div>
           
-          {/* System Prompt */}
+          {/* Command Content */}
           <div className="mb-8">
-            <h2 className="text-lg font-semibold mb-4">System Prompt</h2>
+            <h2 className="text-lg font-semibold mb-4">Command Instructions</h2>
             <div className="bg-muted rounded-lg p-6 prose prose-sm max-w-none">
               {formattedContent}
             </div>
@@ -241,7 +266,7 @@ export function SubagentPageClient({ subagent }: SubagentPageClientProps) {
           {/* Actions */}
           <div className="flex gap-4">
             <a 
-              href={`https://github.com/davepoon/claude-code-subagents-collection/blob/main/subagents/${subagent.slug}.md`}
+              href={`https://github.com/davepoon/claude-code-subagents-collection/blob/main/commands/${command.slug}.md`}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -250,8 +275,8 @@ export function SubagentPageClient({ subagent }: SubagentPageClientProps) {
                 View on GitHub
               </Button>
             </a>
-            <Link href="/browse">
-              <Button variant="outline">Browse More Subagents</Button>
+            <Link href="/commands">
+              <Button variant="outline">Browse More Commands</Button>
             </Link>
           </div>
         </div>

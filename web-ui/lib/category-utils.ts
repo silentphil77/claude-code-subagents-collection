@@ -16,6 +16,7 @@ const SPECIAL_CASES: Record<string, string> = {
 
 // Icon mappings for categories
 export const CATEGORY_ICONS: Record<string, string> = {
+  // Subagent categories
   'development-architecture': '🏗️',
   'language-specialists': '💻',
   'infrastructure-operations': '🚀',
@@ -23,6 +24,14 @@ export const CATEGORY_ICONS: Record<string, string> = {
   'data-ai': '📊',
   'specialized-domains': '🎯',
   'crypto-trading': '💰',
+  // Command categories
+  'ci-deployment': '🔄',
+  'code-analysis-testing': '🧪',
+  'context-loading-priming': '📥',
+  'documentation-changelogs': '📝',
+  'project-task-management': '📋',
+  'version-control-git': '🌿',
+  'miscellaneous': '🔧',
   // Default icon for unknown categories
   'default': '📦'
 };

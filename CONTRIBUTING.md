@@ -1,46 +1,41 @@
-# Contributing to Claude Code Subagents Collection
+# Contributing to Claude Code Subagents & Commands Collection
 
-Thank you for your interest in contributing to the Claude Code Subagents Collection! This guide will help you create high-quality subagents that integrate seamlessly with Claude Code.
+Thank you for your interest in contributing to the Claude Code Subagents & Commands Collection! This guide will help you create high-quality subagents and commands that integrate seamlessly with Claude Code.
 
 ## Table of Contents
 - [Before You Start](#before-you-start)
-- [Creating a New Subagent](#creating-a-new-subagent)
+- [Contributing Subagents](#contributing-subagents)
+  - [Creating a New Subagent](#creating-a-new-subagent)
+  - [Subagent Structure](#subagent-structure)
+  - [Testing Your Subagent](#testing-your-subagent)
+- [Contributing Commands](#contributing-commands)
+  - [Creating a New Command](#creating-a-new-command)
+  - [Command Structure](#command-structure)
+  - [Testing Your Command](#testing-your-command)
 - [File Naming Conventions](#file-naming-conventions)
-- [Required Structure](#required-structure)
 - [Writing Guidelines](#writing-guidelines)
-- [Testing Your Subagent](#testing-your-subagent)
 - [Submitting a Pull Request](#submitting-a-pull-request)
 - [How Automated Checks Work](#how-automated-checks-work)
 - [Code of Conduct](#code-of-conduct)
 
 ## Before You Start
 
-1. **Read the documentation**: Familiarize yourself with [Claude Code's subagent documentation](https://docs.anthropic.com/en/docs/claude-code/sub-agents)
-2. **Check existing subagents**: Ensure your idea doesn't overlap significantly with existing subagents
-3. **One purpose per subagent**: Each subagent should have a single, clear responsibility
+1. **Read the documentation**: 
+   - For subagents: [Claude Code's subagent documentation](https://docs.anthropic.com/en/docs/claude-code/sub-agents)
+   - For commands: [Claude Code's slash commands documentation](https://docs.anthropic.com/en/docs/claude-code/slash-commands)
+2. **Check existing contributions**: Ensure your idea doesn't overlap significantly with existing subagents or commands
+3. **One purpose per contribution**: Each subagent or command should have a single, clear responsibility
 
-## Creating a New Subagent
+## Contributing Subagents
 
-### File Naming Conventions
+### Creating a New Subagent
 
-- **Format**: `descriptive-name.md`
-- **Rules**:
-  - Use lowercase letters only
-  - Separate words with hyphens (-)
-  - Be descriptive but concise
-  - Match the `name` field in the frontmatter
+1. **Create your file** in the `subagents/` directory
+2. **Name it appropriately**: `your-subagent-name.md`
+3. **Follow the required structure** (see below)
+4. **Test thoroughly** before submitting
 
-**Good examples**:
-- `code-reviewer.md`
-- `python-pro.md`
-- `database-optimizer.md`
-
-**Bad examples**:
-- `CodeReviewer.md` (wrong case)
-- `code_reviewer.md` (underscores)
-- `cr.md` (too vague)
-
-### Required Structure
+### Subagent Structure
 
 Every subagent MUST follow this exact structure:
 
@@ -179,7 +174,7 @@ Ensure APIs follow REST principles, maintain consistency, and provide excellent 
 - Developer documentation templates
 ```
 
-## Testing Your Subagent
+### Testing Your Subagent
 
 Before submitting, test your subagent:
 
@@ -192,7 +187,7 @@ Before submitting, test your subagent:
 2. **Invocation Tests**:
    - Test automatic invocation with relevant prompts
    - Test explicit invocation: "Use the [subagent-name] to..."
-   - Test @ mention: "@[subagent-name] please help with..."
+   - Test @ mention: "@agent-[subagent-name] please help with..."
 
 3. **Functionality Tests**:
    - Verify it performs its stated capabilities
@@ -204,17 +199,96 @@ Before submitting, test your subagent:
    - Verify it doesn't activate inappropriately
    - Check interaction with other subagents
 
+## Contributing Commands
+
+### Creating a New Command
+
+1. **Create your file** in the `commands/` directory
+2. **Name it appropriately**: `your-command-name.md`
+3. **Follow the required structure** (see below)
+4. **Test the command** thoroughly
+
+### Command Structure
+
+Every command MUST follow this structure:
+
+```markdown
+---
+description: Brief explanation of what the command does (10-200 chars)
+category: category-name  # Required - see valid categories below
+argument-hint: <optional-args>  # Optional - describe expected arguments
+allowed-tools: tool1, tool2  # Optional - restrict tool usage
+model: opus|sonnet|haiku  # Optional - specify model preference
+---
+
+# Command implementation
+
+Detailed instructions for how the command should work...
+```
+
+#### Valid Command Categories:
+- `ci-deployment` - CI/CD and deployment commands
+- `code-analysis-testing` - Code quality and testing commands
+- `context-loading-priming` - Context and priming commands
+- `documentation-changelogs` - Documentation commands
+- `project-task-management` - Project management commands
+- `version-control-git` - Git and version control commands
+- `miscellaneous` - Other specialized commands
+
+### Testing Your Command
+
+1. **Installation Test**:
+   ```bash
+   cp commands/your-command.md ~/.claude/commands/
+   # Restart Claude Code
+   ```
+
+2. **Usage Tests**:
+   - Test basic invocation: `/your_command`
+   - Test with arguments: `/your_command arg1 arg2`
+   - Verify error handling for invalid inputs
+
+3. **Tool Restriction Tests**:
+   - If you specified `allowed-tools`, verify only those tools are used
+   - Test that restricted tools are not accessible
+
+## File Naming Conventions
+
+For both subagents and commands:
+
+- **Format**: `descriptive-name.md`
+- **Rules**:
+  - Use lowercase letters only
+  - Separate words with hyphens (-)
+  - Be descriptive but concise
+  - For subagents: Match the `name` field in frontmatter
+  - For commands: Use underscores in the actual command (e.g., file `create-pr.md` becomes `/create_pr`)
+
+**Good examples**:
+- Subagents: `code-reviewer.md`, `python-pro.md`
+- Commands: `create-pr.md`, `fix-issue.md`
+
+**Bad examples**:
+- `CodeReviewer.md` (wrong case)
+- `code_reviewer.md` (underscores for subagents)
+- `cr.md` (too vague)
+
 ## Submitting a Pull Request
 
 ### PR Requirements
 
-1. **Branch Naming**: `add-[subagent-name]` or `update-[subagent-name]`
+1. **Branch Naming**: 
+   - Subagents: `add-[subagent-name]` or `update-[subagent-name]`
+   - Commands: `add-[command-name]` or `update-[command-name]`
 
 2. **PR Title**: 
-   - New: "Add [subagent-name] subagent"
-   - Update: "Update [subagent-name]: [brief description]"
+   - New subagent: "Add [subagent-name] subagent"
+   - New command: "Add [command-name] command"
+   - Updates: "Update [name]: [brief description]"
 
-3. **PR Description Template**:
+3. **PR Description Templates**:
+
+   **For Subagents:**
    ```markdown
    ## Summary
    Brief description of the subagent and its purpose
@@ -234,12 +308,30 @@ Before submitting, test your subagent:
    Provide 2-3 example prompts that trigger this subagent
    ```
 
+   **For Commands:**
+   ```markdown
+   ## Summary
+   Brief description of the command and its purpose
+   
+   ## Command Details
+   - **Command**: /[command_name]
+   - **Category**: [Git/Testing/Documentation/etc.]
+   - **Arguments**: [describe any arguments]
+   
+   ## Testing
+   - [ ] Tested basic usage
+   - [ ] Tested with arguments (if applicable)
+   - [ ] Tested error cases
+   - [ ] Verified tool restrictions (if any)
+   
+   ## Examples
+   Provide 2-3 example usages of the command
+   ```
+
 4. **Files to Update**:
-   - Add your `subagent-name.md` file to the `subagents/` directory
-   - Update `README.md`:
-     - Add to the appropriate category section
-     - Update the count in the overview
-     - Add to the Recent Updates if significant
+   - For subagents: Add file to `subagents/` directory
+   - For commands: Add file to `commands/` directory
+   - Update `README.md` if adding significant new functionality
 
 ### Review Process
 
@@ -249,6 +341,7 @@ Before submitting, test your subagent:
    - Markdown formatting
    - Frontmatter schema compliance
    - Duplicate name detection
+   - Category validation
 
 2. **Manual Review**:
    - Uniqueness and value proposition
@@ -276,24 +369,26 @@ Your PR will be evaluated on:
 
 Once your pull request is approved and merged:
 
-1. **Automatic Deployment**: Your subagent will be automatically available on the [Web UI](https://www.buildwithclaude.com) within minutes
+1. **Automatic Deployment**: Your subagent or command will be automatically available on the [Web UI](https://www.buildwithclaude.com) within minutes
 2. **No Manual Steps Required**: The deployment is handled automatically by Vercel
-3. **Immediate Availability**: Users can browse, copy, or download your subagent from the website
-4. **Repository Sync**: The web UI always displays the latest subagents from the main branch
+3. **Immediate Availability**: Users can browse, copy, or download your contribution from the website
+4. **Repository Sync**: The web UI always displays the latest subagents and commands from the main branch
 
-This means contributors don't need to worry about deployment - just focus on creating quality subagents!
+This means contributors don't need to worry about deployment - just focus on creating quality subagents and commands!
 
 ## How Automated Checks Work
 
-Our GitHub Actions workflow automatically validates all subagent contributions. Here's what gets checked:
+Our GitHub Actions workflow automatically validates all contributions. Here's what gets checked:
 
 ### Validation Process
 
 When you submit a PR, the following checks run automatically:
 
+#### For Subagents:
+
 1. **Frontmatter Validation**:
    - Validates YAML structure against our JSON schema
-   - Ensures required fields (`name`, `description`) are present
+   - Ensures required fields (`name`, `description`, `category`) are present
    - Checks field formats (e.g., name must be lowercase with hyphens)
 
 2. **File Naming**:
@@ -305,9 +400,21 @@ When you submit a PR, the following checks run automatically:
    - Validates description length (10-500 characters recommended)
    - Checks for duplicate names across all subagents
 
-4. **Tool Validation**:
-   - If `tools` field is present, validates against known tools
-   - Warns about unknown tool names
+4. **Category Validation**:
+   - Ensures category is one of the valid options
+
+#### For Commands:
+
+1. **Frontmatter Validation**:
+   - Validates required fields (`description`, `category`)
+   - Checks optional fields format (`argument-hint`, `allowed-tools`, `model`)
+
+2. **Content Validation**:
+   - Ensures the command has implementation details
+   - Validates description length (10-200 characters)
+
+3. **Category Validation**:
+   - Ensures category is one of the valid command categories
 
 ### Running Checks Locally
 
@@ -317,8 +424,11 @@ Before submitting your PR, run the validation locally:
 # Install dependencies
 npm install gray-matter ajv glob chalk
 
-# Run validation
+# Run validation for subagents
 node scripts/validate-subagents.js
+
+# Run validation for commands
+node scripts/validate-commands.js
 ```
 
 ### Understanding Validation Output
