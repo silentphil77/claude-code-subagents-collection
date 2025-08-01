@@ -21,13 +21,13 @@ interface SubagentCardProps {
 }
 
 const categoryColors: Record<CategoryKey, string> = {
-  'development-architecture': 'bg-blue-500/10 text-blue-700 dark:text-blue-300',
-  'language-specialists': 'bg-green-500/10 text-green-700 dark:text-green-300',
-  'infrastructure-operations': 'bg-orange-500/10 text-orange-700 dark:text-orange-300',
-  'quality-security': 'bg-red-500/10 text-red-700 dark:text-red-300',
-  'data-ai': 'bg-purple-500/10 text-purple-700 dark:text-purple-300',
-  'specialized-domains': 'bg-indigo-500/10 text-indigo-700 dark:text-indigo-300',
-  'crypto-trading': 'bg-yellow-500/10 text-yellow-700 dark:text-yellow-300'
+  'development-architecture': 'border-blue-500/50 text-blue-400',
+  'language-specialists': 'border-green-500/50 text-green-400',
+  'infrastructure-operations': 'border-orange-500/50 text-orange-400',
+  'quality-security': 'border-red-500/50 text-red-400',
+  'data-ai': 'border-purple-500/50 text-purple-400',
+  'specialized-domains': 'border-indigo-500/50 text-indigo-400',
+  'crypto-trading': 'border-yellow-500/50 text-yellow-400'
 }
 
 export function SubagentCard({ subagent }: SubagentCardProps) {
@@ -67,22 +67,25 @@ export function SubagentCard({ subagent }: SubagentCardProps) {
     <TooltipProvider>
       <div className="relative group">
         <Link href={`/subagent/${subagent.slug}`}>
-          <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
+          <Card className="h-full card-hover border-border/50 hover:border-primary/20 transition-all duration-300 cursor-pointer overflow-hidden">
             <CardHeader>
               <div className="flex items-start justify-between mb-2">
-                <CardTitle className="text-xl">{subagent.name}</CardTitle>
-                <Badge className={colorClass} variant="secondary">
+                <CardTitle className="text-xl font-semibold">{subagent.name}</CardTitle>
+                <Badge 
+                  className={`${colorClass} bg-transparent border font-medium`} 
+                  variant="outline"
+                >
                   {categoryName}
                 </Badge>
               </div>
-              <CardDescription className="line-clamp-3">
+              <CardDescription className="line-clamp-3 text-muted-foreground/80">
                 {subagent.description}
               </CardDescription>
             </CardHeader>
             <CardContent>
               {subagent.tools && (
-                <div className="text-sm text-muted-foreground">
-                  <span className="font-medium">Tools:</span> {subagent.tools}
+                <div className="text-sm text-muted-foreground/60 font-mono">
+                  <span className="font-sans font-medium text-muted-foreground/80">Tools:</span> {subagent.tools}
                 </div>
               )}
             </CardContent>
@@ -90,13 +93,13 @@ export function SubagentCard({ subagent }: SubagentCardProps) {
         </Link>
         
         {/* Action buttons - positioned at bottom right */}
-        <div className="absolute bottom-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="absolute bottom-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-200">
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
                 size="icon"
-                variant="secondary"
-                className="h-8 w-8"
+                variant="ghost"
+                className="h-8 w-8 bg-background/80 backdrop-blur-sm hover:bg-primary/20 hover:text-primary border border-border/50"
                 onClick={handleCopy}
               >
                 {copied ? (
@@ -115,8 +118,8 @@ export function SubagentCard({ subagent }: SubagentCardProps) {
             <TooltipTrigger asChild>
               <Button
                 size="icon"
-                variant="secondary"
-                className="h-8 w-8"
+                variant="ghost"
+                className="h-8 w-8 bg-background/80 backdrop-blur-sm hover:bg-primary/20 hover:text-primary border border-border/50"
                 onClick={handleDownload}
               >
                 <Download className="h-4 w-4" />

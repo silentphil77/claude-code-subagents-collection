@@ -1,18 +1,20 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
+  display: 'swap',
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
   subsets: ["latin"],
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -28,63 +30,78 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}
       >
-        <nav className="border-b">
+        <nav className="fixed top-0 w-full z-50 border-b border-border/40 bg-background/80 backdrop-blur-md">
           <div className="container mx-auto px-4">
             <div className="flex h-16 items-center justify-between">
               <div className="flex items-center gap-8">
-                <Link href="/" className="text-xl font-bold">
-                  Claude Code Subagents
+                <Link href="/" className="text-md font-bold text-gradient">
+                  Claude Code Subagents Collection
                 </Link>
                 <div className="hidden md:flex items-center gap-6">
-                  <Link href="/browse" className="text-sm font-medium hover:text-primary transition-colors">
+                  <Link href="/browse" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
                     Browse
                   </Link>
-                  <Link href="/docs" className="text-sm font-medium hover:text-primary transition-colors">
+                  <Link href="/docs" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
                     Documentation
-                  </Link>
-                  <Link href="/about" className="text-sm font-medium hover:text-primary transition-colors">
-                    About
                   </Link>
                 </div>
               </div>
-              <a 
-                href="https://github.com/davepoon/claude-code-subagents-collection" 
-                target="_blank" 
-                rel="noopener noreferrer"
-              >
-                <Button variant="outline" size="sm" className="gap-2">
-                  <GitHubLogoIcon className="h-4 w-4" />
-                  GitHub
-                </Button>
-              </a>
+              <div className="flex items-center gap-3">
+                <a 
+                  href="https://github.com/davepoon/claude-code-subagents-collection" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  <Button variant="ghost" size="sm" className="gap-2 hover:bg-primary/10 hover:text-primary border border-border/50">
+                    <GitHubLogoIcon className="h-4 w-4" />
+                    GitHub
+                  </Button>
+                </a>
+                <a
+                  href="https://github.com/davepoon/claude-code-subagents-collection"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hidden sm:block"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img 
+                    src="https://img.shields.io/github/stars/davepoon/claude-code-subagents-collection.svg?style=social&label=Star"
+                    alt="GitHub stars"
+                    className="h-5"
+                  />
+                </a>
+              </div>
             </div>
           </div>
         </nav>
+        <div className="h-16" /> {/* Spacer for fixed nav */}
         {children}
-        <footer className="border-t">
-          <div className="container mx-auto px-4 py-8">
-            <div className="text-center text-sm text-muted-foreground">
-              <p>Made with ❤️ by the Claude Code community</p>
-              <p className="mt-2">
-                <Link href="/license" className="hover:text-primary transition-colors">
+        <footer className="border-t border-border/40 bg-card/50">
+          <div className="container mx-auto px-4 py-12">
+            <div className="text-center space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Made with <span className="text-primary">❤️</span> by the Claude Code community
+              </p>
+              <div className="flex items-center justify-center gap-6 text-sm">
+                <Link href="/license" className="text-muted-foreground hover:text-primary transition-colors">
                   MIT License
                 </Link>
-                {" · "}
-                <Link href="/contributing" className="hover:text-primary transition-colors">
+                <span className="text-muted-foreground/40">•</span>
+                <Link href="/contributing" className="text-muted-foreground hover:text-primary transition-colors">
                   Contributing
                 </Link>
-                {" · "}
+                <span className="text-muted-foreground/40">•</span>
                 <a 
                   href="https://github.com/davepoon/claude-code-subagents-collection/issues" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="hover:text-primary transition-colors"
+                  className="text-muted-foreground hover:text-primary transition-colors"
                 >
                   Report Issue
                 </a>
-              </p>
+              </div>
             </div>
           </div>
         </footer>

@@ -16,6 +16,15 @@ module.exports = {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ["var(--font-inter)", "system-ui", "sans-serif"],
+        mono: ["var(--font-jetbrains-mono)", "monospace"],
+      },
+      fontSize: {
+        "display-1": ["clamp(3rem, 8vw, 5rem)", { lineHeight: "1.1", letterSpacing: "-0.02em" }],
+        "display-2": ["clamp(2.5rem, 6vw, 4rem)", { lineHeight: "1.2", letterSpacing: "-0.02em" }],
+        "display-3": ["clamp(2rem, 4vw, 3rem)", { lineHeight: "1.3", letterSpacing: "-0.01em" }],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
