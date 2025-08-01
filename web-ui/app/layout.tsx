@@ -85,13 +85,23 @@ export default function RootLayout({
                 Made with <span className="text-primary">❤️</span> by the Claude Code community
               </p>
               <div className="flex items-center justify-center gap-6 text-sm">
-                <Link href="/license" className="text-muted-foreground hover:text-primary transition-colors">
+                <a 
+                  href="https://github.com/davepoon/claude-code-subagents-collection/blob/main/LICENSE"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
                   MIT License
-                </Link>
+                </a>
                 <span className="text-muted-foreground/40">•</span>
-                <Link href="/contributing" className="text-muted-foreground hover:text-primary transition-colors">
+                <a 
+                  href="https://github.com/davepoon/claude-code-subagents-collection/blob/main/CONTRIBUTING.md"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
                   Contributing
-                </Link>
+                </a>
                 <span className="text-muted-foreground/40">•</span>
                 <a 
                   href="https://github.com/davepoon/claude-code-subagents-collection/issues" 

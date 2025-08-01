@@ -167,6 +167,9 @@ export default function AboutPage() {
                 contribute to the Claude Code ecosystem. Join us in building the future of AI-assisted 
                 development!
               </p>
+              <p className="text-sm text-muted-foreground mt-4">
+                <span className="text-primary font-semibold">✨ Automatic Deployment:</span> All merged subagents are automatically deployed to this website within minutes. No manual deployment steps required!
+              </p>
               <div className="flex gap-4 justify-center flex-wrap">
                 <a 
                   href="https://github.com/davepoon/claude-code-subagents-collection"

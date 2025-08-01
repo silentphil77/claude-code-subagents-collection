@@ -84,6 +84,8 @@ Visit our [Web UI](https://claude-code-subagents.vercel.app) to browse all subag
 - 🔍 Search and filter by category
 - 📖 Preview full documentation for each subagent
 
+> **Note**: The Web UI automatically syncs with the main branch. Newly merged subagents appear within minutes of PR merge.
+
 ### Manual Installation Steps
 
 1. **Clone this repository:**
@@ -276,6 +278,8 @@ We welcome contributions! To add a new subagent:
    - The new subagent file
    - Updated README listing
    - Example usage scenarios
+
+5. **Automatic Deployment**: Once merged, your subagent will be automatically available on the [Web UI](https://claude-code-subagents.vercel.app) within minutes.
 
 ## Advanced Configuration
 

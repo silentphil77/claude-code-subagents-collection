@@ -41,8 +41,8 @@ export default function HomePageClient({ allSubagents, featuredSubagents }: Home
     },
     {
       icon: Code2,
-      title: 'Open Source',
-      description: 'Community-driven development with transparent implementation'
+      title: 'Auto-Deploy on Merge',
+      description: 'New subagents appear on the site automatically after PR merge'
     }
   ]
 
