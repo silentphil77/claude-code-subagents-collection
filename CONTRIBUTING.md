@@ -260,6 +260,17 @@ Your PR will be evaluated on:
 - **Documentation**: Are examples and usage clear?
 - **Security**: No malicious capabilities or prompts
 
+### After Your PR is Merged
+
+Once your pull request is approved and merged:
+
+1. **Automatic Deployment**: Your subagent will be automatically available on the [Web UI](https://www.buildwithclaude.com) within minutes
+2. **No Manual Steps Required**: The deployment is handled automatically by Vercel
+3. **Immediate Availability**: Users can browse, copy, or download your subagent from the website
+4. **Repository Sync**: The web UI always displays the latest subagents from the main branch
+
+This means contributors don't need to worry about deployment - just focus on creating quality subagents!
+
 ## How Automated Checks Work
 
 Our GitHub Actions workflow automatically validates all subagent contributions. Here's what gets checked:
