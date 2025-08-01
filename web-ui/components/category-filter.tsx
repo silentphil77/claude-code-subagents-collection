@@ -1,14 +1,15 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { CATEGORIES, type CategoryKey } from '@/lib/subagents-types'
+import { type CategoryMetadata } from '@/lib/subagents-types'
 
 interface CategoryFilterProps {
-  selectedCategory: CategoryKey | 'all'
-  onCategoryChange: (category: CategoryKey | 'all') => void
+  selectedCategory: string | 'all'
+  onCategoryChange: (category: string | 'all') => void
+  categories: CategoryMetadata[]
 }
 
-export function CategoryFilter({ selectedCategory, onCategoryChange }: CategoryFilterProps) {
+export function CategoryFilter({ selectedCategory, onCategoryChange, categories }: CategoryFilterProps) {
   return (
     <div className="flex flex-wrap gap-2">
       <Button
@@ -18,14 +19,14 @@ export function CategoryFilter({ selectedCategory, onCategoryChange }: CategoryF
       >
         All Categories
       </Button>
-      {Object.entries(CATEGORIES).map(([key, label]) => (
+      {categories.map(({ id, displayName, icon, count }) => (
         <Button
-          key={key}
-          variant={selectedCategory === key ? 'default' : 'outline'}
+          key={id}
+          variant={selectedCategory === id ? 'default' : 'outline'}
           size="sm"
-          onClick={() => onCategoryChange(key as CategoryKey)}
+          onClick={() => onCategoryChange(id)}
         >
-          {label}
+          {icon} {displayName} ({count})
         </Button>
       ))}
     </div>

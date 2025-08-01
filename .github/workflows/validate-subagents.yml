@@ -1,4 +1,4 @@
-name: Validate Subagents
+name: Validate Subagents and Commands
 
 on:
   push:
@@ -6,7 +6,8 @@ on:
     branches: [ '**' ]
   pull_request:
     paths:
-      - '*.md'
+      - 'subagents/*.md'
+      - 'commands/*.md'
       - '!README.md'
       - '!CONTRIBUTING.md'
       - '.github/workflows/validate-subagents.yml'
@@ -30,23 +31,27 @@ jobs:
         npm init -y
         npm install gray-matter ajv glob chalk
         
-    - name: Run validation
+    - name: Validate subagents
       run: node scripts/validate-subagents.js
+      
+    - name: Validate commands
+      run: node scripts/validate-commands.js
       
     - name: Check for naming inconsistencies
       run: |
-        # Check if any files have mismatched names
-        for file in *.md; do
-          if [[ "$file" != "README.md" && "$file" != "CONTRIBUTING.md" && "$file" != "LICENSE" ]]; then
+        # Check if any subagent files have mismatched names (commands don't have name field)
+        for file in subagents/*.md; do
+          if [[ -f "$file" ]]; then
             name=$(grep -E "^name:" "$file" | sed 's/name: //')
-            expected="${file%.md}"
+            basename=$(basename "$file")
+            expected="${basename%.md}"
             if [[ "$name" != "$expected" ]]; then
               echo "❌ File $file has name field '$name' but should be '$expected'"
               exit 1
             fi
           fi
         done
-        echo "✅ All file names match their name fields"
+        echo "✅ All subagent file names match their name fields"
         
     - name: Upload validation report
       if: failure()

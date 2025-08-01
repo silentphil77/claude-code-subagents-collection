@@ -16,25 +16,58 @@ export default function InstallationPage() {
   }
   
   const installCommands = {
-    allUser: {
+    // Quick install everything
+    everything: {
       mac: `git clone https://github.com/davepoon/claude-code-subagents-collection.git
-find claude-code-subagents-collection -maxdepth 1 -name "*.md" -not -name "README.md" -not -name "CONTRIBUTING.md" -exec cp {} ~/.claude/agents/ \\;`,
+cd claude-code-subagents-collection
+find subagents -name "*.md" -exec cp {} ~/.claude/agents/ \\;
+find commands -name "*.md" -exec cp {} ~/.claude/commands/ \\;`,
       windows: `git clone https://github.com/davepoon/claude-code-subagents-collection.git
-for %f in (claude-code-subagents-collection\\*.md) do if not "%f"=="claude-code-subagents-collection\\README.md" if not "%f"=="claude-code-subagents-collection\\CONTRIBUTING.md" copy "%f" %USERPROFILE%\\.claude\\agents\\`
+cd claude-code-subagents-collection
+for %f in (subagents\\*.md) do copy "%f" %USERPROFILE%\\.claude\\agents\\
+for %f in (commands\\*.md) do copy "%f" %USERPROFILE%\\.claude\\commands\\`
     },
-    allProject: {
+    // Subagents only
+    allSubagentsUser: {
+      mac: `git clone https://github.com/davepoon/claude-code-subagents-collection.git
+find claude-code-subagents-collection/subagents -name "*.md" -exec cp {} ~/.claude/agents/ \\;`,
+      windows: `git clone https://github.com/davepoon/claude-code-subagents-collection.git
+for %f in (claude-code-subagents-collection\\subagents\\*.md) do copy "%f" %USERPROFILE%\\.claude\\agents\\`
+    },
+    allSubagentsProject: {
       mac: `mkdir -p .claude/agents
-find /path/to/claude-code-subagents-collection -maxdepth 1 -name "*.md" -not -name "README.md" -not -name "CONTRIBUTING.md" -exec cp {} .claude/agents/ \\;`,
+find /path/to/claude-code-subagents-collection/subagents -name "*.md" -exec cp {} .claude/agents/ \\;`,
       windows: `mkdir .claude\\agents 2>nul
-for %f in (\\path\\to\\claude-code-subagents-collection\\*.md) do if not "%~nxf"=="README.md" if not "%~nxf"=="CONTRIBUTING.md" copy "%f" .claude\\agents\\`
+for %f in (\\path\\to\\claude-code-subagents-collection\\subagents\\*.md) do copy "%f" .claude\\agents\\`
     },
-    singleUser: {
+    singleSubagentUser: {
       mac: `cp subagent-name.md ~/.claude/agents/`,
       windows: `copy subagent-name.md %USERPROFILE%\\.claude\\agents\\`
     },
-    singleProject: {
+    singleSubagentProject: {
       mac: `mkdir -p .claude/agents && cp subagent-name.md .claude/agents/`,
       windows: `mkdir .claude\\agents 2>nul && copy subagent-name.md .claude\\agents\\`
+    },
+    // Commands only
+    allCommandsUser: {
+      mac: `git clone https://github.com/davepoon/claude-code-subagents-collection.git
+find claude-code-subagents-collection/commands -name "*.md" -exec cp {} ~/.claude/commands/ \\;`,
+      windows: `git clone https://github.com/davepoon/claude-code-subagents-collection.git
+for %f in (claude-code-subagents-collection\\commands\\*.md) do copy "%f" %USERPROFILE%\\.claude\\commands\\`
+    },
+    allCommandsProject: {
+      mac: `mkdir -p .claude/commands
+find /path/to/claude-code-subagents-collection/commands -name "*.md" -exec cp {} .claude/commands/ \\;`,
+      windows: `mkdir .claude\\commands 2>nul
+for %f in (\\path\\to\\claude-code-subagents-collection\\commands\\*.md) do copy "%f" .claude\\commands\\`
+    },
+    singleCommandUser: {
+      mac: `cp command-name.md ~/.claude/commands/`,
+      windows: `copy command-name.md %USERPROFILE%\\.claude\\commands\\`
+    },
+    singleCommandProject: {
+      mac: `mkdir -p .claude/commands && cp command-name.md .claude/commands/`,
+      windows: `mkdir .claude\\commands 2>nul && copy command-name.md .claude\\commands\\`
     }
   }
   
@@ -53,7 +86,7 @@ for %f in (\\path\\to\\claude-code-subagents-collection\\*.md) do if not "%~nxf"
             <div>
               <h1 className="text-3xl font-bold">Installation Guide</h1>
               <p className="text-muted-foreground mt-1">
-                Learn how to install Claude Code Subagents in your projects
+                Learn how to install Claude Code Subagents and Commands
               </p>
             </div>
           </div>
@@ -68,320 +101,679 @@ for %f in (\\path\\to\\claude-code-subagents-collection\\*.md) do if not "%~nxf"
             <div>
               <p className="font-semibold text-primary mb-1">Quick Installation Tip</p>
               <p className="text-sm">
-                The easiest way to install individual subagents is directly from the browse page!
-                Each subagent card has copy and download buttons that appear on hover, allowing you
-                to quickly grab any subagent without running terminal commands.
+                The easiest way to install individual subagents or commands is directly from their pages!
+                Each page has platform-specific installation instructions with copy buttons for quick setup.
               </p>
-              <Link href="/browse">
-                <Button variant="outline" size="sm" className="mt-3 gap-2 border-primary/20 hover:bg-primary/10">
-                  Browse Subagents <ArrowLeft className="h-3 w-3 rotate-180" />
-                </Button>
-              </Link>
+              <div className="flex gap-2 mt-3">
+                <Link href="/browse">
+                  <Button variant="outline" size="sm" className="gap-2 border-primary/20 hover:bg-primary/10">
+                    Browse Subagents <ArrowLeft className="h-3 w-3 rotate-180" />
+                  </Button>
+                </Link>
+                <Link href="/commands">
+                  <Button variant="outline" size="sm" className="gap-2 border-primary/20 hover:bg-primary/10">
+                    Browse Commands <ArrowLeft className="h-3 w-3 rotate-180" />
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
         
         {/* Main Installation Content */}
-        <Tabs defaultValue="all-subagents" className="space-y-8">
-          <TabsList className="grid w-full grid-cols-2 max-w-md">
-            <TabsTrigger value="all-subagents">All Subagents</TabsTrigger>
-            <TabsTrigger value="single-subagent">Single Subagent</TabsTrigger>
+        <Tabs defaultValue="everything" className="space-y-8">
+          <TabsList className="grid w-full grid-cols-3 max-w-2xl">
+            <TabsTrigger value="everything">Install Everything</TabsTrigger>
+            <TabsTrigger value="subagents">Subagents Only</TabsTrigger>
+            <TabsTrigger value="commands">Commands Only</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="all-subagents" className="space-y-6">
+          {/* Install Everything Tab */}
+          <TabsContent value="everything" className="space-y-6">
             <div>
-              <h2 className="text-2xl font-bold mb-3">Install All Subagents</h2>
+              <h2 className="text-2xl font-bold mb-3">Install Everything (Recommended)</h2>
               <p className="text-muted-foreground">
-                Get the complete collection of 40+ specialized subagents for comprehensive AI assistance across all domains.
+                Get the complete collection of 43+ specialized subagents and 39+ commands for comprehensive AI assistance and automation.
               </p>
             </div>
             
-            <Tabs defaultValue="user" className="w-full">
+            <div className="bg-card/50 rounded-lg p-4 border border-border/50">
+              <p className="text-sm font-medium mb-1">What&apos;s Included</p>
+              <div className="text-sm text-muted-foreground space-y-1">
+                <p>✓ 43+ AI Subagents for specialized tasks</p>
+                <p>✓ 39+ Slash Commands for automation</p>
+                <p>✓ Automatic invocation based on context</p>
+                <p>✓ Works across all your projects</p>
+              </div>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="font-medium">macOS/Linux</span>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="gap-2 hover:bg-primary/10"
+                    onClick={() => copyToClipboard(installCommands.everything.mac, 0)}
+                  >
+                    {copiedIndex === 0 ? (
+                      <>
+                        <Check className="h-4 w-4" />
+                        Copied!
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="h-4 w-4" />
+                        Copy
+                      </>
+                    )}
+                  </Button>
+                </div>
+                <pre className="bg-background/50 border border-border/50 p-4 rounded-lg overflow-x-auto">
+                  <code className="text-sm font-mono">{installCommands.everything.mac}</code>
+                </pre>
+              </div>
+              
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="font-medium">Windows</span>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="gap-2 hover:bg-primary/10"
+                    onClick={() => copyToClipboard(installCommands.everything.windows, 1)}
+                  >
+                    {copiedIndex === 1 ? (
+                      <>
+                        <Check className="h-4 w-4" />
+                        Copied!
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="h-4 w-4" />
+                        Copy
+                      </>
+                    )}
+                  </Button>
+                </div>
+                <pre className="bg-background/50 border border-border/50 p-4 rounded-lg overflow-x-auto">
+                  <code className="text-sm font-mono">{installCommands.everything.windows}</code>
+                </pre>
+              </div>
+            </div>
+          </TabsContent>
+          
+          {/* Subagents Only Tab */}
+          <TabsContent value="subagents" className="space-y-6">
+            <div>
+              <h2 className="text-2xl font-bold mb-3">Install Subagents Only</h2>
+              <p className="text-muted-foreground">
+                Install the complete collection of 43+ specialized AI subagents for comprehensive assistance across all domains.
+              </p>
+            </div>
+            
+            <Tabs defaultValue="all" className="w-full">
               <TabsList className="grid w-full grid-cols-2 max-w-sm">
-                <TabsTrigger value="user">User Installation</TabsTrigger>
-                <TabsTrigger value="project">Project Installation</TabsTrigger>
+                <TabsTrigger value="all">All Subagents</TabsTrigger>
+                <TabsTrigger value="single">Single Subagent</TabsTrigger>
               </TabsList>
               
-              <TabsContent value="user" className="space-y-6 mt-6">
-                <div className="bg-card/50 rounded-lg p-4 border border-border/50">
-                  <p className="text-sm font-medium mb-1">User Installation</p>
-                  <p className="text-sm text-muted-foreground">
-                    Installs subagents globally, making them available in all your projects
-                  </p>
-                </div>
-                
-                <div className="space-y-4">
-                  <div>
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="font-medium">macOS/Linux</span>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="gap-2 hover:bg-primary/10"
-                        onClick={() => copyToClipboard(installCommands.allUser.mac, 0)}
-                      >
-                        {copiedIndex === 0 ? (
-                          <>
-                            <Check className="h-4 w-4" />
-                            Copied!
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="h-4 w-4" />
-                            Copy
-                          </>
-                        )}
-                      </Button>
-                    </div>
-                    <pre className="bg-background/50 border border-border/50 p-4 rounded-lg overflow-x-auto">
-                      <code className="text-sm font-mono">{installCommands.allUser.mac}</code>
-                    </pre>
-                  </div>
+              <TabsContent value="all" className="space-y-6 mt-6">
+                <Tabs defaultValue="user" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2 max-w-xs">
+                    <TabsTrigger value="user">User Level</TabsTrigger>
+                    <TabsTrigger value="project">Project Level</TabsTrigger>
+                  </TabsList>
                   
-                  <div>
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="font-medium">Windows</span>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="gap-2 hover:bg-primary/10"
-                        onClick={() => copyToClipboard(installCommands.allUser.windows, 1)}
-                      >
-                        {copiedIndex === 1 ? (
-                          <>
-                            <Check className="h-4 w-4" />
-                            Copied!
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="h-4 w-4" />
-                            Copy
-                          </>
-                        )}
-                      </Button>
+                  <TabsContent value="user" className="space-y-6 mt-6">
+                    <div className="bg-card/50 rounded-lg p-4 border border-border/50">
+                      <p className="text-sm font-medium mb-1">User Installation</p>
+                      <p className="text-sm text-muted-foreground">
+                        Installs subagents globally, making them available in all your projects
+                      </p>
                     </div>
-                    <pre className="bg-background/50 border border-border/50 p-4 rounded-lg overflow-x-auto">
-                      <code className="text-sm font-mono">{installCommands.allUser.windows}</code>
-                    </pre>
-                  </div>
-                </div>
+                    
+                    <div className="space-y-4">
+                      <div>
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="font-medium">macOS/Linux</span>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="gap-2 hover:bg-primary/10"
+                            onClick={() => copyToClipboard(installCommands.allSubagentsUser.mac, 2)}
+                          >
+                            {copiedIndex === 2 ? (
+                              <>
+                                <Check className="h-4 w-4" />
+                                Copied!
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="h-4 w-4" />
+                                Copy
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                        <pre className="bg-background/50 border border-border/50 p-4 rounded-lg overflow-x-auto">
+                          <code className="text-sm font-mono">{installCommands.allSubagentsUser.mac}</code>
+                        </pre>
+                      </div>
+                      
+                      <div>
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="font-medium">Windows</span>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="gap-2 hover:bg-primary/10"
+                            onClick={() => copyToClipboard(installCommands.allSubagentsUser.windows, 3)}
+                          >
+                            {copiedIndex === 3 ? (
+                              <>
+                                <Check className="h-4 w-4" />
+                                Copied!
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="h-4 w-4" />
+                                Copy
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                        <pre className="bg-background/50 border border-border/50 p-4 rounded-lg overflow-x-auto">
+                          <code className="text-sm font-mono">{installCommands.allSubagentsUser.windows}</code>
+                        </pre>
+                      </div>
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="project" className="space-y-6 mt-6">
+                    <div className="bg-card/50 rounded-lg p-4 border border-border/50">
+                      <p className="text-sm font-medium mb-1">Project Installation</p>
+                      <p className="text-sm text-muted-foreground">
+                        Installs subagents only for the current project
+                      </p>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div>
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="font-medium">macOS/Linux</span>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="gap-2 hover:bg-primary/10"
+                            onClick={() => copyToClipboard(installCommands.allSubagentsProject.mac, 4)}
+                          >
+                            {copiedIndex === 4 ? (
+                              <>
+                                <Check className="h-4 w-4" />
+                                Copied!
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="h-4 w-4" />
+                                Copy
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                        <pre className="bg-background/50 border border-border/50 p-4 rounded-lg overflow-x-auto">
+                          <code className="text-sm font-mono">{installCommands.allSubagentsProject.mac}</code>
+                        </pre>
+                      </div>
+                      
+                      <div>
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="font-medium">Windows</span>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="gap-2 hover:bg-primary/10"
+                            onClick={() => copyToClipboard(installCommands.allSubagentsProject.windows, 5)}
+                          >
+                            {copiedIndex === 5 ? (
+                              <>
+                                <Check className="h-4 w-4" />
+                                Copied!
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="h-4 w-4" />
+                                Copy
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                        <pre className="bg-background/50 border border-border/50 p-4 rounded-lg overflow-x-auto">
+                          <code className="text-sm font-mono">{installCommands.allSubagentsProject.windows}</code>
+                        </pre>
+                      </div>
+                    </div>
+                  </TabsContent>
+                </Tabs>
               </TabsContent>
               
-              <TabsContent value="project" className="space-y-6 mt-6">
+              <TabsContent value="single" className="space-y-6 mt-6">
                 <div className="bg-card/50 rounded-lg p-4 border border-border/50">
-                  <p className="text-sm font-medium mb-1">Project Installation</p>
+                  <p className="text-sm font-medium mb-1">Manual Installation</p>
                   <p className="text-sm text-muted-foreground">
-                    Installs subagents only for the current project
+                    Replace <code className="bg-background px-1 rounded">subagent-name.md</code> with the actual filename
+                  </p>
+                  <p className="text-sm text-primary mt-2">
+                    💡 Pro tip: Visit any subagent page for specific installation commands with the actual filename!
                   </p>
                 </div>
                 
-                <div className="space-y-4">
-                  <div>
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="font-medium">macOS/Linux</span>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="gap-2 hover:bg-primary/10"
-                        onClick={() => copyToClipboard(installCommands.allProject.mac, 2)}
-                      >
-                        {copiedIndex === 2 ? (
-                          <>
-                            <Check className="h-4 w-4" />
-                            Copied!
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="h-4 w-4" />
-                            Copy
-                          </>
-                        )}
-                      </Button>
-                    </div>
-                    <pre className="bg-background/50 border border-border/50 p-4 rounded-lg overflow-x-auto">
-                      <code className="text-sm font-mono">{installCommands.allProject.mac}</code>
-                    </pre>
-                  </div>
+                <Tabs defaultValue="user" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2 max-w-xs">
+                    <TabsTrigger value="user">User Level</TabsTrigger>
+                    <TabsTrigger value="project">Project Level</TabsTrigger>
+                  </TabsList>
                   
-                  <div>
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="font-medium">Windows</span>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="gap-2 hover:bg-primary/10"
-                        onClick={() => copyToClipboard(installCommands.allProject.windows, 3)}
-                      >
-                        {copiedIndex === 3 ? (
-                          <>
-                            <Check className="h-4 w-4" />
-                            Copied!
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="h-4 w-4" />
-                            Copy
-                          </>
-                        )}
-                      </Button>
+                  <TabsContent value="user" className="space-y-4 mt-6">
+                    <div>
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="font-medium">macOS/Linux</span>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="gap-2 hover:bg-primary/10"
+                          onClick={() => copyToClipboard(installCommands.singleSubagentUser.mac, 6)}
+                        >
+                          {copiedIndex === 6 ? (
+                            <>
+                              <Check className="h-4 w-4" />
+                              Copied!
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="h-4 w-4" />
+                              Copy
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                      <pre className="bg-background/50 border border-border/50 p-4 rounded-lg overflow-x-auto">
+                        <code className="text-sm font-mono">{installCommands.singleSubagentUser.mac}</code>
+                      </pre>
                     </div>
-                    <pre className="bg-background/50 border border-border/50 p-4 rounded-lg overflow-x-auto">
-                      <code className="text-sm font-mono">{installCommands.allProject.windows}</code>
-                    </pre>
-                  </div>
-                </div>
+                    
+                    <div>
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="font-medium">Windows</span>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="gap-2 hover:bg-primary/10"
+                          onClick={() => copyToClipboard(installCommands.singleSubagentUser.windows, 7)}
+                        >
+                          {copiedIndex === 7 ? (
+                            <>
+                              <Check className="h-4 w-4" />
+                              Copied!
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="h-4 w-4" />
+                              Copy
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                      <pre className="bg-background/50 border border-border/50 p-4 rounded-lg overflow-x-auto">
+                        <code className="text-sm font-mono">{installCommands.singleSubagentUser.windows}</code>
+                      </pre>
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="project" className="space-y-4 mt-6">
+                    <div>
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="font-medium">macOS/Linux</span>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="gap-2 hover:bg-primary/10"
+                          onClick={() => copyToClipboard(installCommands.singleSubagentProject.mac, 8)}
+                        >
+                          {copiedIndex === 8 ? (
+                            <>
+                              <Check className="h-4 w-4" />
+                              Copied!
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="h-4 w-4" />
+                              Copy
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                      <pre className="bg-background/50 border border-border/50 p-4 rounded-lg overflow-x-auto">
+                        <code className="text-sm font-mono">{installCommands.singleSubagentProject.mac}</code>
+                      </pre>
+                    </div>
+                    
+                    <div>
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="font-medium">Windows</span>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="gap-2 hover:bg-primary/10"
+                          onClick={() => copyToClipboard(installCommands.singleSubagentProject.windows, 9)}
+                        >
+                          {copiedIndex === 9 ? (
+                            <>
+                              <Check className="h-4 w-4" />
+                              Copied!
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="h-4 w-4" />
+                              Copy
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                      <pre className="bg-background/50 border border-border/50 p-4 rounded-lg overflow-x-auto">
+                        <code className="text-sm font-mono">{installCommands.singleSubagentProject.windows}</code>
+                      </pre>
+                    </div>
+                  </TabsContent>
+                </Tabs>
               </TabsContent>
             </Tabs>
           </TabsContent>
           
-          <TabsContent value="single-subagent" className="space-y-6">
+          {/* Commands Only Tab */}
+          <TabsContent value="commands" className="space-y-6">
             <div>
-              <h2 className="text-2xl font-bold mb-3">Install Single Subagent</h2>
+              <h2 className="text-2xl font-bold mb-3">Install Commands Only</h2>
               <p className="text-muted-foreground">
-                Choose specific subagents based on your project needs. Perfect for focused development work.
+                Install the collection of 39+ slash commands for automation and productivity.
               </p>
             </div>
             
-            <Tabs defaultValue="user" className="w-full">
+            <Tabs defaultValue="all" className="w-full">
               <TabsList className="grid w-full grid-cols-2 max-w-sm">
-                <TabsTrigger value="user">User Installation</TabsTrigger>
-                <TabsTrigger value="project">Project Installation</TabsTrigger>
+                <TabsTrigger value="all">All Commands</TabsTrigger>
+                <TabsTrigger value="single">Single Command</TabsTrigger>
               </TabsList>
               
-              <TabsContent value="user" className="space-y-6 mt-6">
-                <div className="bg-card/50 rounded-lg p-4 border border-border/50">
-                  <p className="text-sm font-medium mb-1">Manual Installation</p>
-                  <p className="text-sm text-muted-foreground">
-                    Replace <code className="bg-background px-1 rounded">subagent-name.md</code> with the actual filename
-                  </p>
-                  <p className="text-sm text-primary mt-2">
-                    💡 Pro tip: Use the copy button on any subagent card in the browse page for easier installation!
-                  </p>
-                </div>
-                
-                <div className="space-y-4">
-                  <div>
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="font-medium">macOS/Linux</span>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="gap-2 hover:bg-primary/10"
-                        onClick={() => copyToClipboard(installCommands.singleUser.mac, 4)}
-                      >
-                        {copiedIndex === 4 ? (
-                          <>
-                            <Check className="h-4 w-4" />
-                            Copied!
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="h-4 w-4" />
-                            Copy
-                          </>
-                        )}
-                      </Button>
-                    </div>
-                    <pre className="bg-background/50 border border-border/50 p-4 rounded-lg overflow-x-auto">
-                      <code className="text-sm font-mono">{installCommands.singleUser.mac}</code>
-                    </pre>
-                  </div>
+              <TabsContent value="all" className="space-y-6 mt-6">
+                <Tabs defaultValue="user" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2 max-w-xs">
+                    <TabsTrigger value="user">User Level</TabsTrigger>
+                    <TabsTrigger value="project">Project Level</TabsTrigger>
+                  </TabsList>
                   
-                  <div>
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="font-medium">Windows</span>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="gap-2 hover:bg-primary/10"
-                        onClick={() => copyToClipboard(installCommands.singleUser.windows, 5)}
-                      >
-                        {copiedIndex === 5 ? (
-                          <>
-                            <Check className="h-4 w-4" />
-                            Copied!
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="h-4 w-4" />
-                            Copy
-                          </>
-                        )}
-                      </Button>
+                  <TabsContent value="user" className="space-y-6 mt-6">
+                    <div className="bg-card/50 rounded-lg p-4 border border-border/50">
+                      <p className="text-sm font-medium mb-1">User Installation</p>
+                      <p className="text-sm text-muted-foreground">
+                        Installs commands globally, making them available in all your projects
+                      </p>
                     </div>
-                    <pre className="bg-background/50 border border-border/50 p-4 rounded-lg overflow-x-auto">
-                      <code className="text-sm font-mono">{installCommands.singleUser.windows}</code>
-                    </pre>
-                  </div>
-                </div>
+                    
+                    <div className="space-y-4">
+                      <div>
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="font-medium">macOS/Linux</span>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="gap-2 hover:bg-primary/10"
+                            onClick={() => copyToClipboard(installCommands.allCommandsUser.mac, 10)}
+                          >
+                            {copiedIndex === 10 ? (
+                              <>
+                                <Check className="h-4 w-4" />
+                                Copied!
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="h-4 w-4" />
+                                Copy
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                        <pre className="bg-background/50 border border-border/50 p-4 rounded-lg overflow-x-auto">
+                          <code className="text-sm font-mono">{installCommands.allCommandsUser.mac}</code>
+                        </pre>
+                      </div>
+                      
+                      <div>
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="font-medium">Windows</span>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="gap-2 hover:bg-primary/10"
+                            onClick={() => copyToClipboard(installCommands.allCommandsUser.windows, 11)}
+                          >
+                            {copiedIndex === 11 ? (
+                              <>
+                                <Check className="h-4 w-4" />
+                                Copied!
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="h-4 w-4" />
+                                Copy
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                        <pre className="bg-background/50 border border-border/50 p-4 rounded-lg overflow-x-auto">
+                          <code className="text-sm font-mono">{installCommands.allCommandsUser.windows}</code>
+                        </pre>
+                      </div>
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="project" className="space-y-6 mt-6">
+                    <div className="bg-card/50 rounded-lg p-4 border border-border/50">
+                      <p className="text-sm font-medium mb-1">Project Installation</p>
+                      <p className="text-sm text-muted-foreground">
+                        Installs commands only for the current project
+                      </p>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div>
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="font-medium">macOS/Linux</span>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="gap-2 hover:bg-primary/10"
+                            onClick={() => copyToClipboard(installCommands.allCommandsProject.mac, 12)}
+                          >
+                            {copiedIndex === 12 ? (
+                              <>
+                                <Check className="h-4 w-4" />
+                                Copied!
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="h-4 w-4" />
+                                Copy
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                        <pre className="bg-background/50 border border-border/50 p-4 rounded-lg overflow-x-auto">
+                          <code className="text-sm font-mono">{installCommands.allCommandsProject.mac}</code>
+                        </pre>
+                      </div>
+                      
+                      <div>
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="font-medium">Windows</span>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="gap-2 hover:bg-primary/10"
+                            onClick={() => copyToClipboard(installCommands.allCommandsProject.windows, 13)}
+                          >
+                            {copiedIndex === 13 ? (
+                              <>
+                                <Check className="h-4 w-4" />
+                                Copied!
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="h-4 w-4" />
+                                Copy
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                        <pre className="bg-background/50 border border-border/50 p-4 rounded-lg overflow-x-auto">
+                          <code className="text-sm font-mono">{installCommands.allCommandsProject.windows}</code>
+                        </pre>
+                      </div>
+                    </div>
+                  </TabsContent>
+                </Tabs>
               </TabsContent>
               
-              <TabsContent value="project" className="space-y-6 mt-6">
+              <TabsContent value="single" className="space-y-6 mt-6">
                 <div className="bg-card/50 rounded-lg p-4 border border-border/50">
                   <p className="text-sm font-medium mb-1">Manual Installation</p>
                   <p className="text-sm text-muted-foreground">
-                    Replace <code className="bg-background px-1 rounded">subagent-name.md</code> with the actual filename
+                    Replace <code className="bg-background px-1 rounded">command-name.md</code> with the actual filename
                   </p>
                   <p className="text-sm text-primary mt-2">
-                    💡 Pro tip: Use the download button on any subagent card in the browse page for easier installation!
+                    💡 Pro tip: Visit any command page for specific installation commands with the actual filename!
                   </p>
                 </div>
                 
-                <div className="space-y-4">
-                  <div>
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="font-medium">macOS/Linux</span>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="gap-2 hover:bg-primary/10"
-                        onClick={() => copyToClipboard(installCommands.singleProject.mac, 6)}
-                      >
-                        {copiedIndex === 6 ? (
-                          <>
-                            <Check className="h-4 w-4" />
-                            Copied!
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="h-4 w-4" />
-                            Copy
-                          </>
-                        )}
-                      </Button>
-                    </div>
-                    <pre className="bg-background/50 border border-border/50 p-4 rounded-lg overflow-x-auto">
-                      <code className="text-sm font-mono">{installCommands.singleProject.mac}</code>
-                    </pre>
-                  </div>
+                <Tabs defaultValue="user" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2 max-w-xs">
+                    <TabsTrigger value="user">User Level</TabsTrigger>
+                    <TabsTrigger value="project">Project Level</TabsTrigger>
+                  </TabsList>
                   
-                  <div>
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="font-medium">Windows</span>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="gap-2 hover:bg-primary/10"
-                        onClick={() => copyToClipboard(installCommands.singleProject.windows, 7)}
-                      >
-                        {copiedIndex === 7 ? (
-                          <>
-                            <Check className="h-4 w-4" />
-                            Copied!
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="h-4 w-4" />
-                            Copy
-                          </>
-                        )}
-                      </Button>
+                  <TabsContent value="user" className="space-y-4 mt-6">
+                    <div>
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="font-medium">macOS/Linux</span>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="gap-2 hover:bg-primary/10"
+                          onClick={() => copyToClipboard(installCommands.singleCommandUser.mac, 14)}
+                        >
+                          {copiedIndex === 14 ? (
+                            <>
+                              <Check className="h-4 w-4" />
+                              Copied!
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="h-4 w-4" />
+                              Copy
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                      <pre className="bg-background/50 border border-border/50 p-4 rounded-lg overflow-x-auto">
+                        <code className="text-sm font-mono">{installCommands.singleCommandUser.mac}</code>
+                      </pre>
                     </div>
-                    <pre className="bg-background/50 border border-border/50 p-4 rounded-lg overflow-x-auto">
-                      <code className="text-sm font-mono">{installCommands.singleProject.windows}</code>
-                    </pre>
-                  </div>
-                </div>
+                    
+                    <div>
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="font-medium">Windows</span>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="gap-2 hover:bg-primary/10"
+                          onClick={() => copyToClipboard(installCommands.singleCommandUser.windows, 15)}
+                        >
+                          {copiedIndex === 15 ? (
+                            <>
+                              <Check className="h-4 w-4" />
+                              Copied!
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="h-4 w-4" />
+                              Copy
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                      <pre className="bg-background/50 border border-border/50 p-4 rounded-lg overflow-x-auto">
+                        <code className="text-sm font-mono">{installCommands.singleCommandUser.windows}</code>
+                      </pre>
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="project" className="space-y-4 mt-6">
+                    <div>
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="font-medium">macOS/Linux</span>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="gap-2 hover:bg-primary/10"
+                          onClick={() => copyToClipboard(installCommands.singleCommandProject.mac, 16)}
+                        >
+                          {copiedIndex === 16 ? (
+                            <>
+                              <Check className="h-4 w-4" />
+                              Copied!
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="h-4 w-4" />
+                              Copy
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                      <pre className="bg-background/50 border border-border/50 p-4 rounded-lg overflow-x-auto">
+                        <code className="text-sm font-mono">{installCommands.singleCommandProject.mac}</code>
+                      </pre>
+                    </div>
+                    
+                    <div>
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="font-medium">Windows</span>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="gap-2 hover:bg-primary/10"
+                          onClick={() => copyToClipboard(installCommands.singleCommandProject.windows, 17)}
+                        >
+                          {copiedIndex === 17 ? (
+                            <>
+                              <Check className="h-4 w-4" />
+                              Copied!
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="h-4 w-4" />
+                              Copy
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                      <pre className="bg-background/50 border border-border/50 p-4 rounded-lg overflow-x-auto">
+                        <code className="text-sm font-mono">{installCommands.singleCommandProject.windows}</code>
+                      </pre>
+                    </div>
+                  </TabsContent>
+                </Tabs>
               </TabsContent>
             </Tabs>
           </TabsContent>
@@ -398,7 +790,7 @@ for %f in (\\path\\to\\claude-code-subagents-collection\\*.md) do if not "%~nxf"
               <div>
                 <p className="font-medium mb-1">Restart Claude Code</p>
                 <p className="text-sm text-muted-foreground">
-                  Restart Claude Code to load the newly installed subagents
+                  Restart Claude Code to load the newly installed subagents and commands
                 </p>
               </div>
             </div>
@@ -408,9 +800,9 @@ for %f in (\\path\\to\\claude-code-subagents-collection\\*.md) do if not "%~nxf"
                 2
               </div>
               <div>
-                <p className="font-medium mb-1">Automatic Invocation</p>
+                <p className="font-medium mb-1">Using Subagents</p>
                 <p className="text-sm text-muted-foreground">
-                  Subagents will be automatically invoked based on the context of your tasks
+                  Subagents will be automatically invoked based on context, or you can call them explicitly using @ mentions
                 </p>
               </div>
             </div>
@@ -420,9 +812,21 @@ for %f in (\\path\\to\\claude-code-subagents-collection\\*.md) do if not "%~nxf"
                 3
               </div>
               <div>
-                <p className="font-medium mb-1">Manual Invocation</p>
+                <p className="font-medium mb-1">Using Commands</p>
                 <p className="text-sm text-muted-foreground">
-                  You can explicitly call subagents using @ mentions or describe the task in natural language
+                  Invoke commands using the / prefix, e.g., <code className="bg-background px-1 rounded">/commit</code> or <code className="bg-background px-1 rounded">/todo add &quot;task&quot;</code>
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex gap-3">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-semibold">
+                4
+              </div>
+              <div>
+                <p className="font-medium mb-1">Verify Installation</p>
+                <p className="text-sm text-muted-foreground">
+                  Check installed files: <code className="bg-background px-1 rounded">ls ~/.claude/agents/</code> and <code className="bg-background px-1 rounded">ls ~/.claude/commands/</code>
                 </p>
               </div>
             </div>
@@ -433,7 +837,13 @@ for %f in (\\path\\to\\claude-code-subagents-collection\\*.md) do if not "%~nxf"
         <div className="mt-8 flex gap-4 flex-wrap">
           <Link href="/browse">
             <Button variant="outline" className="gap-2">
-              Browse All Subagents
+              Browse Subagents
+              <ArrowLeft className="h-4 w-4 rotate-180" />
+            </Button>
+          </Link>
+          <Link href="/commands">
+            <Button variant="outline" className="gap-2">
+              Browse Commands
               <ArrowLeft className="h-4 w-4 rotate-180" />
             </Button>
           </Link>

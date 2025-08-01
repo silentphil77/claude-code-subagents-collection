@@ -3,15 +3,28 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { SubagentCard } from '@/components/subagent-card'
+import { CommandCard } from '@/components/command-card'
 import { Terminal, Zap, Shield, Database, Brain, Code2, Download, ArrowRight } from 'lucide-react'
-import type { Subagent } from '@/lib/subagents-types'
+import type { Subagent, CategoryMetadata } from '@/lib/subagents-types'
+import type { Command } from '@/lib/commands-types'
 
 interface HomePageClientProps {
   allSubagents: Subagent[]
   featuredSubagents: Subagent[]
+  categories: CategoryMetadata[]
+  allCommands: Command[]
+  featuredCommands: Command[]
+  commandCategories: CategoryMetadata[]
 }
 
-export default function HomePageClient({ allSubagents, featuredSubagents }: HomePageClientProps) {
+export default function HomePageClient({ 
+  allSubagents, 
+  featuredSubagents, 
+  categories,
+  allCommands,
+  featuredCommands,
+  commandCategories 
+}: HomePageClientProps) {
 
   const features = [
     {
@@ -31,8 +44,8 @@ export default function HomePageClient({ allSubagents, featuredSubagents }: Home
     },
     {
       icon: Database,
-      title: '40+ Specialists',
-      description: 'From backend to crypto trading, we have experts for every domain'
+      title: `${allSubagents.length}+ Subagents & ${allCommands.length}+ Commands`,
+      description: 'Comprehensive collection of AI specialists and productivity commands'
     },
     {
       icon: Brain,
@@ -46,15 +59,6 @@ export default function HomePageClient({ allSubagents, featuredSubagents }: Home
     }
   ]
 
-  const categories = [
-    { icon: '🏗️', name: 'Development & Architecture', count: 9 },
-    { icon: '💻', name: 'Language Specialists', count: 6 },
-    { icon: '🚀', name: 'Infrastructure & Operations', count: 4 },
-    { icon: '🛡️', name: 'Quality & Security', count: 5 },
-    { icon: '📊', name: 'Data & AI', count: 4 },
-    { icon: '🎯', name: 'Specialized Domains', count: 8 },
-    { icon: '💰', name: 'Crypto Trading', count: 5 }
-  ]
 
   return (
     <div className="min-h-screen">
@@ -74,11 +78,11 @@ export default function HomePageClient({ allSubagents, featuredSubagents }: Home
               </span>
               <span className="text-gradient">Claude Code</span>
               <br />
-              <span className="text-foreground">Subagents Collection</span>
+              <span className="text-foreground">Subagents & Commands</span>
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-2xl mx-auto animate-fade-in" style={{ animationDelay: '0.1s' }}>
-              Enhance your AI development with 40+ specialized experts. 
-              Get domain-specific assistance instantly.
+              Enhance your AI development with {allSubagents.length}+ specialized experts and {allCommands.length}+ productivity commands. 
+              Get domain-specific assistance and automate workflows instantly.
             </p>
             <div className="flex gap-4 justify-center flex-wrap animate-fade-in" style={{ animationDelay: '0.2s' }}>
               <Link href="/browse">
@@ -119,12 +123,12 @@ export default function HomePageClient({ allSubagents, featuredSubagents }: Home
               <div className="text-sm text-muted-foreground">Subagents</div>
             </div>
             <div className="text-center p-8 bg-background rounded-xl border border-border/50 hover:border-primary/20 transition-colors">
-              <div className="text-4xl font-bold text-primary mb-2">7</div>
-              <div className="text-sm text-muted-foreground">Categories</div>
+              <div className="text-4xl font-bold text-primary mb-2">{allCommands.length}+</div>
+              <div className="text-sm text-muted-foreground">Commands</div>
             </div>
             <div className="text-center p-8 bg-background rounded-xl border border-border/50 hover:border-primary/20 transition-colors">
-              <div className="text-4xl font-bold text-primary mb-2">Active</div>
-              <div className="text-sm text-muted-foreground">Community</div>
+              <div className="text-4xl font-bold text-primary mb-2">{categories.length + commandCategories.length}</div>
+              <div className="text-sm text-muted-foreground">Categories</div>
             </div>
             <div className="text-center p-8 bg-background rounded-xl border border-border/50 hover:border-primary/20 transition-colors">
               <div className="text-4xl font-bold text-primary mb-2">MIT</div>
@@ -176,18 +180,41 @@ export default function HomePageClient({ allSubagents, featuredSubagents }: Home
         </div>
       </section>
 
+      {/* Featured Commands */}
+      <section className="container mx-auto px-4 py-16 bg-card/50">
+        <div className="mb-8">
+          <h2 className="text-3xl font-bold mb-4">Featured Commands</h2>
+          <p className="text-muted-foreground">
+            Powerful slash commands to automate your workflow. 
+            Hover over any card to copy or download instantly!
+          </p>
+        </div>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          {featuredCommands.map((command) => (
+            <CommandCard key={command.slug} command={command} />
+          ))}
+        </div>
+        <div className="text-center">
+          <Link href="/commands">
+            <Button variant="outline" size="lg">
+              View All Commands
+            </Button>
+          </Link>
+        </div>
+      </section>
+
       {/* Categories Overview */}
       <section className="container mx-auto px-4 py-16">
         <div className="mb-8">
-          <h2 className="text-3xl font-bold mb-4">Browse by Category</h2>
+          <h2 className="text-3xl font-bold mb-4">Browse Subagents by Category</h2>
           <p className="text-muted-foreground">Find the perfect specialist for your needs</p>
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {categories.map((category, i) => (
-            <Link key={i} href={`/browse?category=${category.name.toLowerCase().replace(/\s+/g, '-')}`}>
+          {categories.map((category) => (
+            <Link key={category.id} href={`/browse?category=${category.id}`}>
               <div className="p-6 bg-card rounded-lg border hover:shadow-lg transition-shadow cursor-pointer">
                 <div className="text-3xl mb-2">{category.icon}</div>
-                <h3 className="font-semibold mb-1">{category.name}</h3>
+                <h3 className="font-semibold mb-1">{category.displayName}</h3>
                 <p className="text-sm text-muted-foreground">{category.count} subagents</p>
               </div>
             </Link>
@@ -203,12 +230,12 @@ export default function HomePageClient({ allSubagents, featuredSubagents }: Home
             <div className="relative z-10">
               <h2 className="text-display-3 font-bold mb-6">Ready to Supercharge Your Development?</h2>
               <p className="text-xl mb-10 text-muted-foreground max-w-2xl mx-auto">
-                Install the subagents collection and let Claude Code automatically delegate to domain experts
+                Install the complete collection of subagents and commands to enhance Claude Code with domain experts and productivity tools
               </p>
               <div className="bg-background/80 backdrop-blur rounded-xl p-6 max-w-3xl mx-auto mb-10 border border-border/50">
-                <code className="text-sm font-mono text-foreground/90">
-                  git clone https://github.com/davepoon/claude-code-subagents-collection.git && 
-                  {'find claude-code-subagents-collection -name "*.md" -not -name "README.md" -exec cp {} ~/.claude/agents/ \\;'}
+                <p className="text-sm text-muted-foreground mb-2">Quick install everything:</p>
+                <code className="text-sm font-mono text-foreground/90 block overflow-x-auto">
+                  git clone https://github.com/davepoon/claude-code-subagents-collection.git && cd claude-code-subagents-collection && {'find subagents -name "*.md" -exec cp {} ~/.claude/agents/ \\;'} && {'find commands -name "*.md" -exec cp {} ~/.claude/commands/ \\;'}
                 </code>
               </div>
               <Link href="/docs/installation">

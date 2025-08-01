@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import {
   Tooltip,
   TooltipContent,
@@ -11,7 +10,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { ArrowLeft, Copy, Download, Check, Github } from 'lucide-react'
-import { CATEGORIES, type CategoryKey, type Subagent } from '@/lib/subagents-types'
+import { type Subagent } from '@/lib/subagents-types'
 import { generateSubagentMarkdown } from '@/lib/utils'
 
 interface SubagentPageClientProps {
@@ -21,8 +20,6 @@ interface SubagentPageClientProps {
 export function SubagentPageClient({ subagent }: SubagentPageClientProps) {
   const [copied, setCopied] = useState(false)
   
-  const categoryKey = subagent.category as CategoryKey
-  const categoryName = CATEGORIES[categoryKey]
   
   const handleCopy = async () => {
     const markdown = generateSubagentMarkdown(subagent)
@@ -88,10 +85,9 @@ export function SubagentPageClient({ subagent }: SubagentPageClientProps) {
           
           {/* Header */}
           <div className="mb-8">
-            <div className="flex items-start justify-between mb-4">
-              <h1 className="text-3xl font-bold">{subagent.name}</h1>
-              <div className="flex items-center gap-3">
-                <Badge variant="secondary">{categoryName}</Badge>
+            <div className="space-y-4">
+              <div className="flex items-start justify-between gap-4">
+                <h1 className="text-3xl font-bold">{subagent.name}</h1>
                 <div className="flex gap-2">
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -179,16 +175,35 @@ export function SubagentPageClient({ subagent }: SubagentPageClientProps) {
             <h2 className="text-lg font-semibold mb-4">Installation</h2>
             <div className="space-y-4">
               <div>
-                <p className="text-sm font-medium mb-2">Install as User Subagent (available in all projects):</p>
-                <div className="bg-background rounded p-3 font-mono text-sm">
-                  cp {subagent.slug}.md ~/.claude/agents/
+                <h3 className="text-sm font-semibold mb-2">Option A: Install as User Subagent (available in all projects)</h3>
+                <div className="space-y-2">
+                  <p className="text-sm text-muted-foreground">macOS/Linux:</p>
+                  <div className="bg-background rounded p-3 font-mono text-sm">
+                    cp {subagent.slug}.md ~/.claude/agents/
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-2">Windows:</p>
+                  <div className="bg-background rounded p-3 font-mono text-sm">
+                    copy {subagent.slug}.md %USERPROFILE%\.claude\agents\
+                  </div>
                 </div>
               </div>
               <div>
-                <p className="text-sm font-medium mb-2">Install as Project Subagent (current project only):</p>
-                <div className="bg-background rounded p-3 font-mono text-sm">
-                  mkdir -p .claude/agents && cp {subagent.slug}.md .claude/agents/
+                <h3 className="text-sm font-semibold mb-2">Option B: Install as Project Subagent (current project only)</h3>
+                <div className="space-y-2">
+                  <p className="text-sm text-muted-foreground">macOS/Linux:</p>
+                  <div className="bg-background rounded p-3 font-mono text-sm">
+                    mkdir -p .claude/agents && cp {subagent.slug}.md .claude/agents/
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-2">Windows:</p>
+                  <div className="bg-background rounded p-3 font-mono text-sm">
+                    mkdir .claude\agents 2&gt;nul && copy {subagent.slug}.md .claude\agents\
+                  </div>
                 </div>
+              </div>
+              <div className="mt-4 p-3 bg-primary/5 rounded-md">
+                <p className="text-sm text-muted-foreground">
+                  <strong>Note:</strong> After installation, restart Claude Code to load the new subagent.
+                </p>
               </div>
             </div>
           </div>
@@ -223,7 +238,7 @@ export function SubagentPageClient({ subagent }: SubagentPageClientProps) {
           {/* Actions */}
           <div className="flex gap-4">
             <a 
-              href={`https://github.com/davepoon/claude-code-subagents-collection/blob/main/${subagent.slug}.md`}
+              href={`https://github.com/davepoon/claude-code-subagents-collection/blob/main/subagents/${subagent.slug}.md`}
               target="_blank"
               rel="noopener noreferrer"
             >

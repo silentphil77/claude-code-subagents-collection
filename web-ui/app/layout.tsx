@@ -19,8 +19,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Claude Code Subagents Collection",
-  description: "A comprehensive collection of 40+ specialized AI subagents for Claude Code, designed to enhance development workflows with domain-specific expertise.",
+  title: "Claude Code Subagents & Commands Collection",
+  description: "A comprehensive collection of 40+ specialized AI subagents & commands for Claude Code, designed to enhance development workflows with domain-specific expertise.",
 };
 
 export default function RootLayout({
@@ -38,11 +38,14 @@ export default function RootLayout({
             <div className="flex h-16 items-center justify-between">
               <div className="flex items-center gap-8">
                 <Link href="/" className="text-md font-bold text-gradient">
-                  Claude Code Subagents Collection
+                  Build with Claude Code
                 </Link>
                 <div className="hidden md:flex items-center gap-6">
                   <Link href="/browse" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                    Browse
+                    Subagents
+                  </Link>
+                  <Link href="/commands" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                    Commands
                   </Link>
                   <Link href="/docs" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
                     Documentation

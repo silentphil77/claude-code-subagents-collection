@@ -1,18 +1,47 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { SubagentCard } from '@/components/subagent-card'
 import { CategoryFilter } from '@/components/category-filter'
 import { SearchBar } from '@/components/search-bar'
-import { CATEGORIES, type CategoryKey, type Subagent } from '@/lib/subagents-types'
+import { type Subagent, type CategoryMetadata, generateCategoryDisplayName } from '@/lib/subagents-types'
 
 interface BrowsePageClientProps {
   allSubagents: Subagent[]
+  categories: CategoryMetadata[]
 }
 
-export default function BrowsePageClient({ allSubagents }: BrowsePageClientProps) {
-  const [selectedCategory, setSelectedCategory] = useState<CategoryKey | 'all'>('all')
+export default function BrowsePageClient({ allSubagents, categories }: BrowsePageClientProps) {
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const [selectedCategory, setSelectedCategory] = useState<string | 'all'>('all')
   const [searchQuery, setSearchQuery] = useState('')
+  
+  // Set initial category from URL parameter
+  useEffect(() => {
+    const categoryParam = searchParams.get('category')
+    if (categoryParam && categories.some(cat => cat.id === categoryParam)) {
+      setSelectedCategory(categoryParam)
+    }
+  }, [searchParams, categories])
+  
+  // Handle category change and update URL
+  const handleCategoryChange = (category: string | 'all') => {
+    setSelectedCategory(category)
+    
+    // Update URL with new category parameter
+    const params = new URLSearchParams(searchParams.toString())
+    if (category === 'all') {
+      params.delete('category')
+    } else {
+      params.set('category', category)
+    }
+    
+    // Use replace to avoid adding to browser history for each filter change
+    const newUrl = params.toString() ? `/browse?${params.toString()}` : '/browse'
+    router.replace(newUrl)
+  }
   
   const filteredSubagents = useMemo(() => {
     let filtered = allSubagents
@@ -40,7 +69,7 @@ export default function BrowsePageClient({ allSubagents }: BrowsePageClientProps
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-4">Browse Subagents</h1>
+          <h1 className="text-3xl font-bold mb-4">Browse AI Subagents</h1>
           <p className="text-muted-foreground">
             Explore our collection of {allSubagents.length} specialized AI subagents. 
             Hover over any card to instantly copy or download!
@@ -56,14 +85,15 @@ export default function BrowsePageClient({ allSubagents }: BrowsePageClientProps
           />
           <CategoryFilter 
             selectedCategory={selectedCategory}
-            onCategoryChange={setSelectedCategory}
+            onCategoryChange={handleCategoryChange}
+            categories={categories}
           />
         </div>
         
         {/* Results */}
         <div className="mb-4 text-sm text-muted-foreground">
           Showing {filteredSubagents.length} of {allSubagents.length} subagents
-          {selectedCategory !== 'all' && ` in ${CATEGORIES[selectedCategory]}`}
+          {selectedCategory !== 'all' && ` in ${generateCategoryDisplayName(selectedCategory)}`}
           {searchQuery && ` matching "${searchQuery}"`}
         </div>
         
