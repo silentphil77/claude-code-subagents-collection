@@ -4,19 +4,18 @@ import matter from 'gray-matter'
 import { Subagent, CategoryKey, categoryMapping } from './subagents-types'
 
 export function getAllSubagents(): Subagent[] {
-  const subagentsDirectory = path.join(process.cwd(), '..')
+  const subagentsDirectory = path.join(process.cwd(), '../subagents')
   const fileNames = fs.readdirSync(subagentsDirectory)
   
   const subagents = fileNames
-    .filter(fileName => fileName.endsWith('.md') && 
-            !['README.md', 'CONTRIBUTING.md'].includes(fileName))
+    .filter(fileName => fileName.endsWith('.md'))
     .map(fileName => {
       const filePath = path.join(subagentsDirectory, fileName)
       const fileContents = fs.readFileSync(filePath, 'utf8')
       const { data, content } = matter(fileContents)
       
       const slug = fileName.replace(/\.md$/, '')
-      const category = categoryMapping[slug] || 'specialized-domains'
+      const category = data.category || categoryMapping[slug] || 'specialized-domains'
       
       return {
         slug,
@@ -24,7 +23,7 @@ export function getAllSubagents(): Subagent[] {
         description: data.description || '',
         tools: data.tools,
         content,
-        category
+        category: category as CategoryKey
       }
     })
   
@@ -32,7 +31,7 @@ export function getAllSubagents(): Subagent[] {
 }
 
 export function getSubagentBySlug(slug: string): Subagent | null {
-  const subagentsDirectory = path.join(process.cwd(), '..')
+  const subagentsDirectory = path.join(process.cwd(), '../subagents')
   const filePath = path.join(subagentsDirectory, `${slug}.md`)
   
   if (!fs.existsSync(filePath)) {
@@ -41,7 +40,7 @@ export function getSubagentBySlug(slug: string): Subagent | null {
   
   const fileContents = fs.readFileSync(filePath, 'utf8')
   const { data, content } = matter(fileContents)
-  const category = categoryMapping[slug] || 'specialized-domains'
+  const category = data.category || categoryMapping[slug] || 'specialized-domains'
   
   return {
     slug,
@@ -49,7 +48,7 @@ export function getSubagentBySlug(slug: string): Subagent | null {
     description: data.description || '',
     tools: data.tools,
     content,
-    category
+    category: category as CategoryKey
   }
 }
 

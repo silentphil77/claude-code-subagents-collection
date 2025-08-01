@@ -19,8 +19,21 @@
       "type": "string",
       "pattern": "^[A-Za-z, ]+$",
       "description": "Comma-separated list of allowed tools"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "development-architecture",
+        "language-specialists",
+        "infrastructure-operations",
+        "quality-security",
+        "data-ai",
+        "specialized-domains",
+        "crypto-trading"
+      ],
+      "description": "Category for organizing the subagent"
     }
   },
-  "required": ["name", "description"],
+  "required": ["name", "description", "category"],
   "additionalProperties": false
 }

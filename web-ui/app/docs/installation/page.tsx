@@ -18,15 +18,15 @@ export default function InstallationPage() {
   const installCommands = {
     allUser: {
       mac: `git clone https://github.com/davepoon/claude-code-subagents-collection.git
-find claude-code-subagents-collection -maxdepth 1 -name "*.md" -not -name "README.md" -not -name "CONTRIBUTING.md" -exec cp {} ~/.claude/agents/ \\;`,
+find claude-code-subagents-collection/subagents -name "*.md" -exec cp {} ~/.claude/agents/ \\;`,
       windows: `git clone https://github.com/davepoon/claude-code-subagents-collection.git
-for %f in (claude-code-subagents-collection\\*.md) do if not "%f"=="claude-code-subagents-collection\\README.md" if not "%f"=="claude-code-subagents-collection\\CONTRIBUTING.md" copy "%f" %USERPROFILE%\\.claude\\agents\\`
+for %f in (claude-code-subagents-collection\\subagents\\*.md) do copy "%f" %USERPROFILE%\\.claude\\agents\\`
     },
     allProject: {
       mac: `mkdir -p .claude/agents
-find /path/to/claude-code-subagents-collection -maxdepth 1 -name "*.md" -not -name "README.md" -not -name "CONTRIBUTING.md" -exec cp {} .claude/agents/ \\;`,
+find /path/to/claude-code-subagents-collection/subagents -name "*.md" -exec cp {} .claude/agents/ \\;`,
       windows: `mkdir .claude\\agents 2>nul
-for %f in (\\path\\to\\claude-code-subagents-collection\\*.md) do if not "%~nxf"=="README.md" if not "%~nxf"=="CONTRIBUTING.md" copy "%f" .claude\\agents\\`
+for %f in (\\path\\to\\claude-code-subagents-collection\\subagents\\*.md) do copy "%f" .claude\\agents\\`
     },
     singleUser: {
       mac: `cp subagent-name.md ~/.claude/agents/`,

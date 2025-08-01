@@ -20,10 +20,8 @@ let hasErrors = false;
 const errors = [];
 const warnings = [];
 
-// Find all subagent markdown files
-const subagentFiles = globSync('*.md', {
-  ignore: ['README.md', 'CONTRIBUTING.md', 'LICENSE']
-});
+// Find all subagent and command markdown files
+const subagentFiles = globSync(['subagents/*.md', 'commands/*.md']);
 
 console.log(`\n\x1b[34mValidating ${subagentFiles.length} subagent files...\x1b[0m\n`);
 
@@ -33,7 +31,7 @@ subagentFiles.forEach(file => {
   
   try {
     // Read file content
-    const content = fs.readFileSync(file, 'utf8');
+    const content = fs.readFileSync(path.join(process.cwd(), file), 'utf8');
     
     // Parse frontmatter
     const parsed = matter(content);
@@ -58,6 +56,10 @@ subagentFiles.forEach(file => {
           message = `Field '${error.instancePath.replace('/', '')}' ${error.message}`;
         } else if (error.schemaPath.includes('/description/')) {
           message = `Description ${error.message}`;
+        } else if (error.schemaPath.includes('/category/')) {
+          message = `Category ${error.message}. Valid categories: development-architecture, language-specialists, infrastructure-operations, quality-security, data-ai, specialized-domains, crypto-trading`;
+        } else if (error.schemaPath.includes('/required') && error.params.missingProperty === 'category') {
+          message = `Missing required field 'category'. Valid categories: development-architecture, language-specialists, infrastructure-operations, quality-security, data-ai, specialized-domains, crypto-trading`;
         }
         errors.push({
           file,
@@ -71,11 +73,12 @@ subagentFiles.forEach(file => {
     // Additional custom validations
     
     // 1. Check file name matches name field
+    const fileName = path.basename(file);
     const expectedFileName = `${parsed.data.name}.md`;
-    if (file !== expectedFileName) {
+    if (fileName !== expectedFileName) {
       errors.push({
         file,
-        message: `File name '${file}' doesn't match name field '${parsed.data.name}'. Expected '${expectedFileName}'`
+        message: `File name '${fileName}' doesn't match name field '${parsed.data.name}'. Expected '${expectedFileName}'`
       });
       hasErrors = true;
     }
@@ -101,7 +104,7 @@ subagentFiles.forEach(file => {
     // 4. Check for duplicate names across all files
     const allNames = subagentFiles.map(f => {
       try {
-        const content = fs.readFileSync(f, 'utf8');
+        const content = fs.readFileSync(path.join(process.cwd(), f), 'utf8');
         const parsed = matter(content);
         return { file: f, name: parsed.data.name };
       } catch (e) {

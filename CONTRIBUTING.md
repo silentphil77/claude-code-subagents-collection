@@ -48,6 +48,7 @@ Every subagent MUST follow this exact structure:
 ---
 name: subagent-name
 description: Clear, specific description of when this subagent should be invoked
+category: category-name  # Required - see valid categories below
 tools: tool1, tool2  # Optional - omit for all tools
 ---
 
@@ -81,6 +82,16 @@ You are a [role/expertise description].
   - Include keywords that users might use
   - Mention if proactive use is expected
   - Keep under 500 characters
+
+- **category** (Required):
+  - Must be one of the following valid categories:
+    - `development-architecture` - Backend, frontend, mobile, API design
+    - `language-specialists` - Language-specific expertise (Python, Go, Rust, etc.)
+    - `infrastructure-operations` - DevOps, cloud, deployment, databases
+    - `quality-security` - Code review, security, testing, performance
+    - `data-ai` - Data science, ML/AI engineering, analytics
+    - `specialized-domains` - Domain-specific tools (payments, blockchain, etc.)
+    - `crypto-trading` - Cryptocurrency and DeFi applications
 
 - **tools** (Optional):
   - Only include if restricting tools
@@ -137,6 +148,7 @@ You are a [role/expertise description].
 ---
 name: api-validator
 description: Validates REST API design, OpenAPI specs, and ensures API best practices. Use when designing or reviewing APIs.
+category: development-architecture
 tools: Read, Write, Edit, WebSearch
 ---
 
@@ -173,7 +185,7 @@ Before submitting, test your subagent:
 
 1. **Installation Test**:
    ```bash
-   cp your-subagent.md ~/.claude/agents/
+   cp subagents/your-subagent.md ~/.claude/agents/
    # Restart Claude Code
    ```
 
@@ -223,7 +235,7 @@ Before submitting, test your subagent:
    ```
 
 4. **Files to Update**:
-   - Add your `subagent-name.md` file
+   - Add your `subagent-name.md` file to the `subagents/` directory
    - Update `README.md`:
      - Add to the appropriate category section
      - Update the count in the overview

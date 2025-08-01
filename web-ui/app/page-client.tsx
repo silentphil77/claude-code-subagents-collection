@@ -208,7 +208,7 @@ export default function HomePageClient({ allSubagents, featuredSubagents }: Home
               <div className="bg-background/80 backdrop-blur rounded-xl p-6 max-w-3xl mx-auto mb-10 border border-border/50">
                 <code className="text-sm font-mono text-foreground/90">
                   git clone https://github.com/davepoon/claude-code-subagents-collection.git && 
-                  {'find claude-code-subagents-collection -name "*.md" -not -name "README.md" -exec cp {} ~/.claude/agents/ \\;'}
+                  {'find claude-code-subagents-collection/subagents -name "*.md" -exec cp {} ~/.claude/agents/ \\;'}
                 </code>
               </div>
               <Link href="/docs/installation">

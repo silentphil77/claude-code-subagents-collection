@@ -6,7 +6,8 @@ on:
     branches: [ '**' ]
   pull_request:
     paths:
-      - '*.md'
+      - 'subagents/*.md'
+      - 'commands/*.md'
       - '!README.md'
       - '!CONTRIBUTING.md'
       - '.github/workflows/validate-subagents.yml'
@@ -36,10 +37,11 @@ jobs:
     - name: Check for naming inconsistencies
       run: |
         # Check if any files have mismatched names
-        for file in *.md; do
-          if [[ "$file" != "README.md" && "$file" != "CONTRIBUTING.md" && "$file" != "LICENSE" ]]; then
+        for file in subagents/*.md commands/*.md; do
+          if [[ -f "$file" ]]; then
             name=$(grep -E "^name:" "$file" | sed 's/name: //')
-            expected="${file%.md}"
+            basename=$(basename "$file")
+            expected="${basename%.md}"
             if [[ "$name" != "$expected" ]]; then
               echo "❌ File $file has name field '$name' but should be '$expected'"
               exit 1

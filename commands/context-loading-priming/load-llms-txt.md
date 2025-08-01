@@ -1,0 +1,1 @@
+Use `curl` to read the contents of https://raw.githubusercontent.com/ethpandaops/xatu-data/master/llms.txt

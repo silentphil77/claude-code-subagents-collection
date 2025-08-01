@@ -20,8 +20,8 @@ This repository contains 37 specialized subagents that extend Claude Code's capa
 # Clone the repository
 git clone https://github.com/davepoon/claude-code-subagents-collection.git
 
-# Copy all subagent files (excluding README and CONTRIBUTING)
-find claude-code-subagents-collection -maxdepth 1 -name "*.md" -not -name "README.md" -not -name "CONTRIBUTING.md" -exec cp {} ~/.claude/agents/ \;
+# Copy all subagent files from the subagents directory
+find claude-code-subagents-collection/subagents -name "*.md" -exec cp {} ~/.claude/agents/ \;
 
 # Restart Claude Code to load the new subagents
 ```
@@ -105,15 +105,14 @@ Visit our [Web UI](https://www.buildwithclaude.com) to browse all subagents and 
 
 2. **Option A: Install as User Subagents (available in all projects):**
    ```bash
-   # macOS/Linux - Copy all subagent files except README and CONTRIBUTING
-   find . -maxdepth 1 -name "*.md" -not -name "README.md" -not -name "CONTRIBUTING.md" -exec cp {} ~/.claude/agents/ \;
+   # macOS/Linux - Copy all subagent files from the subagents directory
+   find subagents -name "*.md" -exec cp {} ~/.claude/agents/ \;
    
-   # Alternative for macOS/Linux using bash extended globbing
-   shopt -s extglob
-   cp !(README|CONTRIBUTING).md ~/.claude/agents/
+   # Alternative for macOS/Linux (if in the subagents directory)
+   cp subagents/*.md ~/.claude/agents/
    
-   # Windows - Copy all subagent files except README and CONTRIBUTING
-   for %f in (*.md) do if not "%f"=="README.md" if not "%f"=="CONTRIBUTING.md" copy "%f" %USERPROFILE%\.claude\agents\
+   # Windows - Copy all subagent files from the subagents directory
+   for %f in (subagents\*.md) do copy "%f" %USERPROFILE%\.claude\agents\
    ```
 
    **Option B: Install as Project Subagents (only for current project):**
@@ -125,11 +124,11 @@ Visit our [Web UI](https://www.buildwithclaude.com) to browse all subagents and 
    mkdir -p .claude/agents
    
    # macOS/Linux - Copy specific subagents you need
-   find /path/to/claude-code-subagents-collection -maxdepth 1 -name "*.md" -not -name "README.md" -not -name "CONTRIBUTING.md" -exec cp {} .claude/agents/ \;
+   find /path/to/claude-code-subagents-collection/subagents -name "*.md" -exec cp {} .claude/agents/ \;
    
    # Windows - Copy specific subagents you need
    mkdir .claude\agents 2>nul
-   for %f in (\path\to\claude-code-subagents-collection\*.md) do if not "%~nxf"=="README.md" if not "%~nxf"=="CONTRIBUTING.md" copy "%f" .claude\agents\
+   for %f in (\path\to\claude-code-subagents-collection\subagents\*.md) do copy "%f" .claude\agents\
    ```
    
    > **Note**: Project subagents are only available in the specific project where they're installed. Use this option when you want subagents tailored to a particular project or when testing new subagents.
@@ -213,6 +212,7 @@ Each subagent follows this structure:
 ---
 name: subagent-name
 description: When this subagent should be invoked
+category: category-name  # Required - see CONTRIBUTING.md for valid categories
 tools: tool1, tool2  # Optional - defaults to all tools
 ---
 
@@ -222,6 +222,7 @@ System prompt defining the subagent's role and capabilities
 ### Key Components:
 - **name**: Unique identifier for the subagent
 - **description**: Triggers automatic invocation
+- **category**: Organizational category (e.g., development-architecture, quality-security)
 - **tools**: Specific tools the subagent can use (optional)
 - **system prompt**: Detailed instructions and expertise
 
@@ -271,6 +272,7 @@ We welcome contributions! To add a new subagent:
    ---
    name: your-subagent
    description: Clear description of when to use
+   category: appropriate-category
    ---
    
    Detailed system prompt...
@@ -279,6 +281,7 @@ We welcome contributions! To add a new subagent:
 3. **Guidelines**:
    - Use lowercase, hyphen-separated names
    - Write clear, specific descriptions
+   - Choose an appropriate category (see CONTRIBUTING.md for valid options)
    - Include concrete examples in the prompt
    - Test with various scenarios
    - Document any special requirements
