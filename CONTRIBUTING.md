@@ -264,7 +264,7 @@ Your PR will be evaluated on:
 
 Once your pull request is approved and merged:
 
-1. **Automatic Deployment**: Your subagent will be automatically available on the [Web UI](https://claude-code-subagents.vercel.app) within minutes
+1. **Automatic Deployment**: Your subagent will be automatically available on the [Web UI](https://www.buildwithclaude.com) within minutes
 2. **No Manual Steps Required**: The deployment is handled automatically by Vercel
 3. **Immediate Availability**: Users can browse, copy, or download your subagent from the website
 4. **Repository Sync**: The web UI always displays the latest subagents from the main branch

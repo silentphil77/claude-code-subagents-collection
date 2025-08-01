@@ -78,7 +78,7 @@ find claude-code-subagents-collection -maxdepth 1 -name "*.md" -not -name "READM
 
 ### Quick Installation via Web UI
 
-Visit our [Web UI](https://claude-code-subagents.vercel.app) to browse all subagents and easily:
+Visit our [Web UI](https://www.buildwithclaude.com) to browse all subagents and easily:
 - 📋 **Copy** any subagent's markdown content with one click
 - 💾 **Download** individual subagent files directly
 - 🔍 Search and filter by category
@@ -279,7 +279,7 @@ We welcome contributions! To add a new subagent:
    - Updated README listing
    - Example usage scenarios
 
-5. **Automatic Deployment**: Once merged, your subagent will be automatically available on the [Web UI](https://claude-code-subagents.vercel.app) within minutes.
+5. **Automatic Deployment**: Once merged, your subagent will be automatically available on the [Web UI](https://www.buildwithclaude.com) within minutes.
 
 ## Advanced Configuration
 
