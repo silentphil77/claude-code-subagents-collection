@@ -42,9 +42,9 @@ export default function DocsPage() {
       icon: GitBranch,
       title: 'Contributing',
       description: 'Guidelines for contributing to the collection',
-      href: 'https://github.com/davepoon/claude-code-subagents-collection/blob/main/CONTRIBUTING.md',
+      href: '/contribute',
       color: 'text-orange-400',
-      external: true
+      external: false
     },
     {
       icon: Shield,
