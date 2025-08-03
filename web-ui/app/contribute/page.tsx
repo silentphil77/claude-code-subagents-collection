@@ -28,24 +28,30 @@ export default function ContributePage() {
 
   const subagentTemplate = `---
 name: your-subagent-name
-description: Clear description of when to invoke (under 500 chars)
+description: Clear description of when to invoke. Use PROACTIVELY for automatic delegation. (under 500 chars)
 category: development-architecture # Required
 tools: Read, Write, Edit # Optional - omit for all tools
 ---
 
 You are a [role/expertise description].
 
-## Role
-[1-2 sentences describing the subagent's primary role]
+When invoked:
+1. [First action to take]
+2. [Second action to take]
+3. [Begin main task]
 
-## Capabilities
-[List 3-5 key capabilities or areas of expertise]
+Process:
+- [Key step or check]
+- [Another important step]
+- [Validation or verification]
+- [Documentation or output]
 
-## Approach
-[Describe how the subagent should approach tasks]
+Provide:
+- [Type of output or feedback]
+- [Another deliverable]
+- [Final recommendations]
 
-## Output
-[Specify what kind of output the subagent should provide]`
+[Additional specific instructions or constraints]`
 
   const commandTemplate = `---
 description: Brief explanation of what the command does (10-200 chars)
@@ -77,7 +83,7 @@ Detailed instructions for how the command should work...`
       title: 'Subagents',
       description: 'Specialized AI assistants for specific domains',
       count: '40+',
-      href: '#subagents',
+      href: '#contribute-tabs',
       color: 'text-purple-400'
     },
     {
@@ -85,7 +91,7 @@ Detailed instructions for how the command should work...`
       title: 'Commands',
       description: 'Slash commands to automate workflows',
       count: '39+',
-      href: '#commands',
+      href: '#contribute-tabs',
       color: 'text-blue-400'
     }
   ]
@@ -97,7 +103,11 @@ Detailed instructions for how the command should work...`
     'quality-security',
     'data-ai',
     'specialized-domains',
-    'crypto-trading'
+    'crypto-trading',
+    'business-finance',
+    'design-experience',
+    'blockchain-web3',
+    'sales-marketing'
   ]
 
   const commandCategories = [
@@ -186,7 +196,7 @@ Detailed instructions for how the command should work...`
 
         {/* Contribution Guides */}
         <section>
-          <Tabs defaultValue="subagents" className="w-full">
+          <Tabs defaultValue="subagents" className="w-full" id="contribute-tabs">
             <TabsList className="grid w-full grid-cols-2 mb-8">
               <TabsTrigger value="subagents">Creating Subagents</TabsTrigger>
               <TabsTrigger value="commands">Creating Commands</TabsTrigger>
@@ -203,24 +213,30 @@ Detailed instructions for how the command should work...`
                   <div className="bg-card rounded-lg border border-border/50 p-4 font-mono text-sm overflow-x-auto">
                     <pre className="text-muted-foreground">{`---
 name: your-subagent-name
-description: Clear description of when to invoke (under 500 chars)
+description: Clear description of when to invoke. Use PROACTIVELY for automatic delegation. (under 500 chars)
 category: ${subagentCategories[0]} # Required
 tools: Read, Write, Edit # Optional - omit for all tools
 ---
 
 You are a [role/expertise description].
 
-## Role
-[1-2 sentences describing the subagent's primary role]
+When invoked:
+1. [First action to take]
+2. [Second action to take]
+3. [Begin main task]
 
-## Capabilities
-[List 3-5 key capabilities or areas of expertise]
+Process:
+- [Key step or check]
+- [Another important step]
+- [Validation or verification]
+- [Documentation or output]
 
-## Approach
-[Describe how the subagent should approach tasks]
+Provide:
+- [Type of output or feedback]
+- [Another deliverable]
+- [Final recommendations]
 
-## Output
-[Specify what kind of output the subagent should provide]`}</pre>
+[Additional specific instructions or constraints]`}</pre>
                   </div>
                   <Button 
                     variant="ghost" 

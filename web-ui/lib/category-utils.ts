@@ -24,6 +24,10 @@ export const CATEGORY_ICONS: Record<string, string> = {
   'data-ai': '📊',
   'specialized-domains': '🎯',
   'crypto-trading': '💰',
+  'business-finance': '💼',
+  'design-experience': '🎨',
+  'blockchain-web3': '🔗',
+  'sales-marketing': '📣',
   // Command categories
   'ci-deployment': '🔄',
   'code-analysis-testing': '🧪',

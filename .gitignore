@@ -2,3 +2,4 @@ node_modules
 validation-report.txt
 mise.toml
 yarn.lock
+.DS_Store

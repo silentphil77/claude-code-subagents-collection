@@ -29,7 +29,11 @@
         "quality-security",
         "data-ai",
         "specialized-domains",
-        "crypto-trading"
+        "crypto-trading",
+        "business-finance",
+        "design-experience",
+        "blockchain-web3",
+        "sales-marketing"
       ],
       "description": "Category for organizing the subagent"
     }
