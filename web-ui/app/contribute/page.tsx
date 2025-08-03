@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -18,8 +20,57 @@ import {
   BookOpen,
   Heart
 } from 'lucide-react'
+import { useState } from 'react'
 
 export default function ContributePage() {
+  const [copiedSubagent, setCopiedSubagent] = useState(false)
+  const [copiedCommand, setCopiedCommand] = useState(false)
+
+  const subagentTemplate = `---
+name: your-subagent-name
+description: Clear description of when to invoke (under 500 chars)
+category: development-architecture # Required
+tools: Read, Write, Edit # Optional - omit for all tools
+---
+
+You are a [role/expertise description].
+
+## Role
+[1-2 sentences describing the subagent's primary role]
+
+## Capabilities
+[List 3-5 key capabilities or areas of expertise]
+
+## Approach
+[Describe how the subagent should approach tasks]
+
+## Output
+[Specify what kind of output the subagent should provide]`
+
+  const commandTemplate = `---
+description: Brief explanation of what the command does (10-200 chars)
+category: ci-deployment # Required
+argument-hint: <optional-args> # Optional
+allowed-tools: Read, Write, Edit # Optional - restrict tools
+model: opus|sonnet|haiku # Optional - specify model
+---
+
+# Command implementation
+
+Detailed instructions for how the command should work...`
+
+  const handleCopySubagent = () => {
+    navigator.clipboard.writeText(subagentTemplate)
+    setCopiedSubagent(true)
+    setTimeout(() => setCopiedSubagent(false), 2000)
+  }
+
+  const handleCopyCommand = () => {
+    navigator.clipboard.writeText(commandTemplate)
+    setCopiedCommand(true)
+    setTimeout(() => setCopiedCommand(false), 2000)
+  }
+
   const contributionTypes = [
     {
       icon: Sparkles,
@@ -171,9 +222,14 @@ You are a [role/expertise description].
 ## Output
 [Specify what kind of output the subagent should provide]`}</pre>
                   </div>
-                  <Button variant="ghost" size="sm" className="mt-4 gap-2">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="mt-4 gap-2"
+                    onClick={handleCopySubagent}
+                  >
                     <Copy className="h-3 w-3" />
-                    Copy Template
+                    {copiedSubagent ? 'Copied!' : 'Copy Template'}
                   </Button>
                 </Card>
 
@@ -314,9 +370,14 @@ model: opus|sonnet|haiku # Optional - specify model
 
 Detailed instructions for how the command should work...`}</pre>
                   </div>
-                  <Button variant="ghost" size="sm" className="mt-4 gap-2">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="mt-4 gap-2"
+                    onClick={handleCopyCommand}
+                  >
                     <Copy className="h-3 w-3" />
-                    Copy Template
+                    {copiedCommand ? 'Copied!' : 'Copy Template'}
                   </Button>
                 </Card>
 
