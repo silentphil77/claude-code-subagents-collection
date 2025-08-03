@@ -375,14 +375,14 @@ Detailed instructions for how the command should work...`}</pre>
               { icon: GitBranch, title: 'Submit PR', desc: 'Open a pull request' },
               { icon: Zap, title: 'Auto Deploy', desc: 'Merged PRs go live instantly' }
             ].map((step, i) => (
-              <div key={i} className="text-center">
+              <div key={i} className="text-center relative">
                 <div className="mx-auto w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mb-3">
                   <step.icon className="h-6 w-6 text-primary" />
                 </div>
                 <h4 className="font-semibold mb-1">{step.title}</h4>
                 <p className="text-xs text-muted-foreground">{step.desc}</p>
                 {i < 3 && (
-                  <div className="hidden md:block absolute top-6 left-full w-full">
+                  <div className="hidden md:block absolute top-6 -right-3 translate-x-full">
                     <ArrowRight className="h-4 w-4 text-muted-foreground/40" />
                   </div>
                 )}
