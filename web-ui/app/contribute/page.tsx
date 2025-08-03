@@ -83,7 +83,7 @@ Detailed instructions for how the command should work...`
       title: 'Subagents',
       description: 'Specialized AI assistants for specific domains',
       count: '40+',
-      href: '#subagents',
+      href: '#contribute-tabs',
       color: 'text-purple-400'
     },
     {
@@ -91,7 +91,7 @@ Detailed instructions for how the command should work...`
       title: 'Commands',
       description: 'Slash commands to automate workflows',
       count: '39+',
-      href: '#commands',
+      href: '#contribute-tabs',
       color: 'text-blue-400'
     }
   ]
@@ -196,7 +196,7 @@ Detailed instructions for how the command should work...`
 
         {/* Contribution Guides */}
         <section>
-          <Tabs defaultValue="subagents" className="w-full">
+          <Tabs defaultValue="subagents" className="w-full" id="contribute-tabs">
             <TabsList className="grid w-full grid-cols-2 mb-8">
               <TabsTrigger value="subagents">Creating Subagents</TabsTrigger>
               <TabsTrigger value="commands">Creating Commands</TabsTrigger>
