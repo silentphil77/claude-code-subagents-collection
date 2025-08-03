@@ -50,6 +50,9 @@ export default function RootLayout({
                   <Link href="/docs" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
                     Documentation
                   </Link>
+                  <Link href="/contribute" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                    Contribute
+                  </Link>
                 </div>
               </div>
               <div className="flex items-center gap-3">
