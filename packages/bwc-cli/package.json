@@ -1,6 +1,6 @@
 {
   "name": "bwc-cli",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "CLI tool for installing Claude Code subagents and commands",
   "keywords": [
     "claude",
@@ -26,7 +26,6 @@
   },
   "files": [
     "dist",
-    "schemas",
     "README.md",
     "LICENSE"
   ],

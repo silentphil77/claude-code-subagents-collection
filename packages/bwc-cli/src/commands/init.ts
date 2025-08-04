@@ -1,7 +1,7 @@
 import { Command } from 'commander'
 import { ConfigManager } from '../config/manager.js'
 import { logger } from '../utils/logger.js'
-import { fileExists, CONFIG_PATH } from '../utils/files.js'
+// No longer need fileExists and CONFIG_PATH imports here
 
 export function createInitCommand() {
   const init = new Command('init')

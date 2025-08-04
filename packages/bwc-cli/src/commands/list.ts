@@ -45,7 +45,7 @@ export function createListCommand() {
 async function listSubagents(
   configManager: ConfigManager,
   registryClient: RegistryClient,
-  options: any
+  options: { category?: string; installed?: boolean }
 ): Promise<void> {
   const spinner = logger.spinner('Fetching subagents...')
   
@@ -89,7 +89,7 @@ async function listSubagents(
 async function listCommands(
   configManager: ConfigManager,
   registryClient: RegistryClient,
-  options: any
+  options: { category?: string; installed?: boolean }
 ): Promise<void> {
   const spinner = logger.spinner('Fetching commands...')
   

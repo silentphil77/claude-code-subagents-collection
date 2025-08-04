@@ -78,7 +78,7 @@ export class ConfigManager {
       // Initialize global config
       await ensureDir(BWC_DIR)
       
-      if (await fileExists(CONFIG_PATH) && !options.force) {
+      if (await fileExists(CONFIG_PATH) && !options?.force) {
         throw new Error('Configuration already exists. Use --force to overwrite.')
       }
       

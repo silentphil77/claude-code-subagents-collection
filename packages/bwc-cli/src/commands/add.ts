@@ -5,7 +5,6 @@ import { ConfigManager } from '../config/manager.js'
 import { RegistryClient } from '../registry/client.js'
 import { logger } from '../utils/logger.js'
 import { writeFile } from '../utils/files.js'
-import { Subagent, Command as CliCommand } from '../registry/types.js'
 
 export function createAddCommand() {
   const add = new Command('add')
@@ -20,7 +19,6 @@ export function createAddCommand() {
 
         // Check if using project config
         const isProject = await configManager.isUsingProjectConfig()
-        const scope = isProject && !options.global ? 'project' : 'global'
         
         if (isProject && !options.global) {
           logger.info('Installing to project configuration')
