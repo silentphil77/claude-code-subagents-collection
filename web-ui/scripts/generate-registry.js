@@ -74,6 +74,7 @@ async function generateRegistry() {
     ]);
     
     const registry = {
+      $schema: 'https://buildwithclaude.com/schema/registry.json',
       version: '1.0.0',
       lastUpdated: new Date().toISOString(),
       subagents,
