@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "node ../scripts/generate-registry.js && next build",
+    "build": "node scripts/generate-registry.js && next build",
     "start": "next start",
     "lint": "next lint",
-    "generate-registry": "node ../scripts/generate-registry.js"
+    "generate-registry": "node scripts/generate-registry.js"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.14",
