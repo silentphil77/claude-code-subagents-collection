@@ -1,5 +1,11 @@
 # Claude Code Subagents & Commands Collection
 
+[![Open Source](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://opensource.org/)
+[![npm version](https://img.shields.io/npm/v/bwc-cli.svg)](https://www.npmjs.com/package/bwc-cli)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![GitHub stars](https://img.shields.io/github/stars/davepoon/claude-code-subagents-collection.svg?style=social&label=Star)](https://github.com/davepoon/claude-code-subagents-collection)
+
 A comprehensive collection of specialized AI subagents and slash commands for [Claude Code](https://docs.anthropic.com/en/docs/claude-code), designed to enhance development workflows with domain-specific expertise and powerful automation.
 
 ## 🌐 Now with a Web UI and CLI Tool!
