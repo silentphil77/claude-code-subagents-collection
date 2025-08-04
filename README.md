@@ -2,7 +2,7 @@
 
 A comprehensive collection of specialized AI subagents and slash commands for [Claude Code](https://docs.anthropic.com/en/docs/claude-code), designed to enhance development workflows with domain-specific expertise and powerful automation.
 
-## 🌐 Now with a Web UI!
+## 🌐 Now with a Web UI and CLI Tool!
 
 Browse, search, and install both subagents and commands instantly at [buildwithclaude.com](https://www.buildwithclaude.com)
 
@@ -12,6 +12,34 @@ Browse, search, and install both subagents and commands instantly at [buildwithc
 
 ![Browse Commands](buildwithclaude-commands.png)
 
+### 🚀 CLI Tool for Easy Installation
+
+Install and manage subagents and commands directly from your terminal with our new CLI tool:
+
+```bash
+# Install the CLI globally
+npm install -g bwc-cli
+
+# Initialize configuration
+bwc init
+
+# Add subagents or commands
+bwc add --agent python-pro
+bwc add --command dockerize
+
+# Browse and install interactively
+bwc add
+
+# List available items
+bwc list --agents
+bwc list --commands
+
+# Search for specific tools
+bwc search python
+```
+
+Learn more about the CLI tool at [buildwithclaude.com/docs/cli](https://www.buildwithclaude.com/docs/cli)
+
 ## Overview
 
 This repository contains:
@@ -19,6 +47,8 @@ This repository contains:
 - **39+ Slash Commands**: Community-contributed commands for automating tasks, managing projects, and enhancing workflows
 
 ## Quick Start
+
+> **💡 Tip**: For easier installation and management, use our [CLI tool](#-cli-tool-for-easy-installation) (`npm install -g bwc-cli`)
 
 ### Install Everything (Recommended)
 ```bash
@@ -527,4 +557,4 @@ This collection is provided under the MIT License. See [LICENSE](LICENSE) for de
 
 ---
 
-Made with ❤️ by the Claude Code community
+Made with ❤️ by Dave Poon

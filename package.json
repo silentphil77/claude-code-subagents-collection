@@ -1,6 +1,7 @@
 {
   "name": "claude-code-subagents-collection",
   "version": "1.0.0",
+  "private": true,
   "description": "A comprehensive collection of specialized AI subagents for [Claude Code](https://docs.anthropic.com/en/docs/claude-code), designed to enhance development workflows with domain-specific expertise.",
   "main": "index.js",
   "scripts": {

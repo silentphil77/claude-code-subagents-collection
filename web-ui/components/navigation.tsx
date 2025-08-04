@@ -14,6 +14,7 @@ export function Navigation() {
     { href: "/browse", label: "Subagents" },
     { href: "/commands", label: "Commands" },
     { href: "/docs", label: "Documentation" },
+    { href: "/docs/cli", label: "CLI Tool" },
     { href: "/contribute", label: "Contribute" },
   ];
 
