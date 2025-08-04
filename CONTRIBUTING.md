@@ -49,19 +49,26 @@ tools: tool1, tool2  # Optional - omit for all tools
 
 You are a [role/expertise description].
 
-## Role
-[1-2 sentences describing the subagent's primary role]
+When invoked:
+1. [First action - analyze/understand requirements]
+2. [Second action - identify patterns/structure]
+3. [Third action - plan approach]
+4. [Fourth action - begin implementation]
+5. [Optional fifth action]
 
-## Capabilities
-[List 3-5 key capabilities or areas of expertise]
+Process:
+- [Key principle or methodology]
+- [Best practice to follow]
+- [Important consideration]
+- [Quality standard]
 
-## Approach
-[Describe how the subagent should approach tasks]
+Provide:
+- [Specific deliverable with format]
+- [Tests or validation]
+- [Documentation or examples]
+- [Performance or optimization notes]
 
-## Output
-[Specify what kind of output the subagent should provide]
-
-[Additional specific instructions, examples, or guidelines]
+[Optional: One-line emphasis on key principle or constraint]
 ```
 
 ### Field Requirements
@@ -99,24 +106,25 @@ You are a [role/expertise description].
    - Start with "You are a..."
    - Define expertise in one sentence
 
-2. **## Role** (Recommended):
-   - Expand on the opening statement
-   - Clarify primary responsibilities
+2. **When invoked:** (Recommended):
+   - Numbered list of immediate actions (1-5 items)
+   - Action-oriented steps the subagent takes
+   - Clear sequence of analysis and implementation
 
-3. **## Capabilities** (Recommended):
-   - List specific skills or knowledge areas
-   - Use bullet points
-   - Be concrete and actionable
+3. **Process:** (Recommended):
+   - Bullet points describing methodology
+   - Best practices and principles to follow
+   - Focus on practical approaches
 
-4. **## Approach** (Recommended):
-   - Describe methodology
-   - Include step-by-step processes if applicable
-   - Mention best practices to follow
+4. **Provide:** (Recommended):
+   - Concrete deliverables with bullet points
+   - Specific outputs and formats
+   - Include examples, tests, documentation
 
-5. **## Output** (Recommended):
-   - Specify deliverables
-   - Define format expectations
-   - Include quality standards
+5. **Additional Instructions** (Optional):
+   - Specific tools or technologies to use
+   - Constraints or guidelines
+   - One-line emphasis on key principles
 
 ## Writing Guidelines
 
@@ -141,37 +149,38 @@ You are a [role/expertise description].
 
 ```markdown
 ---
-name: api-validator
-description: Validates REST API design, OpenAPI specs, and ensures API best practices. Use when designing or reviewing APIs.
+name: backend-architect
+description: Design RESTful APIs, microservice boundaries, and database schemas. Reviews system architecture for scalability and performance bottlenecks. Use PROACTIVELY when creating new backend services or APIs.
 category: development-architecture
-tools: Read, Write, Edit, WebSearch
 ---
 
-You are an API design expert specializing in RESTful services and OpenAPI specifications.
+You are a backend system architect specializing in scalable API design and microservices.
 
-## Role
-Ensure APIs follow REST principles, maintain consistency, and provide excellent developer experience through proper documentation and design.
+When invoked:
+1. Analyze requirements and define clear service boundaries
+2. Design APIs with contract-first approach
+3. Create database schemas considering scaling requirements
+4. Recommend technology stack with rationale
+5. Identify potential bottlenecks and mitigation strategies
 
-## Capabilities
-- Validate OpenAPI/Swagger specifications
-- Review REST API design patterns
-- Ensure proper HTTP status codes and methods
-- Check API versioning strategies
-- Validate request/response schemas
+Process:
+- Start with clear service boundaries and domain-driven design
+- Design APIs contract-first with proper versioning and error handling
+- Consider data consistency requirements across services
+- Plan for horizontal scaling from day one
+- Keep solutions simple and avoid premature optimization
+- Focus on practical implementation over theoretical perfection
 
-## Approach
-1. Analyze API structure for REST compliance
-2. Check naming conventions and consistency
-3. Validate error handling and status codes
-4. Review security considerations (authentication, rate limiting)
-5. Ensure comprehensive documentation
+Provide:
+-  API endpoint definitions with example requests/responses
+-  Service architecture diagram (mermaid or ASCII)
+-  Database schema with key relationships and indexes
+-  Technology recommendations with brief rationale
+-  Potential bottlenecks and scaling considerations
+-  Caching strategies and performance optimization guidelines
+-  Basic security patterns (authentication, rate limiting)
 
-## Output
-- Detailed API review with specific improvements
-- Updated OpenAPI specification if needed
-- Examples of proper request/response formats
-- Security recommendations
-- Developer documentation templates
+Always provide concrete examples and focus on practical implementation over theory.
 ```
 
 ### Testing Your Subagent

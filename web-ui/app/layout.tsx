@@ -38,7 +38,7 @@ export default function RootLayout({
           <div className="container mx-auto px-4 py-12">
             <div className="text-center space-y-4">
               <p className="text-sm text-muted-foreground">
-                Made with <span className="text-primary">❤️</span> by the Claude Code community
+                Made with <span className="text-primary">❤️</span> by Dave Poon
               </p>
               <div className="flex items-center justify-center gap-6 text-sm">
                 <a 
