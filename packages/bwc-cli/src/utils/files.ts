@@ -46,3 +46,7 @@ export function expandTilde(filePath: string): string {
   }
   return filePath
 }
+
+export async function deleteFile(filePath: string): Promise<void> {
+  await fs.remove(filePath)
+}

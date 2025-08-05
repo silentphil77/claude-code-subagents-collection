@@ -40,9 +40,17 @@ const DEFAULT_PROJECT_CONFIG: BwcConfig = {
 }
 
 export class ConfigManager {
+  private static instance: ConfigManager | null = null
   private config: BwcConfig | null = null
   private configPath: string | null = null
   private isProjectLevel: boolean = false
+
+  static getInstance(): ConfigManager {
+    if (!ConfigManager.instance) {
+      ConfigManager.instance = new ConfigManager()
+    }
+    return ConfigManager.instance
+  }
 
   private async findProjectConfig(): Promise<string | null> {
     const projectConfigNames = ['bwc.config.json', '.bwc/config.json']
@@ -192,6 +200,30 @@ export class ConfigManager {
     return config.installed.commands
   }
 
+  async addInstalledMCPServer(name: string): Promise<void> {
+    const config = await this.load()
+    if (!config.installed.mcpServers) {
+      config.installed.mcpServers = []
+    }
+    if (!config.installed.mcpServers.includes(name)) {
+      config.installed.mcpServers.push(name)
+      await this.save()
+    }
+  }
+
+  async removeInstalledMCPServer(name: string): Promise<void> {
+    const config = await this.load()
+    if (config.installed.mcpServers) {
+      config.installed.mcpServers = config.installed.mcpServers.filter(s => s !== name)
+      await this.save()
+    }
+  }
+
+  async getInstalledMCPServers(): Promise<string[]> {
+    const config = await this.load()
+    return config.installed.mcpServers || []
+  }
+
   async getRegistryUrl(): Promise<string> {
     const config = await this.load()
     return config.registry
@@ -213,5 +245,17 @@ export class ConfigManager {
       subagents: config.installed.subagents || [],
       commands: config.installed.commands || []
     }
+  }
+
+  async getConfig(): Promise<BwcConfig> {
+    if (!this.config) {
+      await this.load()
+    }
+    return this.config!
+  }
+
+  async saveConfig(config: BwcConfig): Promise<void> {
+    this.config = config
+    return this.save()
   }
 }

@@ -4,14 +4,19 @@ import path from 'path'
 import { ConfigManager } from '../config/manager.js'
 import { RegistryClient } from '../registry/client.js'
 import { logger } from '../utils/logger.js'
-import { writeFile } from '../utils/files.js'
+import { writeFile, fileExists } from '../utils/files.js'
+import { installMCPServer, configureInClaudeCode } from '../utils/mcp-installer.js'
+import { addServerToMCPJson } from '../utils/mcp-json.js'
 
 export function createAddCommand() {
   const add = new Command('add')
-    .description('Add subagents or commands')
+    .description('Add subagents, commands, or MCP servers')
     .option('-a, --agent <name>', 'add a specific subagent')
     .option('-c, --command <name>', 'add a specific command')
-    .option('-g, --global', 'force global installation')
+    .option('-m, --mcp <name>', 'add a specific MCP server')
+    .option('-g, --global', 'force global installation (for subagents/commands)')
+    .option('-s, --scope <scope>', 'configuration scope for MCP servers: local, user, or project (default: "local")')
+    .option('-e, --env <env...>', 'set environment variables for MCP servers (e.g. -e KEY=value)')
     .action(async (options) => {
       try {
         const configManager = new ConfigManager()
@@ -28,6 +33,18 @@ export function createAddCommand() {
           await addSubagent(options.agent, configManager, registryClient)
         } else if (options.command) {
           await addCommand(options.command, configManager, registryClient)
+        } else if (options.mcp) {
+          // Validate scope
+          const validScopes = ['local', 'user', 'project']
+          const scope = options.scope || 'local'
+          if (!validScopes.includes(scope)) {
+            throw new Error(`Invalid scope: ${scope}. Must be one of: ${validScopes.join(', ')}`)
+          }
+          
+          await addMCPServer(options.mcp, configManager, registryClient, {
+            scope,
+            envVars: options.env || []
+          })
         } else {
           await interactiveAdd(configManager, registryClient)
         }
@@ -117,15 +134,18 @@ async function interactiveAdd(
         message: 'What would you like to add?',
         choices: [
           { name: 'Subagent', value: 'subagent' },
-          { name: 'Command', value: 'command' }
+          { name: 'Command', value: 'command' },
+          { name: 'MCP Server', value: 'mcp' }
         ]
       }
     ])
 
     if (type === 'subagent') {
       await interactiveAddSubagent(configManager, registryClient)
-    } else {
+    } else if (type === 'command') {
       await interactiveAddCommand(configManager, registryClient)
+    } else {
+      await interactiveAddMCP(configManager, registryClient)
     }
   } catch (error) {
     if (error instanceof Error && error.message.includes('fetch registry')) {
@@ -242,5 +262,212 @@ async function interactiveAddCommand(
   
   for (const name of selected) {
     await addCommand(name, configManager, registryClient)
+  }
+}
+
+interface MCPOptions {
+  scope: 'local' | 'user' | 'project'
+  envVars: string[]
+}
+
+async function addMCPServer(
+  name: string, 
+  configManager: ConfigManager, 
+  registryClient: RegistryClient,
+  options: MCPOptions = { scope: 'local', envVars: [] }
+): Promise<void> {
+  const spinner = logger.spinner(`Fetching MCP server: ${name}`)
+  
+  try {
+    const server = await registryClient.findMCPServer(name)
+    
+    if (!server) {
+      spinner.fail(`MCP server "${name}" not found`)
+      return
+    }
+    
+    spinner.stop()
+    
+    // Show server details
+    logger.info(`\n${server.display_name} - ${server.description}`)
+    logger.info(`Verification: ${server.verification.status}`)
+    
+    // Security warning for experimental servers
+    if (server.verification.status === 'experimental') {
+      logger.warn('⚠️  This is an experimental server. Use with caution.')
+    }
+    
+    // Select installation method
+    let method = server.installation_methods.find(m => m.type === 'bwc')
+    if (!method) {
+      // Find the recommended method or use the first available
+      method = server.installation_methods.find(m => m.recommended) || server.installation_methods[0]
+    }
+    
+    if (!method) {
+      logger.error('No installation methods available for this server')
+      return
+    }
+    
+    spinner.text = `Installing ${server.name} using ${method.type}...`
+    spinner.start()
+    
+    try {
+      // Execute the actual installation
+      await installMCPServer(server, method)
+      
+      spinner.succeed(`Successfully installed ${server.name}`)
+      
+      // Handle different scopes
+      if (options.scope === 'project') {
+        // For project scope, update .mcp.json
+        await addServerToMCPJson(server, method.config_example, options.envVars)
+      }
+      
+      // Update BWC config to track installation
+      await configManager.addInstalledMCPServer(server.name)
+      
+      // Configure in Claude Code with appropriate scope
+      await configureInClaudeCode(server, method, options)
+      
+      // Show scope-specific information
+      logger.info(`\nMCP server configured with ${options.scope} scope`)
+      
+      if (options.scope === 'project') {
+        logger.info('The server is now available to all team members via .mcp.json')
+      } else if (options.scope === 'user') {
+        logger.info('The server is now available across all your projects')
+      } else {
+        logger.info('The server is available for this project only')
+      }
+      
+    } catch (installError) {
+      spinner.fail(`Failed to install ${server.name}`)
+      throw installError
+    }
+  } catch (error) {
+    if (spinner.isSpinning) {
+      spinner.fail('Failed to add MCP server')
+    }
+    throw error
+  }
+}
+
+async function interactiveAddMCP(
+  configManager: ConfigManager, 
+  registryClient: RegistryClient
+): Promise<void> {
+  // First ask for scope
+  const { scope } = await inquirer.prompt([
+    {
+      type: 'list',
+      name: 'scope',
+      message: 'Select configuration scope for MCP servers:',
+      choices: [
+        { name: 'Local (this project only)', value: 'local' },
+        { name: 'Project (shared with team via .mcp.json)', value: 'project' },
+        { name: 'User (across all your projects)', value: 'user' }
+      ],
+      default: 'local'
+    }
+  ])
+  
+  const servers = await registryClient.getMCPServers()
+  
+  // Group by verification status
+  const verificationGroups = servers.reduce((acc, server) => {
+    const status = server.verification.status
+    if (!acc[status]) acc[status] = []
+    acc[status].push(server)
+    return acc
+  }, {} as Record<string, typeof servers>)
+  
+  const { verification } = await inquirer.prompt([
+    {
+      type: 'list',
+      name: 'verification',
+      message: 'Select verification status:',
+      choices: ['All', 'verified', 'community', 'experimental']
+    }
+  ])
+
+  const filteredServers = verification === 'All' 
+    ? servers 
+    : verificationGroups[verification] || []
+
+  logger.info('Use SPACE to select/deselect, ENTER to confirm')
+  
+  const { selected } = await inquirer.prompt([
+    {
+      type: 'checkbox',
+      name: 'selected',
+      message: 'Select MCP servers to install:',
+      choices: filteredServers.map(s => ({
+        name: `${s.name} - ${s.description}`,
+        value: s.name,
+        short: s.name
+      })),
+      validate: (answer: string[]) => {
+        if (answer.length < 1) {
+          return 'You must select at least one MCP server!'
+        }
+        return true
+      }
+    }
+  ])
+
+  if (!selected || selected.length === 0) {
+    logger.warn('No MCP servers selected')
+    return
+  }
+
+  // Ask for environment variables if project scope
+  let envVars: string[] = []
+  if (scope === 'project') {
+    const { hasEnvVars } = await inquirer.prompt([
+      {
+        type: 'confirm',
+        name: 'hasEnvVars',
+        message: 'Do you need to set environment variables?',
+        default: false
+      }
+    ])
+    
+    if (hasEnvVars) {
+      const { envInput } = await inquirer.prompt([
+        {
+          type: 'input',
+          name: 'envInput',
+          message: 'Enter environment variables (e.g., API_KEY=value SECRET=value):',
+          validate: (input) => {
+            if (!input.trim()) return 'Please enter at least one environment variable'
+            return true
+          }
+        }
+      ])
+      envVars = envInput.split(' ').filter(e => e.includes('='))
+    }
+  }
+  
+  logger.info(`Installing ${selected.length} MCP server(s) with ${scope} scope...`)
+  
+  let successCount = 0
+  let failureCount = 0
+  
+  for (const name of selected) {
+    try {
+      await addMCPServer(name, configManager, registryClient, { scope, envVars })
+      successCount++
+    } catch (error) {
+      logger.error(`Failed to install ${name}: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      failureCount++
+    }
+  }
+  
+  if (successCount > 0) {
+    logger.success(`\nSuccessfully installed ${successCount} MCP server(s)`)
+  }
+  if (failureCount > 0) {
+    logger.warn(`Failed to install ${failureCount} MCP server(s)`)
   }
 }

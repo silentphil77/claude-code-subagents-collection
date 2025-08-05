@@ -6,9 +6,10 @@ import { logger } from '../utils/logger.js'
 
 export function createListCommand() {
   const list = new Command('list')
-    .description('List available subagents and commands')
+    .description('List available subagents, commands, and MCP servers')
     .option('-a, --agents', 'list subagents only')
     .option('-c, --commands', 'list commands only')
+    .option('-m, --mcps', 'list MCP servers only')
     .option('--category <category>', 'filter by category')
     .option('--installed', 'show only installed items')
     .action(async (options) => {
@@ -28,10 +29,14 @@ export function createListCommand() {
           await listSubagents(configManager, registryClient, options)
         } else if (options.commands) {
           await listCommands(configManager, registryClient, options)
+        } else if (options.mcps) {
+          await listMCPServers(configManager, registryClient, options)
         } else {
           await listSubagents(configManager, registryClient, options)
           console.log()
           await listCommands(configManager, registryClient, options)
+          console.log()
+          await listMCPServers(configManager, registryClient, options)
         }
       } catch (error) {
         logger.error(error instanceof Error ? error.message : 'Unknown error')
@@ -125,6 +130,52 @@ async function listCommands(
     console.log(`\n${chalk.gray(`Total: ${commands.length} commands`)}`)
   } catch (error) {
     spinner.fail('Failed to fetch commands')
+    throw error
+  }
+}
+
+async function listMCPServers(
+  configManager: ConfigManager,
+  registryClient: RegistryClient,
+  options: { category?: string; installed?: boolean }
+): Promise<void> {
+  const spinner = logger.spinner('Fetching MCP servers...')
+  
+  try {
+    let servers = await registryClient.getMCPServers()
+    const installed = await configManager.getInstalledMCPServers()
+    
+    if (options.category) {
+      servers = servers.filter(s => s.category === options.category)
+    }
+    
+    if (options.installed) {
+      servers = servers.filter(s => installed.includes(s.name))
+    }
+    
+    spinner.stop()
+    
+    logger.heading('Available MCP Servers')
+    
+    const categories = [...new Set(servers.map(s => s.category))].sort()
+    
+    for (const category of categories) {
+      const categoryServers = servers.filter(s => s.category === category)
+      
+      console.log(`\n${chalk.cyan(category)}:`)
+      
+      for (const server of categoryServers) {
+        const installedMark = installed.includes(server.name) ? chalk.green(' ✓') : ''
+        const verificationIcon = server.verification.status === 'verified' ? '✅' : 
+                               server.verification.status === 'community' ? '👥' : '🧪'
+        console.log(`  ${verificationIcon} ${chalk.bold(server.name)}${installedMark} - ${server.description}`)
+        console.log(`    ${chalk.gray(`Type: ${server.server_type}`)}`)
+      }
+    }
+    
+    console.log(`\n${chalk.gray(`Total: ${servers.length} MCP servers`)}`)
+  } catch (error) {
+    spinner.fail('Failed to fetch MCP servers')
     throw error
   }
 }

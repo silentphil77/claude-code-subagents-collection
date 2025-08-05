@@ -6,10 +6,11 @@ import { logger } from '../utils/logger.js'
 
 export function createSearchCommand() {
   const search = new Command('search')
-    .description('Search for subagents and commands')
+    .description('Search for subagents, commands, and MCP servers')
     .argument('<query>', 'search query')
     .option('-a, --agents', 'search subagents only')
     .option('-c, --commands', 'search commands only')
+    .option('-m, --mcps', 'search MCP servers only')
     .action(async (query, options) => {
       try {
         const configManager = new ConfigManager()
@@ -19,10 +20,14 @@ export function createSearchCommand() {
           await searchSubagents(query, configManager, registryClient)
         } else if (options.commands) {
           await searchCommands(query, configManager, registryClient)
+        } else if (options.mcps) {
+          await searchMCPServers(query, configManager, registryClient)
         } else {
           await searchSubagents(query, configManager, registryClient)
           console.log()
           await searchCommands(query, configManager, registryClient)
+          console.log()
+          await searchMCPServers(query, configManager, registryClient)
         }
       } catch (error) {
         logger.error(error instanceof Error ? error.message : 'Unknown error')
@@ -96,6 +101,44 @@ async function searchCommands(
       console.log(`  ${chalk.gray(`Category: ${command.category}`)}`)
       if (command.tags.length > 0) {
         console.log(`  ${chalk.gray(`Tags: ${command.tags.join(', ')}`)}`)
+      }
+    }
+  } catch (error) {
+    spinner.fail('Search failed')
+    throw error
+  }
+}
+
+async function searchMCPServers(
+  query: string,
+  configManager: ConfigManager,
+  registryClient: RegistryClient
+): Promise<void> {
+  const spinner = logger.spinner(`Searching MCP servers for "${query}"...`)
+  
+  try {
+    const servers = await registryClient.searchMCPServers(query)
+    const installed = await configManager.getInstalledMCPServers()
+    
+    spinner.stop()
+    
+    if (servers.length === 0) {
+      logger.info(`No MCP servers found matching "${query}"`)
+      return
+    }
+    
+    logger.heading(`MCP servers matching "${query}" (${servers.length} results)`)
+    
+    for (const server of servers) {
+      const installedMark = installed.includes(server.name) ? chalk.green(' ✓') : ''
+      const verificationIcon = server.verification.status === 'verified' ? '✅' : 
+                             server.verification.status === 'community' ? '👥' : '🧪'
+      console.log(`\n${verificationIcon} ${chalk.bold(server.name)}${installedMark}`)
+      console.log(`  ${server.description}`)
+      console.log(`  ${chalk.gray(`Category: ${server.category}`)}`)
+      console.log(`  ${chalk.gray(`Type: ${server.server_type}`)}`)
+      if (server.tags && server.tags.length > 0) {
+        console.log(`  ${chalk.gray(`Tags: ${server.tags.join(', ')}`)}`)
       }
     }
   } catch (error) {

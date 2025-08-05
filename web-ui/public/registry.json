@@ -1,0 +1,1320 @@
+{
+  "$schema": "https://buildwithclaude.com/schema/registry.json",
+  "version": "1.0.0",
+  "lastUpdated": "2025-08-05T05:09:56.072Z",
+  "subagents": [
+    {
+      "name": "accessibility-specialist",
+      "category": "design-experience",
+      "description": "Ensure web applications meet WCAG 2.1 AA/AAA standards. Implements ARIA attributes, keyboard navigation, and screen reader support. Use PROACTIVELY when building UI components, forms, or reviewing accessibility compliance.",
+      "version": "1.0.0",
+      "file": "subagents/accessibility-specialist.md",
+      "tools": [],
+      "path": "accessibility-specialist.md"
+    },
+    {
+      "name": "ai-engineer",
+      "category": "data-ai",
+      "description": "Build LLM applications, RAG systems, and prompt pipelines. Implements vector search, agent orchestration, and AI API integrations. Use PROACTIVELY for LLM features, chatbots, or AI-powered applications.",
+      "version": "1.0.0",
+      "file": "subagents/ai-engineer.md",
+      "tools": [],
+      "path": "ai-engineer.md"
+    },
+    {
+      "name": "api-documenter",
+      "category": "specialized-domains",
+      "description": "Create OpenAPI/Swagger specs, generate SDKs, and write developer documentation. Handles versioning, examples, and interactive docs. Use PROACTIVELY for API documentation or client library generation.",
+      "version": "1.0.0",
+      "file": "subagents/api-documenter.md",
+      "tools": [],
+      "path": "api-documenter.md"
+    },
+    {
+      "name": "arbitrage-bot",
+      "category": "crypto-trading",
+      "description": "Identify and execute cryptocurrency arbitrage opportunities across exchanges and DeFi protocols. Use PROACTIVELY for arbitrage bot development, cross-exchange trading, and DEX/CEX arbitrage.",
+      "version": "1.0.0",
+      "file": "subagents/arbitrage-bot.md",
+      "tools": [],
+      "path": "arbitrage-bot.md"
+    },
+    {
+      "name": "backend-architect",
+      "category": "development-architecture",
+      "description": "Design RESTful APIs, microservice boundaries, and database schemas. Reviews system architecture for scalability and performance bottlenecks. Use PROACTIVELY when creating new backend services or APIs.",
+      "version": "1.0.0",
+      "file": "subagents/backend-architect.md",
+      "tools": [],
+      "path": "backend-architect.md"
+    },
+    {
+      "name": "blockchain-developer",
+      "category": "blockchain-web3",
+      "description": "Develop smart contracts, DeFi protocols, and Web3 applications. Expertise in Solidity, security auditing, and gas optimization. Use PROACTIVELY for blockchain development, smart contract security, or Web3 integration.",
+      "version": "1.0.0",
+      "file": "subagents/blockchain-developer.md",
+      "tools": [],
+      "path": "blockchain-developer.md"
+    },
+    {
+      "name": "business-analyst",
+      "category": "business-finance",
+      "description": "Analyze metrics, create reports, and track KPIs. Builds dashboards, revenue models, and growth projections. Use PROACTIVELY for business metrics or investor updates.",
+      "version": "1.0.0",
+      "file": "subagents/business-analyst.md",
+      "tools": [],
+      "path": "business-analyst.md"
+    },
+    {
+      "name": "cloud-architect",
+      "category": "infrastructure-operations",
+      "description": "Design AWS/Azure/GCP infrastructure, implement Terraform IaC, and optimize cloud costs. Handles auto-scaling, multi-region deployments, and serverless architectures. Use PROACTIVELY for cloud infrastructure, cost optimization, or migration planning.",
+      "version": "1.0.0",
+      "file": "subagents/cloud-architect.md",
+      "tools": [],
+      "path": "cloud-architect.md"
+    },
+    {
+      "name": "code-reviewer",
+      "category": "quality-security",
+      "description": "Expert code review specialist. Proactively reviews code for quality, security, and maintainability. Use immediately after writing or modifying code.",
+      "version": "1.0.0",
+      "file": "subagents/code-reviewer.md",
+      "tools": [],
+      "path": "code-reviewer.md"
+    },
+    {
+      "name": "content-marketer",
+      "category": "sales-marketing",
+      "description": "Write blog posts, social media content, and email newsletters. Optimizes for SEO and creates content calendars. Use PROACTIVELY for marketing content or social media posts.",
+      "version": "1.0.0",
+      "file": "subagents/content-marketer.md",
+      "tools": [],
+      "path": "content-marketer.md"
+    },
+    {
+      "name": "context-manager",
+      "category": "data-ai",
+      "description": "Manages context across multiple agents and long-running tasks. Use PROACTIVELY when coordinating complex multi-agent workflows or when context needs to be preserved across multiple sessions. MUST BE USED for projects exceeding 10k tokens.",
+      "version": "1.0.0",
+      "file": "subagents/context-manager.md",
+      "tools": [],
+      "path": "context-manager.md"
+    },
+    {
+      "name": "cpp-engineer",
+      "category": "language-specialists",
+      "description": "Write idiomatic C++ code with modern features, RAII, smart pointers, and STL algorithms. Handles templates, move semantics, and performance optimization. Use PROACTIVELY for C++ refactoring, memory safety, or complex C++ patterns.",
+      "version": "1.0.0",
+      "file": "subagents/cpp-engineer.md",
+      "tools": [],
+      "path": "cpp-engineer.md"
+    },
+    {
+      "name": "crypto-analyst",
+      "category": "crypto-trading",
+      "description": "Perform cryptocurrency market analysis, on-chain analytics, and sentiment analysis. Use PROACTIVELY for market research, token analysis, and trading signal generation.",
+      "version": "1.0.0",
+      "file": "subagents/crypto-analyst.md",
+      "tools": [],
+      "path": "crypto-analyst.md"
+    },
+    {
+      "name": "crypto-risk-manager",
+      "category": "crypto-trading",
+      "description": "Implement risk management systems for cryptocurrency trading and DeFi positions. Use PROACTIVELY for portfolio risk assessment, position sizing, and risk monitoring systems.",
+      "version": "1.0.0",
+      "file": "subagents/crypto-risk-manager.md",
+      "tools": [],
+      "path": "crypto-risk-manager.md"
+    },
+    {
+      "name": "crypto-trader",
+      "category": "crypto-trading",
+      "description": "Build cryptocurrency trading systems, implement trading strategies, and integrate with exchange APIs. Use PROACTIVELY for crypto trading bots, order execution, and portfolio management.",
+      "version": "1.0.0",
+      "file": "subagents/crypto-trader.md",
+      "tools": [],
+      "path": "crypto-trader.md"
+    },
+    {
+      "name": "customer-support",
+      "category": "sales-marketing",
+      "description": "Handle support tickets, FAQ responses, and customer emails. Creates help docs, troubleshooting guides, and canned responses. Use PROACTIVELY for customer inquiries or support documentation.",
+      "version": "1.0.0",
+      "file": "subagents/customer-support.md",
+      "tools": [],
+      "path": "customer-support.md"
+    },
+    {
+      "name": "data-engineer",
+      "category": "data-ai",
+      "description": "Build ETL pipelines, data warehouses, and streaming architectures. Implements Spark jobs, Airflow DAGs, and Kafka streams. Use PROACTIVELY for data pipeline design or analytics infrastructure.",
+      "version": "1.0.0",
+      "file": "subagents/data-engineer.md",
+      "tools": [],
+      "path": "data-engineer.md"
+    },
+    {
+      "name": "data-scientist",
+      "category": "data-ai",
+      "description": "Data analysis expert for SQL queries, BigQuery operations, and data insights. Use proactively for data analysis tasks and queries.",
+      "version": "1.0.0",
+      "file": "subagents/data-scientist.md",
+      "tools": [],
+      "path": "data-scientist.md"
+    },
+    {
+      "name": "database-admin",
+      "category": "infrastructure-operations",
+      "description": "Manage database operations, backups, replication, and monitoring. Handles user permissions, maintenance tasks, and disaster recovery. Use PROACTIVELY for database setup, operational issues, or recovery procedures.",
+      "version": "1.0.0",
+      "file": "subagents/database-admin.md",
+      "tools": [],
+      "path": "database-admin.md"
+    },
+    {
+      "name": "database-optimizer",
+      "category": "infrastructure-operations",
+      "description": "Optimize SQL queries, design efficient indexes, and handle database migrations. Solves N+1 problems, slow queries, and implements caching. Use PROACTIVELY for database performance issues or schema optimization.",
+      "version": "1.0.0",
+      "file": "subagents/database-optimizer.md",
+      "tools": [],
+      "path": "database-optimizer.md"
+    },
+    {
+      "name": "debugger",
+      "category": "quality-security",
+      "description": "Debugging specialist for errors, test failures, and unexpected behavior. Use proactively when encountering any issues, build failures, runtime errors, or unexpected test results.",
+      "version": "1.0.0",
+      "file": "subagents/debugger.md",
+      "tools": [],
+      "path": "debugger.md"
+    },
+    {
+      "name": "defi-strategist",
+      "category": "crypto-trading",
+      "description": "Design and implement DeFi yield strategies, liquidity provision, and protocol interactions. Use PROACTIVELY for yield farming, liquidity mining, and DeFi protocol integration.",
+      "version": "1.0.0",
+      "file": "subagents/defi-strategist.md",
+      "tools": [],
+      "path": "defi-strategist.md"
+    },
+    {
+      "name": "deployment-engineer",
+      "category": "infrastructure-operations",
+      "description": "Configure CI/CD pipelines, Docker containers, and cloud deployments. Handles GitHub Actions, Kubernetes, and infrastructure automation. Use PROACTIVELY when setting up deployments, containers, or CI/CD workflows.",
+      "version": "1.0.0",
+      "file": "subagents/deployment-engineer.md",
+      "tools": [],
+      "path": "deployment-engineer.md"
+    },
+    {
+      "name": "devops-troubleshooter",
+      "category": "infrastructure-operations",
+      "description": "Debug production issues, analyze logs, and fix deployment failures. Masters monitoring tools, incident response, and root cause analysis. Use PROACTIVELY for production debugging or system outages.",
+      "version": "1.0.0",
+      "file": "subagents/devops-troubleshooter.md",
+      "tools": [],
+      "path": "devops-troubleshooter.md"
+    },
+    {
+      "name": "directus-developer",
+      "category": "development-architecture",
+      "description": "Build and customize Directus applications with extensions, hooks, and API integrations. Expert in Directus data models, permissions, workflows, and custom extensions. Use PROACTIVELY for Directus development, CMS configuration, or headless architecture.",
+      "version": "1.0.0",
+      "file": "subagents/directus-developer.md",
+      "tools": [],
+      "path": "directus-developer.md"
+    },
+    {
+      "name": "drupal-developer",
+      "category": "development-architecture",
+      "description": "Build and customize Drupal applications with custom modules, themes, and integrations. Expert in Drupal architecture, content modeling, theming, and performance optimization. Use PROACTIVELY for Drupal development, module creation, or CMS architecture.",
+      "version": "1.0.0",
+      "file": "subagents/drupal-developer.md",
+      "tools": [],
+      "path": "drupal-developer.md"
+    },
+    {
+      "name": "frontend-developer",
+      "category": "development-architecture",
+      "description": "Build Next.js applications with React components, shadcn/ui, and Tailwind CSS. Expert in SSR/SSG, app router, and modern frontend patterns. Use PROACTIVELY for Next.js development, UI component creation, or frontend architecture.",
+      "version": "1.0.0",
+      "file": "subagents/frontend-developer.md",
+      "tools": [],
+      "path": "frontend-developer.md"
+    },
+    {
+      "name": "game-developer",
+      "category": "specialized-domains",
+      "description": "Build games with Unity, Unreal Engine, or web technologies. Implements game mechanics, physics, AI, and optimization. Use PROACTIVELY for game development, engine integration, or gameplay programming.",
+      "version": "1.0.0",
+      "file": "subagents/game-developer.md",
+      "tools": [],
+      "path": "game-developer.md"
+    },
+    {
+      "name": "golang-pro",
+      "category": "language-specialists",
+      "description": "Write idiomatic Go code with goroutines, channels, and interfaces. Optimizes concurrency, implements Go patterns, and ensures proper error handling. Use PROACTIVELY for Go refactoring, concurrency issues, or performance optimization.",
+      "version": "1.0.0",
+      "file": "subagents/golang-pro.md",
+      "tools": [],
+      "path": "golang-pro.md"
+    },
+    {
+      "name": "graphql-architect",
+      "category": "development-architecture",
+      "description": "Design GraphQL schemas, resolvers, and federation. Optimizes queries, solves N+1 problems, and implements subscriptions. Use PROACTIVELY for GraphQL API design or performance issues.",
+      "version": "1.0.0",
+      "file": "subagents/graphql-architect.md",
+      "tools": [],
+      "path": "graphql-architect.md"
+    },
+    {
+      "name": "hyperledger-fabric-developer",
+      "category": "blockchain-web3",
+      "description": "Develop enterprise blockchain solutions with Hyperledger Fabric v2.5 LTS and v3.x. Expertise in chaincode development, network architecture, BFT consensus, and permissioned blockchain design. Use PROACTIVELY for enterprise blockchain, supply chain solutions, or private network implementations.",
+      "version": "1.0.0",
+      "file": "subagents/hyperledger-fabric-developer.md",
+      "tools": [],
+      "path": "hyperledger-fabric-developer.md"
+    },
+    {
+      "name": "java-developer",
+      "category": "language-specialists",
+      "description": "Master modern Java with streams, concurrency, and JVM optimization. Handles Spring Boot, reactive programming, and enterprise patterns. Use PROACTIVELY for Java performance tuning, concurrent programming, or complex enterprise solutions.",
+      "version": "1.0.0",
+      "file": "subagents/java-developer.md",
+      "tools": [],
+      "path": "java-developer.md"
+    },
+    {
+      "name": "laravel-vue-developer",
+      "category": "development-architecture",
+      "description": "Build full-stack Laravel applications with Vue3 frontend. Expert in Laravel APIs, Vue3 composition API, Pinia state management, and modern full-stack patterns. Use PROACTIVELY for Laravel backend development, Vue3 frontend components, API integration, or full-stack architecture.",
+      "version": "1.0.0",
+      "file": "subagents/laravel-vue-developer.md",
+      "tools": [],
+      "path": "laravel-vue-developer.md"
+    },
+    {
+      "name": "legacy-modernizer",
+      "category": "specialized-domains",
+      "description": "Refactor legacy codebases, migrate outdated frameworks, and implement gradual modernization. Handles technical debt, dependency updates, and backward compatibility. Use PROACTIVELY for legacy system updates, framework migrations, or technical debt reduction.",
+      "version": "1.0.0",
+      "file": "subagents/legacy-modernizer.md",
+      "tools": [],
+      "path": "legacy-modernizer.md"
+    },
+    {
+      "name": "legal-advisor",
+      "category": "business-finance",
+      "description": "Draft privacy policies, terms of service, disclaimers, and legal notices. Creates GDPR-compliant texts, cookie policies, and data processing agreements. Use PROACTIVELY for legal documentation, compliance texts, or regulatory requirements.",
+      "version": "1.0.0",
+      "file": "subagents/legal-advisor.md",
+      "tools": [],
+      "path": "legal-advisor.md"
+    },
+    {
+      "name": "ml-engineer",
+      "category": "data-ai",
+      "description": "Implement ML pipelines, model serving, and feature engineering. Handles TensorFlow/PyTorch deployment, A/B testing, and monitoring. Use PROACTIVELY for ML model integration or production deployment.",
+      "version": "1.0.0",
+      "file": "subagents/ml-engineer.md",
+      "tools": [],
+      "path": "ml-engineer.md"
+    },
+    {
+      "name": "mlops-engineer",
+      "category": "data-ai",
+      "description": "Build ML pipelines, experiment tracking, and model registries. Implements MLflow, Kubeflow, and automated retraining. Handles data versioning and reproducibility. Use PROACTIVELY for ML infrastructure, experiment management, or pipeline automation.",
+      "version": "1.0.0",
+      "file": "subagents/mlops-engineer.md",
+      "tools": [],
+      "path": "mlops-engineer.md"
+    },
+    {
+      "name": "mobile-developer",
+      "category": "development-architecture",
+      "description": "Develop React Native or Flutter apps with native integrations. Handles offline sync, push notifications, and app store deployments. Use PROACTIVELY for mobile features, cross-platform code, or app optimization.",
+      "version": "1.0.0",
+      "file": "subagents/mobile-developer.md",
+      "tools": [],
+      "path": "mobile-developer.md"
+    },
+    {
+      "name": "nextjs-app-router-developer",
+      "category": "development-architecture",
+      "description": "Build modern Next.js applications using App Router with Server Components, Server Actions, PPR, and advanced caching strategies. Expert in Next.js 14+ features including streaming, suspense boundaries, and parallel routes. Use PROACTIVELY for Next.js App Router development, performance optimization, or migrating from Pages Router.",
+      "version": "1.0.0",
+      "file": "subagents/nextjs-app-router-developer.md",
+      "tools": [],
+      "path": "nextjs-app-router-developer.md"
+    },
+    {
+      "name": "payment-integration",
+      "category": "business-finance",
+      "description": "Integrate Stripe, PayPal, and payment processors. Handles checkout flows, subscriptions, webhooks, and PCI compliance. Use PROACTIVELY when implementing payments, billing, or subscription features.",
+      "version": "1.0.0",
+      "file": "subagents/payment-integration.md",
+      "tools": [],
+      "path": "payment-integration.md"
+    },
+    {
+      "name": "performance-engineer",
+      "category": "quality-security",
+      "description": "Profile applications, optimize bottlenecks, and implement caching strategies. Handles load testing, CDN setup, and query optimization. Use PROACTIVELY for performance issues or optimization tasks.",
+      "version": "1.0.0",
+      "file": "subagents/performance-engineer.md",
+      "tools": [],
+      "path": "performance-engineer.md"
+    },
+    {
+      "name": "php-developer",
+      "category": "language-specialists",
+      "description": "Write idiomatic PHP code with design patterns, SOLID principles, and modern best practices. Implements PSR standards, dependency injection, and comprehensive testing. Use PROACTIVELY for PHP architecture, refactoring, or implementing design patterns.",
+      "version": "1.0.0",
+      "file": "subagents/php-developer.md",
+      "tools": [],
+      "path": "php-developer.md"
+    },
+    {
+      "name": "prompt-engineer",
+      "category": "data-ai",
+      "description": "Optimizes prompts for LLMs and AI systems. Use when building AI features, improving agent performance, or crafting system prompts. Expert in prompt patterns and techniques.",
+      "version": "1.0.0",
+      "file": "subagents/prompt-engineer.md",
+      "tools": [],
+      "path": "prompt-engineer.md"
+    },
+    {
+      "name": "python-pro",
+      "category": "language-specialists",
+      "description": "Write idiomatic Python code with advanced features like decorators, generators, and async/await. Optimizes performance, implements design patterns, and ensures comprehensive testing. Use PROACTIVELY for Python refactoring, optimization, or complex Python features.",
+      "version": "1.0.0",
+      "file": "subagents/python-pro.md",
+      "tools": [],
+      "path": "python-pro.md"
+    },
+    {
+      "name": "quant-analyst",
+      "category": "business-finance",
+      "description": "Build financial models, backtest trading strategies, and analyze market data. Implements risk metrics, portfolio optimization, and statistical arbitrage. Use PROACTIVELY for quantitative finance, trading algorithms, or risk analysis.",
+      "version": "1.0.0",
+      "file": "subagents/quant-analyst.md",
+      "tools": [],
+      "path": "quant-analyst.md"
+    },
+    {
+      "name": "rails-pro",
+      "category": "language-specialists",
+      "description": "Build scalable Rails applications with modern patterns and best practices. Implements service objects, background jobs, and API design. Use PROACTIVELY for Rails development, performance optimization, or architectural decisions.",
+      "version": "1.0.0",
+      "file": "subagents/rails-pro.md",
+      "tools": [],
+      "path": "rails-pro.md"
+    },
+    {
+      "name": "ruby-pro",
+      "category": "language-specialists",
+      "description": "Write idiomatic Ruby code following best practices and design patterns. Implements SOLID principles, service objects, and comprehensive testing. Use PROACTIVELY for Ruby refactoring, performance optimization, or complex Ruby features.",
+      "version": "1.0.0",
+      "file": "subagents/ruby-pro.md",
+      "tools": [],
+      "path": "ruby-pro.md"
+    },
+    {
+      "name": "rust-pro",
+      "category": "language-specialists",
+      "description": "Write idiomatic Rust code with ownership, lifetimes, and type safety. Implements concurrent systems, async programming, and memory-safe abstractions. Use PROACTIVELY for Rust development, systems programming, or performance-critical code.",
+      "version": "1.0.0",
+      "file": "subagents/rust-pro.md",
+      "tools": [],
+      "path": "rust-pro.md"
+    },
+    {
+      "name": "sales-automator",
+      "category": "sales-marketing",
+      "description": "Draft cold emails, follow-ups, and proposal templates. Creates pricing pages, case studies, and sales scripts. Use PROACTIVELY for sales outreach or lead nurturing.",
+      "version": "1.0.0",
+      "file": "subagents/sales-automator.md",
+      "tools": [],
+      "path": "sales-automator.md"
+    },
+    {
+      "name": "security-auditor",
+      "category": "quality-security",
+      "description": "Review code for vulnerabilities, implement secure authentication, and ensure OWASP compliance. Handles JWT, OAuth2, CORS, CSP, and encryption. Use PROACTIVELY for security reviews, auth flows, or vulnerability fixes.",
+      "version": "1.0.0",
+      "file": "subagents/security-auditor.md",
+      "tools": [],
+      "path": "security-auditor.md"
+    },
+    {
+      "name": "test-automator",
+      "category": "quality-security",
+      "description": "Create comprehensive test suites with unit, integration, and e2e tests. Sets up CI pipelines, mocking strategies, and test data. Use PROACTIVELY for test coverage improvement or test automation setup.",
+      "version": "1.0.0",
+      "file": "subagents/test-automator.md",
+      "tools": [],
+      "path": "test-automator.md"
+    },
+    {
+      "name": "typescript-expert",
+      "category": "language-specialists",
+      "description": "Write type-safe TypeScript with advanced type system features, generics, and utility types. Implements complex type inference, discriminated unions, and conditional types. Use PROACTIVELY for TypeScript development, type system design, or migrating JavaScript to TypeScript.",
+      "version": "1.0.0",
+      "file": "subagents/typescript-expert.md",
+      "tools": [],
+      "path": "typescript-expert.md"
+    },
+    {
+      "name": "ui-ux-designer",
+      "category": "design-experience",
+      "description": "Design user interfaces and experiences with modern design principles, accessibility standards, and design systems. Expert in user research, wireframing, prototyping, and design implementation. Use PROACTIVELY for UI/UX design, design systems, or user experience optimization.",
+      "version": "1.0.0",
+      "file": "subagents/ui-ux-designer.md",
+      "tools": [],
+      "path": "ui-ux-designer.md"
+    },
+    {
+      "name": "wordpress-developer",
+      "category": "development-architecture",
+      "description": "Build professional WordPress solutions with custom themes, plugins, and advanced functionality. Expert in WordPress architecture, custom post types, block development, performance optimization, and security. Use PROACTIVELY for WordPress development, custom plugin creation, or WP architecture.",
+      "version": "1.0.0",
+      "file": "subagents/wordpress-developer.md",
+      "tools": [],
+      "path": "wordpress-developer.md"
+    }
+  ],
+  "commands": [
+    {
+      "name": "add-to-changelog",
+      "category": "documentation-changelogs",
+      "description": "Add a new entry to the project's CHANGELOG.md file following Keep a Changelog format",
+      "version": "1.0.0",
+      "file": "commands/add-to-changelog.md",
+      "path": "add-to-changelog.md",
+      "argumentHint": "<version> <change_type> <message>",
+      "model": ""
+    },
+    {
+      "name": "bug-fix",
+      "category": "version-control-git",
+      "description": "Systematic workflow for fixing bugs including issue creation, branch management, and PR submission",
+      "version": "1.0.0",
+      "file": "commands/bug-fix.md",
+      "path": "bug-fix.md",
+      "argumentHint": "<bug_description>",
+      "model": ""
+    },
+    {
+      "name": "check",
+      "category": "code-analysis-testing",
+      "description": "Run project checks and fix any errors without committing",
+      "version": "1.0.0",
+      "file": "commands/check.md",
+      "path": "check.md",
+      "argumentHint": "",
+      "model": ""
+    },
+    {
+      "name": "clean",
+      "category": "code-analysis-testing",
+      "description": "Fix all linting and formatting issues across the codebase",
+      "version": "1.0.0",
+      "file": "commands/clean.md",
+      "path": "clean.md",
+      "argumentHint": "",
+      "model": ""
+    },
+    {
+      "name": "code_analysis",
+      "category": "code-analysis-testing",
+      "description": "Perform comprehensive code analysis with quality metrics and recommendations",
+      "version": "1.0.0",
+      "file": "commands/code_analysis.md",
+      "path": "code_analysis.md",
+      "argumentHint": "[file-or-directory-path]",
+      "model": ""
+    },
+    {
+      "name": "commit",
+      "category": "version-control-git",
+      "description": "Create well-formatted git commits with conventional commit messages and emoji",
+      "version": "1.0.0",
+      "file": "commands/commit.md",
+      "path": "commit.md",
+      "argumentHint": "",
+      "model": ""
+    },
+    {
+      "name": "commit-fast",
+      "category": "version-control-git",
+      "description": "Automatically create and execute a git commit using the first suggested commit message",
+      "version": "1.0.0",
+      "file": "commands/commit-fast.md",
+      "path": "commit-fast.md",
+      "argumentHint": "",
+      "model": ""
+    },
+    {
+      "name": "context-prime",
+      "category": "context-loading-priming",
+      "description": "Load project context by reading README.md and exploring relevant project files",
+      "version": "1.0.0",
+      "file": "commands/context-prime.md",
+      "path": "context-prime.md",
+      "argumentHint": "",
+      "model": ""
+    },
+    {
+      "name": "create-command",
+      "category": "project-task-management",
+      "description": "Create a new command following existing patterns and organizational structure",
+      "version": "1.0.0",
+      "file": "commands/create-command.md",
+      "path": "create-command.md",
+      "argumentHint": "",
+      "model": ""
+    },
+    {
+      "name": "create-docs",
+      "category": "documentation-changelogs",
+      "description": "Analyze GitHub issue and create technical specification with implementation plan",
+      "version": "1.0.0",
+      "file": "commands/create-docs.md",
+      "path": "create-docs.md",
+      "argumentHint": "<issue_number>",
+      "model": ""
+    },
+    {
+      "name": "create-jtbd",
+      "category": "project-task-management",
+      "description": "Create a Jobs to be Done (JTBD) document for a product feature focusing on user needs",
+      "version": "1.0.0",
+      "file": "commands/create-jtbd.md",
+      "path": "create-jtbd.md",
+      "argumentHint": "<feature description> [output-path]",
+      "model": ""
+    },
+    {
+      "name": "create-pr",
+      "category": "version-control-git",
+      "description": "Create a new branch, commit changes, and submit a pull request with automatic commit splitting",
+      "version": "1.0.0",
+      "file": "commands/create-pr.md",
+      "path": "create-pr.md",
+      "argumentHint": "",
+      "model": ""
+    },
+    {
+      "name": "create-prd",
+      "category": "project-task-management",
+      "description": "Create a Product Requirements Document (PRD) for a product feature",
+      "version": "1.0.0",
+      "file": "commands/create-prd.md",
+      "path": "create-prd.md",
+      "argumentHint": "<feature description> [output-path]",
+      "model": ""
+    },
+    {
+      "name": "create-prp",
+      "category": "project-task-management",
+      "description": "Create a comprehensive Product Requirement Prompt (PRP) with research and context gathering",
+      "version": "1.0.0",
+      "file": "commands/create-prp.md",
+      "path": "create-prp.md",
+      "argumentHint": "<feature_description>",
+      "model": ""
+    },
+    {
+      "name": "create-pull-request",
+      "category": "version-control-git",
+      "description": "Guide for creating pull requests using GitHub CLI with proper templates and conventions",
+      "version": "1.0.0",
+      "file": "commands/create-pull-request.md",
+      "path": "create-pull-request.md",
+      "argumentHint": "",
+      "model": ""
+    },
+    {
+      "name": "create-worktrees",
+      "category": "version-control-git",
+      "description": "Manage git worktrees for open PRs and create new branch worktrees",
+      "version": "1.0.0",
+      "file": "commands/create-worktrees.md",
+      "path": "create-worktrees.md",
+      "argumentHint": "",
+      "model": ""
+    },
+    {
+      "name": "docs",
+      "category": "documentation-changelogs",
+      "description": "Update or generate YAML documentation for SQL models with proper descriptions and tests",
+      "version": "1.0.0",
+      "file": "commands/docs.md",
+      "path": "docs.md",
+      "argumentHint": "<model_name_or_path>",
+      "model": ""
+    },
+    {
+      "name": "explain-issue-fix",
+      "category": "documentation-changelogs",
+      "description": "Explain how tasks in an issue were implemented with detailed breakdown",
+      "version": "1.0.0",
+      "file": "commands/explain-issue-fix.md",
+      "path": "explain-issue-fix.md",
+      "argumentHint": "",
+      "model": ""
+    },
+    {
+      "name": "five",
+      "category": "miscellaneous",
+      "description": "Apply the Five Whys root cause analysis technique to systematically investigate issues",
+      "version": "1.0.0",
+      "file": "commands/five.md",
+      "path": "five.md",
+      "argumentHint": "<issue_description>",
+      "model": ""
+    },
+    {
+      "name": "fix-github-issue",
+      "category": "version-control-git",
+      "description": "Analyze and fix a GitHub issue with comprehensive testing and verification",
+      "version": "1.0.0",
+      "file": "commands/fix-github-issue.md",
+      "path": "fix-github-issue.md",
+      "argumentHint": "<issue_number>",
+      "model": ""
+    },
+    {
+      "name": "fix-issue",
+      "category": "version-control-git",
+      "description": "Fix a specific issue or problem with the given identifier or description",
+      "version": "1.0.0",
+      "file": "commands/fix-issue.md",
+      "path": "fix-issue.md",
+      "argumentHint": "<issue_identifier>",
+      "model": ""
+    },
+    {
+      "name": "fix-pr",
+      "category": "version-control-git",
+      "description": "Fetch unresolved comments for current branch's PR and fix them",
+      "version": "1.0.0",
+      "file": "commands/fix-pr.md",
+      "path": "fix-pr.md",
+      "argumentHint": "",
+      "model": ""
+    },
+    {
+      "name": "husky",
+      "category": "version-control-git",
+      "description": "Verify repository is in working state by running CI checks and fixing issues",
+      "version": "1.0.0",
+      "file": "commands/husky.md",
+      "path": "husky.md",
+      "argumentHint": "",
+      "model": ""
+    },
+    {
+      "name": "initref",
+      "category": "context-loading-priming",
+      "description": "Build reference documentation by creating markdown files and updating CLAUDE.md",
+      "version": "1.0.0",
+      "file": "commands/initref.md",
+      "path": "initref.md",
+      "argumentHint": "",
+      "model": ""
+    },
+    {
+      "name": "mermaid",
+      "category": "miscellaneous",
+      "description": "Create entity relationship diagrams using Mermaid from SQL/database files",
+      "version": "1.0.0",
+      "file": "commands/mermaid.md",
+      "path": "mermaid.md",
+      "argumentHint": "<source-path> [output-path]",
+      "model": ""
+    },
+    {
+      "name": "optimize",
+      "category": "code-analysis-testing",
+      "description": "Analyze code performance and propose three specific optimization improvements",
+      "version": "1.0.0",
+      "file": "commands/optimize.md",
+      "path": "optimize.md",
+      "argumentHint": "",
+      "model": ""
+    },
+    {
+      "name": "pr-review",
+      "category": "version-control-git",
+      "description": "Conduct comprehensive PR review from multiple perspectives (PM, Developer, QA, Security)",
+      "version": "1.0.0",
+      "file": "commands/pr-review.md",
+      "path": "pr-review.md",
+      "argumentHint": "<pr_link_or_number>",
+      "model": ""
+    },
+    {
+      "name": "prime",
+      "category": "context-loading-priming",
+      "description": "Load project context by reading key documentation files and exploring project structure",
+      "version": "1.0.0",
+      "file": "commands/prime.md",
+      "path": "prime.md",
+      "argumentHint": "",
+      "model": ""
+    },
+    {
+      "name": "release",
+      "category": "ci-deployment",
+      "description": "Prepare a new release by updating changelog, version, and documentation",
+      "version": "1.0.0",
+      "file": "commands/release.md",
+      "path": "release.md",
+      "argumentHint": "",
+      "model": ""
+    },
+    {
+      "name": "repro-issue",
+      "category": "code-analysis-testing",
+      "description": "Reproduce a specific issue by creating a failing test case",
+      "version": "1.0.0",
+      "file": "commands/repro-issue.md",
+      "path": "repro-issue.md",
+      "argumentHint": "<issue_description>",
+      "model": ""
+    },
+    {
+      "name": "rsi",
+      "category": "context-loading-priming",
+      "description": "Read project commands and documentation to optimize AI-assisted development process",
+      "version": "1.0.0",
+      "file": "commands/rsi.md",
+      "path": "rsi.md",
+      "argumentHint": "",
+      "model": ""
+    },
+    {
+      "name": "run-ci",
+      "category": "ci-deployment",
+      "description": "Run CI checks and fix any errors until all tests pass",
+      "version": "1.0.0",
+      "file": "commands/run-ci.md",
+      "path": "run-ci.md",
+      "argumentHint": "",
+      "model": ""
+    },
+    {
+      "name": "tdd",
+      "category": "code-analysis-testing",
+      "description": "Test-driven development workflow with Red-Green-Refactor process and branch management",
+      "version": "1.0.0",
+      "file": "commands/tdd.md",
+      "path": "tdd.md",
+      "argumentHint": "",
+      "model": ""
+    },
+    {
+      "name": "todo",
+      "category": "project-task-management",
+      "description": "Manage project todos in a todos.md file with add, complete, remove, and list operations",
+      "version": "1.0.0",
+      "file": "commands/todo.md",
+      "path": "todo.md",
+      "argumentHint": "<action> [args...]",
+      "model": ""
+    },
+    {
+      "name": "update-branch-name",
+      "category": "version-control-git",
+      "description": "Update current git branch name based on analysis of changes made",
+      "version": "1.0.0",
+      "file": "commands/update-branch-name.md",
+      "path": "update-branch-name.md",
+      "argumentHint": "",
+      "model": ""
+    },
+    {
+      "name": "update-docs",
+      "category": "documentation-changelogs",
+      "description": "Update implementation documentation including specs, status, and best practices",
+      "version": "1.0.0",
+      "file": "commands/update-docs.md",
+      "path": "update-docs.md",
+      "argumentHint": "",
+      "model": ""
+    },
+    {
+      "name": "use-stepper",
+      "category": "miscellaneous",
+      "description": "Use structured stepper approach for problem-solving and project development",
+      "version": "1.0.0",
+      "file": "commands/use-stepper.md",
+      "path": "use-stepper.md",
+      "argumentHint": "",
+      "model": ""
+    }
+  ],
+  "mcpServers": [
+    {
+      "name": "docker",
+      "display_name": "Docker MCP Server",
+      "category": "development",
+      "description": "Manage Docker containers, images, volumes, and networks",
+      "server_type": "stdio",
+      "protocol_version": "1.1.0",
+      "verification": {
+        "status": "verified",
+        "last_tested": "2025-01-15",
+        "tested_with": [
+          "claude-3.5",
+          "cursor",
+          "cline",
+          "continue"
+        ],
+        "security_audit": true
+      },
+      "sources": {
+        "official": "modelcontextprotocol/servers/tree/main/src/docker",
+        "docker": "mcp/docker:latest",
+        "npm": "@modelcontextprotocol/server-docker",
+        "marketplace": {
+          "smithery": "https://smithery.ai/server/docker",
+          "mcpmarket": "https://mcpmarket.com/server/docker"
+        }
+      },
+      "security": {
+        "auth_type": "none",
+        "permissions": [
+          "container:read",
+          "container:write",
+          "image:read",
+          "image:write",
+          "volume:read",
+          "volume:write",
+          "network:read",
+          "network:write"
+        ],
+        "resource_indicators": false,
+        "elicitation_schema": null
+      },
+      "stats": {
+        "github_stars": 3890,
+        "docker_pulls": 245000,
+        "npm_downloads": 112000,
+        "last_updated": "2025-01-15"
+      },
+      "installation_methods": [
+        {
+          "type": "bwc",
+          "recommended": true,
+          "command": "bwc mcp add docker",
+          "config_example": "# Install using BWC CLI\nbwc mcp add docker\n\n# The BWC CLI will handle the configuration automatically"
+        },
+        {
+          "type": "docker",
+          "recommended": true,
+          "command": "docker run -d --name mcp-docker -v /var/run/docker.sock:/var/run/docker.sock mcp/docker:latest",
+          "config_example": "{\n  \"mcpServers\": {\n    \"docker\": {\n      \"command\": \"docker\",\n      \"args\": [\"run\", \"-i\", \"--rm\", \"-v\", \"/var/run/docker.sock:/var/run/docker.sock\", \"mcp/docker:latest\"],\n      \"env\": {}\n    }\n  }\n}\n"
+        },
+        {
+          "type": "npm",
+          "command": "npm install -g @modelcontextprotocol/server-docker",
+          "config_example": "{\n  \"mcpServers\": {\n    \"docker\": {\n      \"command\": \"npx\",\n      \"args\": [\"-y\", \"@modelcontextprotocol/server-docker\"],\n      \"env\": {\n        \"DOCKER_HOST\": \"unix:///var/run/docker.sock\"\n      }\n    }\n  }\n}\n"
+        }
+      ],
+      "tags": [
+        "docker",
+        "containers",
+        "devops",
+        "orchestration"
+      ],
+      "file": "mcp-servers/verified/docker.md",
+      "path": "verified/docker"
+    },
+    {
+      "name": "filesystem",
+      "display_name": "Filesystem MCP Server",
+      "category": "file-systems",
+      "description": "Secure file system operations with configurable access controls",
+      "server_type": "stdio",
+      "protocol_version": "1.1.0",
+      "verification": {
+        "status": "verified",
+        "last_tested": "2025-01-15",
+        "tested_with": [
+          "claude-3.5",
+          "claude-desktop",
+          "cline"
+        ],
+        "security_audit": true
+      },
+      "sources": {
+        "official": "modelcontextprotocol/servers/tree/main/src/filesystem",
+        "npm": "@modelcontextprotocol/server-filesystem",
+        "marketplace": {
+          "smithery": "https://smithery.ai/server/filesystem"
+        }
+      },
+      "security": {
+        "auth_type": "none",
+        "permissions": [
+          "fs:read",
+          "fs:write",
+          "fs:list"
+        ],
+        "resource_indicators": true,
+        "elicitation_schema": null
+      },
+      "stats": {
+        "github_stars": 5234,
+        "npm_downloads": 125000,
+        "last_updated": "2025-01-15"
+      },
+      "installation_methods": [
+        {
+          "type": "bwc",
+          "recommended": true,
+          "command": "bwc mcp add filesystem",
+          "config_example": "# Install using BWC CLI\nbwc mcp add filesystem\n\n# The BWC CLI will handle the configuration automatically"
+        },
+        {
+          "type": "npm",
+          "recommended": true,
+          "command": "npm install -g @modelcontextprotocol/server-filesystem",
+          "config_example": "{\n  \"mcpServers\": {\n    \"filesystem\": {\n      \"command\": \"npx\",\n      \"args\": [\"-y\", \"@modelcontextprotocol/server-filesystem\", \"/Users/username/allowed-directory\"],\n      \"env\": {}\n    }\n  }\n}\n"
+        },
+        {
+          "type": "manual",
+          "steps": [
+            "git clone https://github.com/modelcontextprotocol/servers",
+            "cd servers/src/filesystem",
+            "npm install && npm run build",
+            "node dist/index.js /path/to/allowed/directory"
+          ]
+        }
+      ],
+      "tags": [
+        "filesystem",
+        "file-management",
+        "local-storage"
+      ],
+      "file": "mcp-servers/verified/filesystem.md",
+      "path": "verified/filesystem"
+    },
+    {
+      "name": "github",
+      "display_name": "GitHub MCP Server",
+      "category": "apis",
+      "description": "Interact with GitHub repositories, issues, pull requests, and more",
+      "server_type": "stdio",
+      "protocol_version": "1.1.0",
+      "verification": {
+        "status": "verified",
+        "last_tested": "2025-01-15",
+        "tested_with": [
+          "claude-3.5",
+          "gpt-4",
+          "cursor",
+          "cline"
+        ],
+        "security_audit": true
+      },
+      "sources": {
+        "official": "modelcontextprotocol/servers/tree/main/src/github",
+        "npm": "@modelcontextprotocol/server-github",
+        "marketplace": {
+          "smithery": "https://smithery.ai/server/github",
+          "mcpmarket": "https://mcpmarket.com/server/github"
+        }
+      },
+      "security": {
+        "auth_type": "api-key",
+        "permissions": [
+          "repo:read",
+          "repo:write",
+          "issues:read",
+          "issues:write",
+          "pr:read",
+          "pr:write"
+        ],
+        "resource_indicators": true,
+        "elicitation_schema": null
+      },
+      "stats": {
+        "github_stars": 3456,
+        "npm_downloads": 89000,
+        "last_updated": "2025-01-15"
+      },
+      "installation_methods": [
+        {
+          "type": "bwc",
+          "recommended": true,
+          "command": "bwc mcp add github",
+          "config_example": "# Install using BWC CLI\nbwc mcp add github\n\n# The BWC CLI will handle the configuration automatically"
+        },
+        {
+          "type": "npm",
+          "recommended": true,
+          "command": "npm install -g @modelcontextprotocol/server-github",
+          "config_example": "{\n  \"mcpServers\": {\n    \"github\": {\n      \"command\": \"npx\",\n      \"args\": [\"-y\", \"@modelcontextprotocol/server-github\"],\n      \"env\": {\n        \"GITHUB_PERSONAL_ACCESS_TOKEN\": \"${GITHUB_TOKEN}\"\n      }\n    }\n  }\n}\n"
+        },
+        {
+          "type": "manual",
+          "steps": [
+            "git clone https://github.com/modelcontextprotocol/servers",
+            "cd servers/src/github",
+            "npm install && npm run build",
+            "GITHUB_PERSONAL_ACCESS_TOKEN=your_token node dist/index.js"
+          ]
+        }
+      ],
+      "tags": [
+        "github",
+        "git",
+        "version-control",
+        "collaboration"
+      ],
+      "file": "mcp-servers/verified/github.md",
+      "path": "verified/github"
+    },
+    {
+      "name": "postgres",
+      "display_name": "PostgreSQL MCP Server",
+      "category": "databases",
+      "description": "Connect to PostgreSQL databases for querying and data management",
+      "server_type": "stdio",
+      "protocol_version": "1.1.0",
+      "verification": {
+        "status": "verified",
+        "last_tested": "2025-01-15",
+        "tested_with": [
+          "claude-3.5",
+          "cursor",
+          "cline",
+          "copilot-studio"
+        ],
+        "security_audit": true
+      },
+      "sources": {
+        "official": "modelcontextprotocol/servers/tree/main/src/postgres",
+        "npm": "@modelcontextprotocol/server-postgres",
+        "docker": "mcp/postgres:latest",
+        "marketplace": {
+          "smithery": "https://smithery.ai/server/postgres",
+          "mcpmarket": "https://mcpmarket.com/server/postgres"
+        }
+      },
+      "security": {
+        "auth_type": "none",
+        "permissions": [
+          "database:read",
+          "database:write",
+          "schema:read",
+          "schema:write"
+        ],
+        "resource_indicators": true,
+        "elicitation_schema": {
+          "type": "object",
+          "properties": {
+            "default_database": {
+              "type": "string",
+              "description": "Default database to connect to"
+            },
+            "default_schema": {
+              "type": "string",
+              "description": "Default schema to use"
+            }
+          }
+        }
+      },
+      "stats": {
+        "github_stars": 4567,
+        "docker_pulls": 156000,
+        "npm_downloads": 98000,
+        "last_updated": "2025-01-15"
+      },
+      "installation_methods": [
+        {
+          "type": "bwc",
+          "recommended": true,
+          "command": "bwc mcp add postgres",
+          "config_example": "# Install using BWC CLI\nbwc mcp add postgres\n\n# The BWC CLI will handle the configuration automatically"
+        },
+        {
+          "type": "docker",
+          "recommended": true,
+          "command": "docker run -d --name mcp-postgres -e DATABASE_URL=postgresql://user:pass@host:5432/dbname mcp/postgres:latest",
+          "config_example": "{\n  \"mcpServers\": {\n    \"postgres\": {\n      \"command\": \"docker\",\n      \"args\": [\"run\", \"-i\", \"--rm\", \"-e\", \"DATABASE_URL=${DATABASE_URL}\", \"mcp/postgres:latest\"],\n      \"env\": {\n        \"DATABASE_URL\": \"postgresql://user:password@localhost:5432/mydb\"\n      }\n    }\n  }\n}\n"
+        },
+        {
+          "type": "npm",
+          "command": "npm install -g @modelcontextprotocol/server-postgres",
+          "config_example": "{\n  \"mcpServers\": {\n    \"postgres\": {\n      \"command\": \"npx\",\n      \"args\": [\"-y\", \"@modelcontextprotocol/server-postgres\", \"postgresql://user:password@localhost:5432/mydb\"],\n      \"env\": {}\n    }\n  }\n}\n"
+        }
+      ],
+      "tags": [
+        "postgresql",
+        "database",
+        "sql",
+        "data-management"
+      ],
+      "file": "mcp-servers/verified/postgres.md",
+      "path": "verified/postgres"
+    },
+    {
+      "name": "slack",
+      "display_name": "Slack MCP Server",
+      "category": "apis",
+      "description": "Interact with Slack workspaces, channels, and messages",
+      "server_type": "stdio",
+      "protocol_version": "1.1.0",
+      "verification": {
+        "status": "verified",
+        "last_tested": "2025-01-15",
+        "tested_with": [
+          "claude-3.5",
+          "cursor",
+          "cline"
+        ],
+        "security_audit": true
+      },
+      "sources": {
+        "official": "modelcontextprotocol/servers/tree/main/src/slack",
+        "npm": "@modelcontextprotocol/server-slack",
+        "marketplace": {
+          "smithery": "https://smithery.ai/server/slack",
+          "mcpmarket": "https://mcpmarket.com/server/slack"
+        }
+      },
+      "security": {
+        "auth_type": "oauth2",
+        "permissions": [
+          "channels:read",
+          "channels:write",
+          "chat:write",
+          "users:read",
+          "files:read",
+          "files:write"
+        ],
+        "resource_indicators": true,
+        "elicitation_schema": null
+      },
+      "stats": {
+        "github_stars": 2345,
+        "npm_downloads": 67000,
+        "last_updated": "2025-01-15"
+      },
+      "installation_methods": [
+        {
+          "type": "bwc",
+          "recommended": true,
+          "command": "bwc mcp add slack",
+          "config_example": "# Install using BWC CLI\nbwc mcp add slack\n\n# The BWC CLI will handle the configuration automatically"
+        },
+        {
+          "type": "npm",
+          "recommended": true,
+          "command": "npm install -g @modelcontextprotocol/server-slack",
+          "config_example": "{\n  \"mcpServers\": {\n    \"slack\": {\n      \"command\": \"npx\",\n      \"args\": [\"-y\", \"@modelcontextprotocol/server-slack\"],\n      \"env\": {\n        \"SLACK_BOT_TOKEN\": \"xoxb-your-bot-token\",\n        \"SLACK_APP_TOKEN\": \"xapp-your-app-token\"\n      }\n    }\n  }\n}\n"
+        },
+        {
+          "type": "manual",
+          "steps": [
+            "git clone https://github.com/modelcontextprotocol/servers",
+            "cd servers/src/slack",
+            "npm install && npm run build",
+            "Set SLACK_BOT_TOKEN and SLACK_APP_TOKEN environment variables",
+            "node dist/index.js"
+          ]
+        }
+      ],
+      "tags": [
+        "slack",
+        "communication",
+        "messaging",
+        "collaboration"
+      ],
+      "file": "mcp-servers/verified/slack.md",
+      "path": "verified/slack"
+    },
+    {
+      "name": "web-browser",
+      "display_name": "Web Browser MCP Server",
+      "category": "web",
+      "description": "Browse the web, interact with pages, and extract content using Puppeteer",
+      "server_type": "stdio",
+      "protocol_version": "1.1.0",
+      "verification": {
+        "status": "community",
+        "last_tested": "2025-01-15",
+        "tested_with": [
+          "claude-3.5",
+          "cursor"
+        ],
+        "security_audit": false
+      },
+      "sources": {
+        "npm": "@modelcontextprotocol/server-puppeteer",
+        "github": "modelcontextprotocol/servers/tree/main/src/puppeteer",
+        "marketplace": {
+          "smithery": "https://smithery.ai/server/web-browser"
+        }
+      },
+      "security": {
+        "auth_type": "none",
+        "permissions": [
+          "browser:navigate",
+          "browser:interact",
+          "browser:screenshot",
+          "content:extract"
+        ],
+        "resource_indicators": false,
+        "elicitation_schema": null
+      },
+      "stats": {
+        "github_stars": 1567,
+        "npm_downloads": 45000,
+        "last_updated": "2025-01-15"
+      },
+      "installation_methods": [
+        {
+          "type": "bwc",
+          "recommended": true,
+          "command": "bwc mcp add web-browser",
+          "config_example": "# Install using BWC CLI\nbwc mcp add web-browser\n\n# The BWC CLI will handle the configuration automatically"
+        },
+        {
+          "type": "npm",
+          "recommended": true,
+          "command": "npm install -g @modelcontextprotocol/server-puppeteer",
+          "config_example": "{\n  \"mcpServers\": {\n    \"web-browser\": {\n      \"command\": \"npx\",\n      \"args\": [\"-y\", \"@modelcontextprotocol/server-puppeteer\"],\n      \"env\": {\n        \"HEADLESS\": \"true\"\n      }\n    }\n  }\n}\n"
+        },
+        {
+          "type": "manual",
+          "steps": [
+            "git clone https://github.com/modelcontextprotocol/servers",
+            "cd servers/src/puppeteer",
+            "npm install && npm run build",
+            "node dist/index.js"
+          ]
+        }
+      ],
+      "tags": [
+        "browser",
+        "web-scraping",
+        "automation",
+        "puppeteer"
+      ],
+      "file": "mcp-servers/community/web-browser.md",
+      "path": "community/web-browser"
+    }
+  ]
+}

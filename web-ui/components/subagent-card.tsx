@@ -11,10 +11,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { Copy, Download, Check } from 'lucide-react'
+import { Copy, Download, Check, Terminal } from 'lucide-react'
 import { generateCategoryDisplayName, getCategoryIcon } from '@/lib/subagents-types'
 import { generateSubagentMarkdown } from '@/lib/utils'
 import type { Subagent } from '@/lib/subagents-types'
+import { InstallationModalEnhanced } from './installation-modal-enhanced'
 
 interface SubagentCardProps {
   subagent: Subagent
@@ -34,6 +35,7 @@ const defaultColorClass = 'border-gray-500/50 text-gray-400'
 
 export function SubagentCard({ subagent }: SubagentCardProps) {
   const [copied, setCopied] = useState(false)
+  const [showInstallModal, setShowInstallModal] = useState(false)
   const categoryName = generateCategoryDisplayName(subagent.category)
   const categoryIcon = getCategoryIcon(subagent.category)
   const colorClass = categoryColors[subagent.category] || defaultColorClass
@@ -134,8 +136,37 @@ export function SubagentCard({ subagent }: SubagentCardProps) {
               <p>Download markdown file</p>
             </TooltipContent>
           </Tooltip>
+          
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="h-8 w-8 bg-background/80 backdrop-blur-sm hover:bg-primary/20 hover:text-primary border border-border/50"
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  setShowInstallModal(true)
+                }}
+              >
+                <Terminal className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Install with BWC CLI</p>
+            </TooltipContent>
+          </Tooltip>
         </div>
       </div>
+      
+      <InstallationModalEnhanced
+        isOpen={showInstallModal}
+        onClose={() => setShowInstallModal(false)}
+        resourceType="subagent"
+        resourceName={subagent.name}
+        displayName={subagent.name}
+        markdownContent={generateSubagentMarkdown(subagent)}
+      />
     </TooltipProvider>
   )
 }

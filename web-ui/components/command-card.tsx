@@ -15,6 +15,7 @@ import { Copy, Download, Check, Terminal } from 'lucide-react'
 import { generateCategoryDisplayName, getCategoryIcon } from '@/lib/commands-types'
 import { generateCommandMarkdown } from '@/lib/utils'
 import type { Command } from '@/lib/commands-types'
+import { InstallationModalEnhanced } from './installation-modal-enhanced'
 
 interface CommandCardProps {
   command: Command
@@ -34,6 +35,7 @@ const defaultColorClass = 'border-gray-500/50 text-gray-400'
 
 export function CommandCard({ command }: CommandCardProps) {
   const [copied, setCopied] = useState(false)
+  const [showInstallModal, setShowInstallModal] = useState(false)
   const categoryName = generateCategoryDisplayName(command.category)
   const categoryIcon = getCategoryIcon(command.category)
   const colorClass = categoryColors[command.category] || defaultColorClass
@@ -143,8 +145,37 @@ export function CommandCard({ command }: CommandCardProps) {
               <p>Download markdown file</p>
             </TooltipContent>
           </Tooltip>
+          
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="h-8 w-8 bg-background/80 backdrop-blur-sm hover:bg-primary/20 hover:text-primary border border-border/50"
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  setShowInstallModal(true)
+                }}
+              >
+                <Terminal className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Install with BWC CLI</p>
+            </TooltipContent>
+          </Tooltip>
         </div>
       </div>
+      
+      <InstallationModalEnhanced
+        isOpen={showInstallModal}
+        onClose={() => setShowInstallModal(false)}
+        resourceType="command"
+        resourceName={command.slug}
+        displayName={commandName}
+        markdownContent={generateCommandMarkdown(command)}
+      />
     </TooltipProvider>
   )
 }
