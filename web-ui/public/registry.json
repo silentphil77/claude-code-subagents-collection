@@ -1,7 +1,7 @@
 {
   "$schema": "https://buildwithclaude.com/schema/registry.json",
   "version": "1.0.0",
-  "lastUpdated": "2025-08-05T05:09:56.072Z",
+  "lastUpdated": "2025-08-05T13:53:35.026Z",
   "subagents": [
     {
       "name": "accessibility-specialist",
@@ -915,8 +915,8 @@
         {
           "type": "bwc",
           "recommended": true,
-          "command": "bwc mcp add docker",
-          "config_example": "# Install using BWC CLI\nbwc mcp add docker\n\n# The BWC CLI will handle the configuration automatically"
+          "command": "bwc add --mcp docker",
+          "config_example": "{\n  \"mcpServers\": {\n    \"docker\": {\n      \"command\": \"docker\",\n      \"args\": [\"run\", \"-i\", \"--rm\", \"-v\", \"/var/run/docker.sock:/var/run/docker.sock\", \"mcp/docker:latest\"],\n      \"env\": {}\n    }\n  }\n}\n"
         },
         {
           "type": "docker",
@@ -937,7 +937,21 @@
         "orchestration"
       ],
       "file": "mcp-servers/verified/docker.md",
-      "path": "verified/docker"
+      "path": "verified/docker",
+      "config_schema": {
+        "type": "object",
+        "properties": {
+          "docker_host": {
+            "type": "string",
+            "description": "Docker daemon socket path or TCP address"
+          },
+          "tls_verify": {
+            "type": "boolean",
+            "description": "Verify TLS certificates when connecting to Docker"
+          }
+        },
+        "required": []
+      }
     },
     {
       "name": "filesystem",
@@ -982,14 +996,13 @@
         {
           "type": "bwc",
           "recommended": true,
-          "command": "bwc mcp add filesystem",
-          "config_example": "# Install using BWC CLI\nbwc mcp add filesystem\n\n# The BWC CLI will handle the configuration automatically"
+          "command": "bwc add --mcp filesystem"
         },
         {
           "type": "npm",
           "recommended": true,
           "command": "npm install -g @modelcontextprotocol/server-filesystem",
-          "config_example": "{\n  \"mcpServers\": {\n    \"filesystem\": {\n      \"command\": \"npx\",\n      \"args\": [\"-y\", \"@modelcontextprotocol/server-filesystem\", \"/Users/username/allowed-directory\"],\n      \"env\": {}\n    }\n  }\n}\n"
+          "config_example": "{\n  \"mcpServers\": {\n    \"filesystem\": {\n      \"command\": \"npx\",\n      \"args\": [\"-y\", \"@modelcontextprotocol/server-filesystem\", \"{{allowed_directory}}\"],\n      \"env\": {}\n    }\n  }\n}\n"
         },
         {
           "type": "manual",
@@ -1007,7 +1020,37 @@
         "local-storage"
       ],
       "file": "mcp-servers/verified/filesystem.md",
-      "path": "verified/filesystem"
+      "path": "verified/filesystem",
+      "user_inputs": [
+        {
+          "name": "allowed_directory",
+          "display_name": "Allowed Directory Path",
+          "type": "path",
+          "description": "Directory the filesystem server can access",
+          "required": true,
+          "placeholder": "/Users/username/allowed-directory",
+          "validation": {
+            "exists": true,
+            "is_directory": true
+          },
+          "arg_position": 2
+        }
+      ],
+      "config_schema": {
+        "type": "object",
+        "properties": {
+          "allowed_directories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of directories the server can access"
+          }
+        },
+        "required": [
+          "allowed_directories"
+        ]
+      }
     },
     {
       "name": "github",
@@ -1057,8 +1100,7 @@
         {
           "type": "bwc",
           "recommended": true,
-          "command": "bwc mcp add github",
-          "config_example": "# Install using BWC CLI\nbwc mcp add github\n\n# The BWC CLI will handle the configuration automatically"
+          "command": "bwc add --mcp github"
         },
         {
           "type": "npm",
@@ -1083,7 +1125,27 @@
         "collaboration"
       ],
       "file": "mcp-servers/verified/github.md",
-      "path": "verified/github"
+      "path": "verified/github",
+      "config_schema": {
+        "type": "object",
+        "properties": {
+          "github_token": {
+            "type": "string",
+            "description": "GitHub Personal Access Token with appropriate scopes"
+          },
+          "default_owner": {
+            "type": "string",
+            "description": "Default repository owner/organization"
+          },
+          "default_repo": {
+            "type": "string",
+            "description": "Default repository name"
+          }
+        },
+        "required": [
+          "github_token"
+        ]
+      }
     },
     {
       "name": "postgres",
@@ -1145,8 +1207,7 @@
         {
           "type": "bwc",
           "recommended": true,
-          "command": "bwc mcp add postgres",
-          "config_example": "# Install using BWC CLI\nbwc mcp add postgres\n\n# The BWC CLI will handle the configuration automatically"
+          "command": "bwc add --mcp postgres"
         },
         {
           "type": "docker",
@@ -1167,7 +1228,31 @@
         "data-management"
       ],
       "file": "mcp-servers/verified/postgres.md",
-      "path": "verified/postgres"
+      "path": "verified/postgres",
+      "config_schema": {
+        "type": "object",
+        "properties": {
+          "database_url": {
+            "type": "string",
+            "description": "PostgreSQL connection string"
+          },
+          "ssl": {
+            "type": "boolean",
+            "description": "Enable SSL connection"
+          },
+          "max_connections": {
+            "type": "number",
+            "description": "Maximum number of concurrent connections"
+          },
+          "query_timeout": {
+            "type": "number",
+            "description": "Query timeout in milliseconds"
+          }
+        },
+        "required": [
+          "database_url"
+        ]
+      }
     },
     {
       "name": "slack",
@@ -1216,8 +1301,7 @@
         {
           "type": "bwc",
           "recommended": true,
-          "command": "bwc mcp add slack",
-          "config_example": "# Install using BWC CLI\nbwc mcp add slack\n\n# The BWC CLI will handle the configuration automatically"
+          "command": "bwc add --mcp slack"
         },
         {
           "type": "npm",
@@ -1243,7 +1327,28 @@
         "collaboration"
       ],
       "file": "mcp-servers/verified/slack.md",
-      "path": "verified/slack"
+      "path": "verified/slack",
+      "config_schema": {
+        "type": "object",
+        "properties": {
+          "bot_token": {
+            "type": "string",
+            "description": "Slack bot user OAuth token (xoxb-)"
+          },
+          "app_token": {
+            "type": "string",
+            "description": "Slack app-level token (xapp-)"
+          },
+          "default_channel": {
+            "type": "string",
+            "description": "Default channel ID for operations"
+          }
+        },
+        "required": [
+          "bot_token",
+          "app_token"
+        ]
+      }
     },
     {
       "name": "web-browser",
@@ -1288,8 +1393,7 @@
         {
           "type": "bwc",
           "recommended": true,
-          "command": "bwc mcp add web-browser",
-          "config_example": "# Install using BWC CLI\nbwc mcp add web-browser\n\n# The BWC CLI will handle the configuration automatically"
+          "command": "bwc add --mcp web-browser"
         },
         {
           "type": "npm",
@@ -1314,7 +1418,28 @@
         "puppeteer"
       ],
       "file": "mcp-servers/community/web-browser.md",
-      "path": "community/web-browser"
+      "path": "community/web-browser",
+      "config_schema": {
+        "type": "object",
+        "properties": {
+          "headless": {
+            "type": "boolean",
+            "description": "Run browser in headless mode"
+          },
+          "viewport": {
+            "type": "object",
+            "properties": {
+              "width": {
+                "type": "number"
+              },
+              "height": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "required": []
+      }
     }
   ]
 }

@@ -35,7 +35,7 @@ export async function installMCPServer(
 
 async function installDockerServer(
   server: MCPServer, 
-  method: MCPInstallationMethod
+  _method: MCPInstallationMethod
 ): Promise<void> {
   // First check if Docker is available
   try {

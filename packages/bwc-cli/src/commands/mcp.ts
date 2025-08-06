@@ -2,19 +2,17 @@ import { Command } from 'commander'
 import chalk from 'chalk'
 import inquirer from 'inquirer'
 import ora from 'ora'
-import { RegistryClient } from '../registry/client'
+import { RegistryClient } from '../registry/client.js'
 import { 
   MCPServer, 
   MCPInstallationMethod, 
   VERIFICATION_STATUS,
   MCP_CATEGORIES,
   SOURCE_PREFERENCE 
-} from '../registry/types'
-import { ConfigManager } from '../config/manager'
-import { logger } from '../utils/logger'
-import { installMCPServer, configureInClaudeCode } from '../utils/mcp-installer'
-import path from 'path'
-import fs from 'fs-extra'
+} from '../registry/types.js'
+import { ConfigManager } from '../config/manager.js'
+import { logger } from '../utils/logger.js'
+import { installMCPServer, configureInClaudeCode } from '../utils/mcp-installer.js'
 
 export function createMCPCommand() {
   const mcp = new Command('mcp')
@@ -103,7 +101,7 @@ export function createMCPCommand() {
         
       } catch (error) {
         spinner.fail('Failed to fetch MCP servers')
-        logger.error(error)
+        logger.error(error instanceof Error ? error.message : String(error))
         process.exit(1)
       }
     })
@@ -194,7 +192,7 @@ export function createMCPCommand() {
           }
           
           // Configure in Claude Code if possible
-          await configureInClaudeCode(server, method)
+          await configureInClaudeCode(server, method, { scope: 'local', envVars: [] })
           
           console.log('\n' + chalk.green('✓ MCP server installed successfully!'))
           
@@ -205,7 +203,7 @@ export function createMCPCommand() {
         
       } catch (error) {
         spinner.fail('Failed to add MCP server')
-        logger.error(error)
+        logger.error(error instanceof Error ? error.message : String(error))
         process.exit(1)
       }
     })
@@ -233,7 +231,7 @@ export function createMCPCommand() {
         console.log(chalk.gray('Note: You may need to manually remove the server configuration from your client'))
         
       } catch (error) {
-        logger.error('Failed to remove MCP server:', error)
+        logger.error(`Failed to remove MCP server: ${error instanceof Error ? error.message : String(error)}`)
         process.exit(1)
       }
     })
@@ -298,7 +296,7 @@ export function createMCPCommand() {
         
       } catch (error) {
         spinner.fail('Failed to fetch server info')
-        logger.error(error)
+        logger.error(error instanceof Error ? error.message : String(error))
         process.exit(1)
       }
     })
@@ -330,7 +328,7 @@ export function createMCPCommand() {
         
       } catch (error) {
         spinner.fail('Search failed')
-        logger.error(error)
+        logger.error(error instanceof Error ? error.message : String(error))
         process.exit(1)
       }
     })

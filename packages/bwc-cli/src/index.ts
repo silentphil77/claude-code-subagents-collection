@@ -13,6 +13,8 @@ import { createRemoveCommand } from './commands/remove.js'
 import { createInfoCommand } from './commands/info.js'
 import { createInstallCommand } from './commands/install.js'
 import { createMCPCommand } from './commands/mcp.js'
+import { createGenerateCommand } from './commands/generate.js'
+import { createContributeCommand } from './commands/contribute.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -35,6 +37,8 @@ program.addCommand(createRemoveCommand())
 program.addCommand(createInfoCommand())
 program.addCommand(createInstallCommand())
 program.addCommand(createMCPCommand())
+program.addCommand(createGenerateCommand())
+program.addCommand(createContributeCommand())
 
 // Parse command line arguments
 program.parse()

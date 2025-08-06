@@ -91,8 +91,7 @@ async function getMCPServers() {
         const bwcMethod = {
           type: 'bwc',
           recommended: true,
-          command: `bwc mcp add ${data.name || file.replace('.md', '')}`,
-          config_example: `# Install using BWC CLI\nbwc mcp add ${data.name || file.replace('.md', '')}\n\n# The BWC CLI will handle the configuration automatically`
+          command: `bwc add --mcp ${data.name || file.replace('.md', '')}`
         };
         
         // Check if BWC method already exists
@@ -116,7 +115,13 @@ async function getMCPServers() {
           installation_methods: installationMethods,
           tags: data.tags || [],
           file: `mcp-servers/${subdir}/${file}`,
-          path: `${subdir}/${file.replace('.md', '')}`
+          path: `${subdir}/${file.replace('.md', '')}`,
+          // Include user inputs if present
+          ...(data.user_inputs && { user_inputs: data.user_inputs }),
+          // Include source registry if present
+          ...(data.source_registry && { source_registry: data.source_registry }),
+          // Include config schema if present
+          ...(data.config_schema && { config_schema: data.config_schema })
         });
       }
     } catch (error) {

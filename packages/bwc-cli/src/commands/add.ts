@@ -4,9 +4,10 @@ import path from 'path'
 import { ConfigManager } from '../config/manager.js'
 import { RegistryClient } from '../registry/client.js'
 import { logger } from '../utils/logger.js'
-import { writeFile, fileExists } from '../utils/files.js'
+import { writeFile } from '../utils/files.js'
 import { installMCPServer, configureInClaudeCode } from '../utils/mcp-installer.js'
 import { addServerToMCPJson } from '../utils/mcp-json.js'
+import { UserInputHandler } from '../utils/user-input-handler.js'
 
 export function createAddCommand() {
   const add = new Command('add')
@@ -298,10 +299,19 @@ async function addMCPServer(
     }
     
     // Select installation method
-    let method = server.installation_methods.find(m => m.type === 'bwc')
-    if (!method) {
-      // Find the recommended method or use the first available
-      method = server.installation_methods.find(m => m.recommended) || server.installation_methods[0]
+    // Skip BWC method if server has user inputs (BWC method doesn't have config_example)
+    let method
+    if (server.user_inputs && server.user_inputs.length > 0) {
+      // Find the recommended non-BWC method or use the first available non-BWC method
+      method = server.installation_methods.find(m => m.type !== 'bwc' && m.recommended) || 
+               server.installation_methods.find(m => m.type !== 'bwc')
+    } else {
+      // Use BWC method if available
+      method = server.installation_methods.find(m => m.type === 'bwc')
+      if (!method) {
+        // Find the recommended method or use the first available
+        method = server.installation_methods.find(m => m.recommended) || server.installation_methods[0]
+      }
     }
     
     if (!method) {
@@ -309,8 +319,47 @@ async function addMCPServer(
       return
     }
     
+    // Check if server requires user inputs
+    let userInputs: Record<string, any> = {}
+    let updatedConfigExample = method.config_example
+    
+    if (server.user_inputs && server.user_inputs.length > 0) {
+      spinner.stop()
+      
+      // Collect user inputs
+      const inputHandler = new UserInputHandler()
+      userInputs = await inputHandler.collectInputs(server)
+      
+      // Validate inputs
+      const validation = await inputHandler.validateInputs(userInputs, server)
+      if (!validation.valid) {
+        logger.error('Invalid inputs:')
+        validation.errors.forEach(error => logger.error(`  - ${error}`))
+        throw new Error('Invalid configuration inputs')
+      }
+      
+      // Show summary
+      inputHandler.showInputSummary(userInputs, server)
+      
+      // Apply inputs to config
+      if (method.config_example) {
+        try {
+          const config = JSON.parse(method.config_example)
+          const updatedConfig = await inputHandler.applyInputsToConfig(config, userInputs, server)
+          updatedConfigExample = JSON.stringify(updatedConfig, null, 2)
+          
+          // Update the method with the new config
+          method = { ...method, config_example: updatedConfigExample }
+        } catch (error) {
+          logger.warn('Could not apply user inputs to config automatically')
+          logger.warn(`Error: ${error instanceof Error ? error.message : String(error)}`)
+        }
+      }
+      
+      spinner.start()
+    }
+    
     spinner.text = `Installing ${server.name} using ${method.type}...`
-    spinner.start()
     
     try {
       // Execute the actual installation
@@ -320,14 +369,14 @@ async function addMCPServer(
       
       // Handle different scopes
       if (options.scope === 'project') {
-        // For project scope, update .mcp.json
-        await addServerToMCPJson(server, method.config_example, options.envVars)
+        // For project scope, update .mcp.json with user inputs applied
+        await addServerToMCPJson(server, updatedConfigExample, options.envVars)
       }
       
       // Update BWC config to track installation
       await configManager.addInstalledMCPServer(server.name)
       
-      // Configure in Claude Code with appropriate scope
+      // Configure in Claude Code with appropriate scope and updated config
       await configureInClaudeCode(server, method, options)
       
       // Show scope-specific information
@@ -445,7 +494,7 @@ async function interactiveAddMCP(
           }
         }
       ])
-      envVars = envInput.split(' ').filter(e => e.includes('='))
+      envVars = envInput.split(' ').filter((e: string) => e.includes('='))
     }
   }
   

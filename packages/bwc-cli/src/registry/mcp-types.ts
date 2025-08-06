@@ -1,5 +1,41 @@
 import { z } from 'zod';
 
+// User Input Schema for MCP server configuration
+export const UserInputValidationSchema = z.object({
+  exists: z.boolean().optional(),
+  is_directory: z.boolean().optional(),
+  is_file: z.boolean().optional(),
+  pattern: z.string().optional(),
+  min: z.number().optional(),
+  max: z.number().optional(),
+  min_length: z.number().optional(),
+  max_length: z.number().optional(),
+  options: z.array(z.string()).optional(), // for select type
+});
+
+export const UserInputSchema = z.object({
+  name: z.string(),
+  display_name: z.string(),
+  type: z.enum(['path', 'string', 'boolean', 'number', 'url', 'select', 'password']),
+  description: z.string(),
+  required: z.boolean().default(true),
+  default: z.any().optional(),
+  placeholder: z.string().optional(),
+  validation: UserInputValidationSchema.optional(),
+  env_var: z.string().optional(),
+  arg_position: z.number().optional(),
+  config_path: z.string().optional(), // JSON path in config (e.g., "env.API_KEY")
+});
+
+// Source Registry Schema
+export const SourceRegistrySchema = z.object({
+  type: z.enum(['github', 'smithery', 'docker', 'manual', 'community']),
+  url: z.string().optional(),
+  id: z.string().optional(), // Registry-specific ID
+  last_fetched: z.string().optional(),
+  auto_update: z.boolean().default(true),
+});
+
 // MCP Server Security Schema
 export const MCPSecuritySchema = z.object({
   auth_type: z.enum(['none', 'oauth2', 'oauth2.1', 'api-key']),
@@ -71,9 +107,14 @@ export const MCPServerSchema = z.object({
   tags: z.array(z.string()).default([]),
   file: z.string(),
   path: z.string(),
+  user_inputs: z.array(UserInputSchema).optional(),
+  source_registry: SourceRegistrySchema.optional(),
 });
 
 // Type exports
+export type UserInputValidation = z.infer<typeof UserInputValidationSchema>;
+export type UserInput = z.infer<typeof UserInputSchema>;
+export type SourceRegistry = z.infer<typeof SourceRegistrySchema>;
 export type MCPSecurity = z.infer<typeof MCPSecuritySchema>;
 export type MCPVerification = z.infer<typeof MCPVerificationSchema>;
 export type MCPSources = z.infer<typeof MCPSourcesSchema>;
