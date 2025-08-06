@@ -298,17 +298,15 @@ async function addMCPServer(
       logger.warn('⚠️  This is an experimental server. Use with caution.')
     }
     
-    // Select installation method
-    // Skip BWC method if server has user inputs (BWC method doesn't have config_example)
-    let method
-    if (server.user_inputs && server.user_inputs.length > 0) {
-      // Find the recommended non-BWC method or use the first available non-BWC method
-      method = server.installation_methods.find(m => m.type !== 'bwc' && m.recommended) || 
-               server.installation_methods.find(m => m.type !== 'bwc')
-    } else {
-      // Use BWC method if available
-      method = server.installation_methods.find(m => m.type === 'bwc')
-      if (!method) {
+    // Select installation method - prefer claude-cli method
+    let method = server.installation_methods.find(m => m.type === 'claude-cli' && m.recommended)
+    if (!method) {
+      // Fall back to other methods
+      if (server.user_inputs && server.user_inputs.length > 0) {
+        // Find the recommended non-BWC method or use the first available non-BWC method
+        method = server.installation_methods.find(m => m.type !== 'bwc' && m.recommended) || 
+                 server.installation_methods.find(m => m.type !== 'bwc')
+      } else {
         // Find the recommended method or use the first available
         method = server.installation_methods.find(m => m.recommended) || server.installation_methods[0]
       }

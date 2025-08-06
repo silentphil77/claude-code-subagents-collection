@@ -10,8 +10,9 @@ export async function generateStaticParams() {
   }))
 }
 
-export default function MCPServerPage({ params }: { params: { slug: string } }) {
-  const server = getMCPServerBySlug(params.slug)
+export default async function MCPServerPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const server = getMCPServerBySlug(slug)
   
   if (!server) {
     notFound()

@@ -68,10 +68,10 @@ async function getCommands() {
 async function getMCPServers() {
   const mcpServers = [];
   
-  // Process all subdirectories (verified, community, experimental)
-  const subdirs = ['verified', 'community', 'experimental'];
+  // Process main MCP server directories
+  const mainSubdirs = ['verified', 'community', 'experimental'];
   
-  for (const subdir of subdirs) {
+  for (const subdir of mainSubdirs) {
     const dirPath = path.join(MCP_SERVERS_DIR, subdir);
     
     try {
@@ -108,6 +108,7 @@ async function getMCPServers() {
           description: data.description || '',
           server_type: data.server_type || 'stdio',
           protocol_version: data.protocol_version || '1.0.0',
+          execution_type: data.execution_type || 'local',
           verification: data.verification || { status: subdir },
           sources: data.sources || {},
           security: data.security || {},
@@ -118,6 +119,69 @@ async function getMCPServers() {
           path: `${subdir}/${file.replace('.md', '')}`,
           // Include user inputs if present
           ...(data.user_inputs && { user_inputs: data.user_inputs }),
+          // Include badges if present
+          ...(data.badges && { badges: data.badges }),
+          // Include source registry if present
+          ...(data.source_registry && { source_registry: data.source_registry }),
+          // Include config schema if present
+          ...(data.config_schema && { config_schema: data.config_schema })
+        });
+      }
+    } catch (error) {
+      // Directory might not exist yet
+      console.warn(`Warning: ${dirPath} not found, skipping...`);
+    }
+  }
+  
+  // Process auto-imported directories from root mcp-servers
+  const autoImportedDirs = ['auto-imported/github', 'auto-imported/docker', 'auto-imported/smithery', 'auto-imported/mcpmarket'];
+  
+  for (const subdir of autoImportedDirs) {
+    const dirPath = path.join(MCP_SERVERS_DIR, subdir);
+    
+    try {
+      const files = await fs.readdir(dirPath);
+      
+      for (const file of files) {
+        if (!file.endsWith('.md') || file === 'TEMPLATE.md') continue;
+        
+        const filePath = path.join(dirPath, file);
+        const content = await fs.readFile(filePath, 'utf-8');
+        const { data } = matter(content);
+        
+        // Add BWC installation method if not already present
+        const installationMethods = data.installation_methods || [];
+        
+        // Add BWC method as the first option
+        const bwcMethod = {
+          type: 'bwc',
+          recommended: true,
+          command: `bwc add --mcp ${data.name || file.replace('.md', '')}`
+        };
+        
+        // Check if BWC method already exists
+        const hasBwcMethod = installationMethods.some(m => m.type === 'bwc');
+        if (!hasBwcMethod) {
+          installationMethods.unshift(bwcMethod);
+        }
+        
+        // Add subdirectory info to the server data
+        mcpServers.push({
+          ...data,
+          installation_methods: installationMethods,
+          file: `mcp-servers/${subdir}/${file}`,
+          path: `mcp-servers/${subdir}/${file}`,
+          verification: data.verification || {
+            status: 'verified', // Auto-imported servers are considered verified
+            last_tested: new Date().toISOString().split('T')[0],
+            tested_with: data.verification?.tested_with || ['claude-3.5']
+          },
+          // Include execution type if present
+          ...(data.execution_type && { execution_type: data.execution_type }),
+          // Include user inputs if present
+          ...(data.user_inputs && { user_inputs: data.user_inputs }),
+          // Include badges if present
+          ...(data.badges && { badges: data.badges }),
           // Include source registry if present
           ...(data.source_registry && { source_registry: data.source_registry }),
           // Include config schema if present

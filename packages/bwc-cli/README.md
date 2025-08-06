@@ -224,6 +224,21 @@ Automate Claude Code setup in your pipelines:
   run: bwc install
 ```
 
+## MCP Servers
+
+### Adding MCP Servers
+
+BWC CLI supports Model Context Protocol (MCP) servers:
+
+```bash
+# Add an MCP server
+bwc add --mcp filesystem
+
+# List available MCP servers
+bwc list --mcp
+```
+
+
 ## Categories
 
 ### Subagent Categories

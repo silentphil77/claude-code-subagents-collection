@@ -29,11 +29,12 @@ export const UserInputSchema = z.object({
 
 // Source Registry Schema
 export const SourceRegistrySchema = z.object({
-  type: z.enum(['github', 'smithery', 'docker', 'manual', 'community']),
+  type: z.enum(['github', 'smithery', 'docker', 'mcpmarket', 'manual', 'community']),
   url: z.string().optional(),
   id: z.string().optional(), // Registry-specific ID
   last_fetched: z.string().optional(),
   auto_update: z.boolean().default(true),
+  verified_by: z.string().optional(), // Who verified this source
 });
 
 // MCP Server Security Schema
@@ -73,7 +74,7 @@ export const MCPStatsSchema = z.object({
 
 // MCP Installation Method Schema
 export const MCPInstallationMethodSchema = z.object({
-  type: z.enum(['docker', 'npm', 'manual', 'binary', 'bwc']),
+  type: z.enum(['docker', 'npm', 'manual', 'binary', 'bwc', 'claude-cli']),
   recommended: z.boolean().optional(),
   command: z.string().optional(),
   config_example: z.string().optional(),
@@ -86,6 +87,7 @@ export const MCPServerSchema = z.object({
   name: z.string(),
   display_name: z.string(),
   category: z.enum([
+    // Original categories (for backward compatibility)
     'databases',
     'file-systems',
     'apis',
@@ -93,11 +95,34 @@ export const MCPServerSchema = z.object({
     'development',
     'ai-tools',
     'productivity',
-    'web'
+    'web',
+    // New expanded categories
+    'web-search',
+    'browser-automation',
+    'memory-management',
+    'email-integration',
+    'blockchain-crypto',
+    'ai-task-management',
+    'developer-tools',
+    'api-development',
+    'version-control',
+    'database',
+    'file-system',
+    'cloud-infrastructure',
+    'content-management',
+    'social-media',
+    'research-education',
+    'media-generation',
+    'data-extraction',
+    'finance-trading',
+    'analytics',
+    'official',
+    'utilities'
   ]),
   description: z.string(),
-  server_type: z.enum(['stdio', 'streaming-http', 'websocket']),
+  server_type: z.enum(['stdio', 'streaming-http', 'websocket', 'sse', 'http']),
   protocol_version: z.string(),
+  execution_type: z.enum(['local', 'remote', 'hybrid']).optional(),
   security: MCPSecuritySchema,
   sources: MCPSourcesSchema,
   verification: MCPVerificationSchema,
@@ -105,6 +130,7 @@ export const MCPServerSchema = z.object({
   installation_methods: z.array(MCPInstallationMethodSchema),
   config_schema: z.any().optional(),
   tags: z.array(z.string()).default([]),
+  badges: z.array(z.string()).optional(), // Visual badges for display
   file: z.string(),
   path: z.string(),
   user_inputs: z.array(UserInputSchema).optional(),
@@ -163,45 +189,128 @@ export type SourceType = typeof SOURCE_PREFERENCE[number];
 
 // Category metadata
 export const MCP_CATEGORIES = {
-  databases: {
-    name: 'Databases',
-    icon: '🗄️',
-    description: 'Database connectors and data management',
+  // Primary Categories (from Smithery)
+  'web-search': {
+    name: 'Web Search',
+    icon: '🔍',
+    description: 'Search engines and web discovery',
   },
-  'file-systems': {
-    name: 'File Systems',
-    icon: '📁',
-    description: 'File and storage system access',
+  'browser-automation': {
+    name: 'Browser Automation',
+    icon: '🌐',
+    description: 'Browser control and web automation',
   },
-  apis: {
-    name: 'APIs',
-    icon: '🔌',
-    description: 'External API integrations',
+  'memory-management': {
+    name: 'Memory Management',
+    icon: '🧠',
+    description: 'Context and memory persistence',
   },
-  monitoring: {
-    name: 'Monitoring',
-    icon: '📊',
-    description: 'System monitoring and observability',
+  'email-integration': {
+    name: 'Email Integration',
+    icon: '📧',
+    description: 'Email clients and communication',
   },
-  development: {
-    name: 'Development',
-    icon: '🛠️',
-    description: 'Development tools and utilities',
+  'blockchain-crypto': {
+    name: 'Blockchain & Crypto',
+    icon: '₿',
+    description: 'Cryptocurrency and blockchain data',
   },
-  'ai-tools': {
-    name: 'AI Tools',
+  'ai-task-management': {
+    name: 'AI Task Management',
     icon: '🤖',
-    description: 'AI and machine learning integrations',
+    description: 'AI reasoning and task orchestration',
   },
+  
+  // Development Categories
+  'developer-tools': {
+    name: 'Developer Tools',
+    icon: '🛠️',
+    description: 'IDEs, terminals, and dev utilities',
+  },
+  'api-development': {
+    name: 'API Development',
+    icon: '🔌',
+    description: 'API integration and testing',
+  },
+  'version-control': {
+    name: 'Version Control',
+    icon: '📝',
+    description: 'Git and source control',
+  },
+  
+  // Data & Infrastructure
+  database: {
+    name: 'Database',
+    icon: '🗄️',
+    description: 'Database management and queries',
+  },
+  'file-system': {
+    name: 'File System',
+    icon: '📁',
+    description: 'File and document management',
+  },
+  'cloud-infrastructure': {
+    name: 'Cloud Infrastructure',
+    icon: '☁️',
+    description: 'Cloud platforms and services',
+  },
+  
+  // Productivity & Content
   productivity: {
     name: 'Productivity',
     icon: '📈',
-    description: 'Productivity and workflow tools',
+    description: 'Task and project management',
   },
-  web: {
-    name: 'Web',
-    icon: '🌐',
-    description: 'Web browsing and automation',
+  'content-management': {
+    name: 'Content Management',
+    icon: '📝',
+    description: 'Documents and content tools',
+  },
+  'social-media': {
+    name: 'Social Media',
+    icon: '💬',
+    description: 'Social platforms integration',
+  },
+  
+  // Specialized
+  'research-education': {
+    name: 'Research & Education',
+    icon: '📚',
+    description: 'Academic and learning resources',
+  },
+  'media-generation': {
+    name: 'Media Generation',
+    icon: '🎨',
+    description: 'Image, video, and content creation',
+  },
+  'data-extraction': {
+    name: 'Data Extraction',
+    icon: '📊',
+    description: 'Scraping and data processing',
+  },
+  'finance-trading': {
+    name: 'Finance & Trading',
+    icon: '💰',
+    description: 'Financial data and trading',
+  },
+  
+  // Analytics and monitoring (keeping for compatibility)
+  analytics: {
+    name: 'Analytics',
+    icon: '📊',
+    description: 'Analytics and monitoring tools',
+  },
+  
+  // Special
+  official: {
+    name: 'Official',
+    icon: '✅',
+    description: 'Official MCP servers',
+  },
+  utilities: {
+    name: 'Utilities',
+    icon: '🔧',
+    description: 'General tools and utilities',
   },
 } as const;
 
@@ -224,5 +333,64 @@ export const VERIFICATION_STATUS = {
     icon: '⚠️',
     color: 'yellow',
     description: 'New or untested - use with caution',
+  },
+} as const;
+
+// Source registry indicators
+export const SOURCE_INDICATORS = {
+  github: {
+    icon: '📦',
+    label: 'GitHub',
+    color: '#24292e',
+    description: 'Official MCP Repository',
+  },
+  smithery: {
+    icon: '🏪',
+    label: 'Smithery',
+    color: '#7c3aed',
+    description: 'Smithery.ai Registry',
+  },
+  docker: {
+    icon: '🐳',
+    label: 'Docker',
+    color: '#2496ed',
+    description: 'Docker Hub',
+  },
+  mcpmarket: {
+    icon: '🛒',
+    label: 'MCPMarket',
+    color: '#10b981',
+    description: 'MCP Market',
+  },
+  manual: {
+    icon: '🛠️',
+    label: 'Manual',
+    color: '#6b7280',
+    description: 'Manually Added',
+  },
+  community: {
+    icon: '👥',
+    label: 'Community',
+    color: '#f59e0b',
+    description: 'Community Contribution',
+  },
+} as const;
+
+// Execution type indicators
+export const EXECUTION_INDICATORS = {
+  local: {
+    icon: '🖥️',
+    label: 'Local',
+    description: 'Runs on your machine',
+  },
+  remote: {
+    icon: '☁️',
+    label: 'Remote',
+    description: 'Runs on external server',
+  },
+  hybrid: {
+    icon: '🔄',
+    label: 'Hybrid',
+    description: 'Can run locally or remotely',
   },
 } as const;

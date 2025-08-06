@@ -3,6 +3,7 @@ import chalk from 'chalk'
 import { ConfigManager } from '../config/manager.js'
 import { RegistryClient } from '../registry/client.js'
 import { logger } from '../utils/logger.js'
+import { SOURCE_INDICATORS, EXECUTION_INDICATORS } from '../registry/mcp-types.js'
 
 export function createListCommand() {
   const list = new Command('list')
@@ -168,8 +169,18 @@ async function listMCPServers(
         const installedMark = installed.includes(server.name) ? chalk.green(' ✓') : ''
         const verificationIcon = server.verification.status === 'verified' ? '✅' : 
                                server.verification.status === 'community' ? '👥' : '🧪'
+        
+        // Get source and execution indicators
+        const sourceInfo = server.source_registry ? SOURCE_INDICATORS[server.source_registry.type] : null
+        const sourceIcon = sourceInfo?.icon || '📦'
+        const sourceLabel = sourceInfo?.label || 'Unknown'
+        
+        const execInfo = server.execution_type ? EXECUTION_INDICATORS[server.execution_type] : EXECUTION_INDICATORS.local
+        const execIcon = execInfo.icon
+        const execLabel = execInfo.label
+        
         console.log(`  ${verificationIcon} ${chalk.bold(server.name)}${installedMark} - ${server.description}`)
-        console.log(`    ${chalk.gray(`Type: ${server.server_type}`)}`)
+        console.log(`    ${chalk.gray(`${sourceIcon} ${sourceLabel} | ${execIcon} ${execLabel} | Type: ${server.server_type}`)}`)
       }
     }
     

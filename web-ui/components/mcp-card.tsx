@@ -11,52 +11,27 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { Copy, Download, Check, Star, Package, Box, Terminal } from 'lucide-react'
-import { MCPServer, VERIFICATION_STATUS, getMCPCategoryDisplayName, getMCPCategoryIcon } from '@/lib/mcp-types'
-import { InstallationModalEnhanced } from './installation-modal-enhanced'
+import { Copy, Star, Package, Box } from 'lucide-react'
+import { 
+  MCPServer, 
+  VERIFICATION_STATUS, 
+  SOURCE_INDICATORS, 
+  EXECUTION_INDICATORS,
+  getMCPCategoryDisplayName, 
+  getMCPCategoryIcon 
+} from '@/lib/mcp-types'
+import { MCPInstallationModal } from './mcp-installation-modal'
 
 interface MCPCardProps {
   server: MCPServer
 }
 
 export function MCPCard({ server }: MCPCardProps) {
-  const [copied, setCopied] = useState(false)
   const [showInstallModal, setShowInstallModal] = useState(false)
   const verificationStatus = VERIFICATION_STATUS[server.verification.status]
   const categoryName = getMCPCategoryDisplayName(server.category)
   const categoryIcon = getMCPCategoryIcon(server.category)
   
-  const handleCopy = async (e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    
-    // Copy the first installation method config
-    const firstMethod = server.installation_methods[0]
-    if (firstMethod?.config_example) {
-      await navigator.clipboard.writeText(firstMethod.config_example)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    }
-  }
-  
-  const handleDownload = (e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    
-    // Create config file content
-    const firstMethod = server.installation_methods[0]
-    const configContent = firstMethod?.config_example || '// No configuration available'
-    
-    const blob = new Blob([configContent], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `mcp-${server.name}-config.json`
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
-  }
   
   // Generate href for the detail page
   const serverSlug = server.path.replace(/\//g, '-')
@@ -68,75 +43,77 @@ export function MCPCard({ server }: MCPCardProps) {
         <Card className="h-full hover:shadow-lg transition-all duration-200 border-muted hover:border-primary/50 group relative overflow-hidden">
           {/* Hover actions */}
           <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
-            <div className="flex gap-1">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={handleCopy}
-                    className="h-8 w-8 p-0"
-                  >
-                    {copied ? (
-                      <Check className="h-4 w-4 text-green-600" />
-                    ) : (
-                      <Copy className="h-4 w-4" />
-                    )}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{copied ? 'Copied!' : 'Copy configuration'}</p>
-                </TooltipContent>
-              </Tooltip>
-              
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={handleDownload}
-                    className="h-8 w-8 p-0"
-                  >
-                    <Download className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Download configuration</p>
-                </TooltipContent>
-              </Tooltip>
-              
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      setShowInstallModal(true)
-                    }}
-                    className="h-8 w-8 p-0"
-                  >
-                    <Terminal className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Install with BWC CLI</p>
-                </TooltipContent>
-              </Tooltip>
-            </div>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    setShowInstallModal(true)
+                  }}
+                  className="h-8 w-8 p-0"
+                >
+                  <Copy className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Copy installation config</p>
+              </TooltipContent>
+            </Tooltip>
           </div>
           
           <CardHeader>
             <div className="flex items-start justify-between mb-2">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-2xl">{categoryIcon}</span>
+                {/* Special badges */}
+                {server.badges?.includes('popular') && (
+                  <Badge variant="default" className="bg-orange-500 hover:bg-orange-600">
+                    🔥 Popular
+                  </Badge>
+                )}
+                {server.badges?.includes('featured') && (
+                  <Badge variant="default" className="bg-purple-500 hover:bg-purple-600">
+                    ⭐ Featured
+                  </Badge>
+                )}
+                {server.badges?.includes('trending') && (
+                  <Badge variant="default" className="bg-blue-500 hover:bg-blue-600">
+                    📈 Trending
+                  </Badge>
+                )}
                 <Badge 
                   variant="outline"
                   className={verificationStatus.className}
                 >
                   {verificationStatus.icon} {verificationStatus.label}
                 </Badge>
+                {server.execution_type && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Badge variant="secondary" className="text-xs">
+                        {EXECUTION_INDICATORS[server.execution_type].icon} {EXECUTION_INDICATORS[server.execution_type].label}
+                      </Badge>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{EXECUTION_INDICATORS[server.execution_type].description}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                )}
+                {server.source_registry && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Badge variant="outline" className="text-xs">
+                        {SOURCE_INDICATORS[server.source_registry.type]?.icon} {SOURCE_INDICATORS[server.source_registry.type]?.label}
+                      </Badge>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{SOURCE_INDICATORS[server.source_registry.type]?.description}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                )}
               </div>
             </div>
             
@@ -199,13 +176,32 @@ export function MCPCard({ server }: MCPCardProps) {
         </Card>
       </Link>
       
-      <InstallationModalEnhanced
+      <MCPInstallationModal
         isOpen={showInstallModal}
         onClose={() => setShowInstallModal(false)}
-        resourceType="mcp"
-        resourceName={server.name}
+        serverName={server.name}
         displayName={server.display_name}
-        markdownContent={`# ${server.display_name}\n\n${server.description}\n\n## Installation\n\n${server.installation_methods[0]?.command || ''}\n\n## Configuration\n\n\`\`\`json\n${server.installation_methods[0]?.config_example || ''}\n\`\`\``}
+        claudeCommand={(() => {
+          // Find claude-cli installation method
+          const claudeMethod = server.installation_methods.find(m => m.type === 'claude-cli')
+          return claudeMethod?.command
+        })()}
+        serverType={server.server_type}
+        jsonConfig={(() => {
+          // Find the first installation method with config_example
+          const methodWithConfig = server.installation_methods.find(m => m.config_example)
+          
+          // Return the config or generate default
+          return methodWithConfig?.config_example || JSON.stringify({
+            mcpServers: {
+              [server.name]: {
+                command: "npx",
+                args: ["-y", server.name],
+                env: {}
+              }
+            }
+          }, null, 2)
+        })()}
       />
     </TooltipProvider>
   )

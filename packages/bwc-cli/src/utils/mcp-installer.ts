@@ -210,61 +210,92 @@ export async function configureInClaudeCode(
   method: MCPInstallationMethod,
   options: MCPConfigOptions = { scope: 'local', envVars: [] }
 ): Promise<void> {
-  // If we used BWC method, get the actual installation method
-  const actualMethod = (method as any)._actualMethod || method
-  const configExample = actualMethod.config_example || method.config_example
-  
   const hasClaudeCLI = await isClaudeCLIAvailable()
   
-  if (hasClaudeCLI && configExample) {
+  if (!hasClaudeCLI) {
+    logger.warn('Claude CLI is not installed. Please install Claude Code first.')
+    logger.info('Visit https://claude.ai/download to install Claude Code')
+    showManualConfiguration(method.config_example || '')
+    return
+  }
+  
+  // Look for claude-cli installation method first
+  const claudeMethod = server.installation_methods.find(m => m.type === 'claude-cli')
+  if (claudeMethod && claudeMethod.command) {
     try {
-      const config = JSON.parse(configExample)
-      const serverConfig = config.mcpServers?.[server.name]
+      // Parse the command to extract parts
+      const commandParts = claudeMethod.command.split(' ')
+      const claudeIndex = commandParts.indexOf('claude')
+      const mcpIndex = commandParts.indexOf('mcp')
+      const addIndex = commandParts.indexOf('add')
       
-      if (serverConfig) {
-        // Use add-json command for more reliable configuration
-        const serverJson = JSON.stringify(serverConfig)
+      if (claudeIndex !== -1 && mcpIndex !== -1 && addIndex !== -1) {
+        // Build the command with user's options
+        const args = ['mcp', 'add']
         
-        // Build Claude CLI arguments
-        const args = ['mcp', 'add-json', '--scope', options.scope, server.name, serverJson]
+        // Add scope
+        args.push('--scope', options.scope)
         
-        // Add environment variables if provided
-        if (options.envVars.length > 0) {
-          for (const envVar of options.envVars) {
-            args.push('-e', envVar)
+        // Check for transport type (SSE/HTTP)
+        const transportIndex = commandParts.indexOf('--transport')
+        if (transportIndex !== -1 && commandParts[transportIndex + 1]) {
+          args.push('--transport', commandParts[transportIndex + 1])
+        }
+        
+        // Add environment variables
+        for (const envVar of options.envVars) {
+          args.push('--env', envVar)
+        }
+        
+        // Get server name and remaining args
+        let serverName = server.name
+        let remainingArgs: string[] = []
+        
+        // For SSE/HTTP servers, the URL is the last part
+        if (transportIndex !== -1) {
+          let urlIndex = addIndex + 1
+          while (urlIndex < commandParts.length && commandParts[urlIndex].startsWith('--')) {
+            urlIndex += 2 // Skip flag and its value
+          }
+          if (urlIndex < commandParts.length) {
+            serverName = commandParts[urlIndex]
+            if (urlIndex + 1 < commandParts.length) {
+              remainingArgs = commandParts.slice(urlIndex + 1)
+            }
+          }
+        } else {
+          // For stdio servers, everything after 'add' (except flags) goes to the command
+          const dashDashIndex = commandParts.indexOf('--')
+          if (dashDashIndex !== -1) {
+            serverName = commandParts[addIndex + 1]
+            remainingArgs = ['--', ...commandParts.slice(dashDashIndex + 1)]
           }
         }
         
-        logger.info('\nConfiguring in Claude Code...')
+        args.push(serverName, ...remainingArgs)
         
-        try {
-          const result = await execa('claude', args)
-          logger.success(`MCP server configured in Claude Code (${options.scope} scope)`)
-          
-          // Show the result if available
-          if (result.stdout) {
-            logger.info(result.stdout)
-          }
-        } catch (cliError: any) {
-          // Show the actual error from Claude CLI
-          logger.error(`Claude CLI error: ${cliError.message}`)
-          if (cliError.stderr) {
-            logger.error(cliError.stderr)
-          }
-          
-          // Fall back to manual configuration
-          logger.info('\nFalling back to manual configuration...')
-          showManualConfiguration(configExample)
+        logger.info('\nConfiguring MCP server with Claude Code...')
+        logger.info(`Running: claude ${args.join(' ')}`)
+        
+        const result = await execa('claude', args)
+        logger.success(`MCP server "${server.name}" configured successfully (${options.scope} scope)`)
+        
+        if (result.stdout) {
+          logger.info(result.stdout)
         }
       }
-    } catch (error) {
-      // If we can't parse the config, show manual instructions
-      logger.info('\nCould not parse configuration for automatic setup.')
-      showManualConfiguration(configExample)
+    } catch (error: any) {
+      logger.error(`Failed to configure with Claude CLI: ${error.message}`)
+      if (error.stderr) {
+        logger.error(error.stderr)
+      }
+      logger.info('\nFalling back to manual configuration...')
+      showManualConfiguration(method.config_example || '')
     }
   } else {
-    // Show manual configuration
-    showManualConfiguration(configExample || '')
+    // Fall back to old method if no claude-cli method available
+    logger.info('\nNo Claude CLI command available for this server.')
+    showManualConfiguration(method.config_example || '')
   }
 }
 

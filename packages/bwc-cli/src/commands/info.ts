@@ -5,6 +5,7 @@ import { ConfigManager } from '../config/manager.js'
 import { RegistryClient } from '../registry/client.js'
 import { logger } from '../utils/logger.js'
 import { readFile, fileExists } from '../utils/files.js'
+import { SOURCE_INDICATORS, EXECUTION_INDICATORS } from '../registry/mcp-types.js'
 
 export function createInfoCommand() {
   const info = new Command('info')
@@ -181,6 +182,26 @@ async function showMCPServerInfo(
     console.log(`  Server Type: ${server.server_type}`)
     console.log(`  Protocol Version: ${server.protocol_version}`)
     console.log(`  Verification: ${server.verification.status}`)
+    
+    // Display source and execution info
+    if (server.source_registry) {
+      const sourceInfo = SOURCE_INDICATORS[server.source_registry.type]
+      if (sourceInfo) {
+        console.log(`  Source: ${sourceInfo.icon} ${sourceInfo.label}`)
+      }
+    }
+    
+    if (server.execution_type) {
+      const execInfo = EXECUTION_INDICATORS[server.execution_type]
+      if (execInfo) {
+        console.log(`  Execution: ${execInfo.icon} ${execInfo.label} - ${execInfo.description}`)
+      }
+    }
+    
+    // Display badges if available
+    if (server.badges && server.badges.length > 0) {
+      console.log(`  Badges: ${server.badges.join(', ')}`)
+    }
     
     // Display security info
     if (server.security) {

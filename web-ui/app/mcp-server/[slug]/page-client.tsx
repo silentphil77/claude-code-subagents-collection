@@ -9,7 +9,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { 
   MCPServer, 
-  VERIFICATION_STATUS, 
+  VERIFICATION_STATUS,
+  SOURCE_INDICATORS,
+  EXECUTION_INDICATORS, 
   getMCPCategoryDisplayName, 
   getMCPCategoryIcon 
 } from '@/lib/mcp-types'
@@ -62,6 +64,16 @@ export default function MCPServerPageClient({ server }: MCPServerPageClientProps
             <Badge variant="secondary">{categoryName}</Badge>
             <Badge variant="outline">Protocol v{server.protocol_version}</Badge>
             <Badge variant="outline">{server.server_type}</Badge>
+            {server.execution_type && (
+              <Badge variant="secondary">
+                {EXECUTION_INDICATORS[server.execution_type].icon} {EXECUTION_INDICATORS[server.execution_type].label}
+              </Badge>
+            )}
+            {server.source_registry && (
+              <Badge variant="outline">
+                {SOURCE_INDICATORS[server.source_registry.type]?.icon} {SOURCE_INDICATORS[server.source_registry.type]?.label}
+              </Badge>
+            )}
           </div>
         </div>
         
@@ -162,6 +174,31 @@ export default function MCPServerPageClient({ server }: MCPServerPageClientProps
                   </span>
                   <ExternalLink className="h-4 w-4" />
                 </a>
+              )}
+              {server.source_registry?.url && (
+                <div className="pt-2 mt-2 border-t">
+                  <a 
+                    href={server.source_registry.url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between hover:text-primary transition-colors"
+                  >
+                    <span className="flex items-center gap-2">
+                      {SOURCE_INDICATORS[server.source_registry.type]?.icon} 
+                      Source: {SOURCE_INDICATORS[server.source_registry.type]?.label}
+                    </span>
+                    <ExternalLink className="h-4 w-4" />
+                  </a>
+                  {server.source_registry.last_fetched && (
+                    <div className="text-xs text-muted-foreground mt-1">
+                      Last fetched: {new Date(server.source_registry.last_fetched).toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: '2-digit', 
+                        day: '2-digit' 
+                      })}
+                    </div>
+                  )}
+                </div>
               )}
             </CardContent>
           </Card>
