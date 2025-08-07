@@ -3,6 +3,7 @@ import chalk from 'chalk'
 import { ConfigManager } from '../config/manager.js'
 import { RegistryClient } from '../registry/client.js'
 import { logger } from '../utils/logger.js'
+import { checkDockerMCPStatus, searchDockerMCPServers, listInstalledDockerMCPServers } from '../utils/docker-mcp.js'
 
 export function createSearchCommand() {
   const search = new Command('search')
@@ -117,28 +118,57 @@ async function searchMCPServers(
   const spinner = logger.spinner(`Searching MCP servers for "${query}"...`)
   
   try {
-    const servers = await registryClient.searchMCPServers(query)
-    const installed = await configManager.getInstalledMCPServers()
+    // Check if Docker MCP is available
+    const dockerStatus = await checkDockerMCPStatus()
     
-    spinner.stop()
-    
-    if (servers.length === 0) {
-      logger.info(`No MCP servers found matching "${query}"`)
-      return
-    }
-    
-    logger.heading(`MCP servers matching "${query}" (${servers.length} results)`)
-    
-    for (const server of servers) {
-      const installedMark = installed.includes(server.name) ? chalk.green(' ✓') : ''
-      const verificationIcon = server.verification.status === 'verified' ? '✅' : 
-                             server.verification.status === 'community' ? '👥' : '🧪'
-      console.log(`\n${verificationIcon} ${chalk.bold(server.name)}${installedMark}`)
-      console.log(`  ${server.description}`)
-      console.log(`  ${chalk.gray(`Category: ${server.category}`)}`)
-      console.log(`  ${chalk.gray(`Type: ${server.server_type}`)}`)
-      if (server.tags && server.tags.length > 0) {
-        console.log(`  ${chalk.gray(`Tags: ${server.tags.join(', ')}`)}`)
+    if (dockerStatus.dockerInstalled && dockerStatus.mcpToolkitAvailable) {
+      // Use Docker MCP search
+      const results = await searchDockerMCPServers(query)
+      const installed = await listInstalledDockerMCPServers()
+      
+      spinner.stop()
+      
+      if (results.length === 0) {
+        logger.info(`No MCP servers found matching "${query}"`)
+        return
+      }
+      
+      logger.heading(`Docker MCP servers matching "${query}" (${results.length} results)`)
+      
+      for (const server of results) {
+        const installedMark = installed.includes(server.name) ? chalk.green(' ✓') : ''
+        console.log(`\n${chalk.bold(server.name)}${installedMark}`)
+        console.log(`  ${server.description}`)
+        if (installed.includes(server.name)) {
+          console.log(`  ${chalk.green('Status: Installed and enabled in Docker MCP')}`)
+        }
+      }
+    } else {
+      // Fallback to registry search (for backwards compatibility)
+      const servers = await registryClient.searchMCPServers(query)
+      const installed = await configManager.getInstalledMCPServers()
+      
+      spinner.stop()
+      
+      if (servers.length === 0) {
+        logger.info(`No MCP servers found matching "${query}"`)
+        logger.info('Docker MCP is not available. Install Docker and enable MCP Toolkit for more servers.')
+        return
+      }
+      
+      logger.heading(`MCP servers matching "${query}" (${servers.length} results)`)
+      
+      for (const server of servers) {
+        const installedMark = installed.includes(server.name) ? chalk.green(' ✓') : ''
+        const verificationIcon = server.verification.status === 'verified' ? '✅' : 
+                               server.verification.status === 'community' ? '👥' : '🧪'
+        console.log(`\n${verificationIcon} ${chalk.bold(server.name)}${installedMark}`)
+        console.log(`  ${server.description}`)
+        console.log(`  ${chalk.gray(`Category: ${server.category}`)}`)
+        console.log(`  ${chalk.gray(`Type: ${server.server_type}`)}`)
+        if (server.tags && server.tags.length > 0) {
+          console.log(`  ${chalk.gray(`Tags: ${server.tags.join(', ')}`)}`)
+        }
       }
     }
   } catch (error) {

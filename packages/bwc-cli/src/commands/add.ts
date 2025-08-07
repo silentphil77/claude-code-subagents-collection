@@ -8,6 +8,15 @@ import { writeFile } from '../utils/files.js'
 import { installMCPServer, configureInClaudeCode } from '../utils/mcp-installer.js'
 import { addServerToMCPJson } from '../utils/mcp-json.js'
 import { UserInputHandler } from '../utils/user-input-handler.js'
+import { 
+  isDockerMCPAvailable, 
+  enableDockerMCPServer, 
+  getDockerMCPServerInfo,
+  checkDockerMCPStatus,
+  setupDockerMCPGateway,
+  listAvailableDockerMCPServers,
+  listInstalledDockerMCPServers
+} from '../utils/docker-mcp.js'
 
 export function createAddCommand() {
   const add = new Command('add')
@@ -18,6 +27,8 @@ export function createAddCommand() {
     .option('-g, --global', 'force global installation (for subagents/commands)')
     .option('-s, --scope <scope>', 'configuration scope for MCP servers: local, user, or project (default: "local")')
     .option('-e, --env <env...>', 'set environment variables for MCP servers (e.g. -e KEY=value)')
+    .option('--setup', 'setup Docker MCP gateway in Claude Code')
+    .option('--docker-mcp', 'use Docker MCP Toolkit for MCP servers')
     .action(async (options) => {
       try {
         const configManager = new ConfigManager()
@@ -28,6 +39,12 @@ export function createAddCommand() {
         
         if (isProject && !options.global) {
           logger.info('Installing to project configuration')
+        }
+
+        // Handle Docker MCP setup
+        if (options.setup) {
+          await setupDockerMCPGatewayCommand(options.scope || 'project')
+          return
         }
 
         if (options.agent) {
@@ -42,10 +59,15 @@ export function createAddCommand() {
             throw new Error(`Invalid scope: ${scope}. Must be one of: ${validScopes.join(', ')}`)
           }
           
-          await addMCPServer(options.mcp, configManager, registryClient, {
-            scope,
-            envVars: options.env || []
-          })
+          // Check if we should use Docker MCP
+          if (options.dockerMcp || await shouldUseDockerMCP()) {
+            await addDockerMCPServer(options.mcp, configManager)
+          } else {
+            await addMCPServer(options.mcp, configManager, registryClient, {
+              scope,
+              envVars: options.env || []
+            })
+          }
         } else {
           await interactiveAdd(configManager, registryClient)
         }
@@ -404,7 +426,14 @@ async function interactiveAddMCP(
   configManager: ConfigManager, 
   registryClient: RegistryClient
 ): Promise<void> {
-  // First ask for scope
+  // Check if we should use Docker MCP
+  if (await shouldUseDockerMCP()) {
+    // Use Docker MCP interactive mode
+    await interactiveAddDockerMCP(configManager)
+    return
+  }
+  
+  // Original interactive MCP add logic (fallback for non-Docker)
   const { scope } = await inquirer.prompt([
     {
       type: 'list',
@@ -516,5 +545,136 @@ async function interactiveAddMCP(
   }
   if (failureCount > 0) {
     logger.warn(`Failed to install ${failureCount} MCP server(s)`)
+  }
+}
+
+// Helper functions for Docker MCP integration
+async function setupDockerMCPGatewayCommand(scope: string): Promise<void> {
+  logger.heading('Setting up Docker MCP Gateway')
+  
+  try {
+    await setupDockerMCPGateway(scope as 'local' | 'project' | 'user')
+    
+    logger.success('\n✅ Docker MCP gateway configured!')
+    logger.info('\nNext steps:')
+    logger.info('1. Restart Claude Code to activate the gateway')
+    logger.info('2. Run "bwc add --mcp <server-name>" to add servers')
+    logger.info('3. Or run "bwc add" for interactive mode')
+  } catch (error: any) {
+    logger.error(`Failed to setup gateway: ${error.message}`)
+  }
+}
+
+async function shouldUseDockerMCP(): Promise<boolean> {
+  // Check if Docker MCP is available and preferred
+  const status = await checkDockerMCPStatus()
+  return status.dockerInstalled && status.mcpToolkitAvailable
+}
+
+async function addDockerMCPServer(name: string, configManager: ConfigManager): Promise<void> {
+  const spinner = logger.spinner(`Adding Docker MCP server: ${name}`)
+  
+  try {
+    // Check if server exists in catalog
+    const info = await getDockerMCPServerInfo(name)
+    
+    if (!info) {
+      spinner.fail(`Server "${name}" not found in Docker MCP catalog`)
+      logger.info('Run "bwc list --mcps" to see available servers')
+      return
+    }
+    
+    spinner.stop()
+    logger.info(`\n📦 ${name}`)
+    logger.info(`   ${info}`)
+    
+    // Check if already installed
+    const installed = await listInstalledDockerMCPServers()
+    if (installed.includes(name)) {
+      logger.warn(`Server "${name}" is already installed`)
+      return
+    }
+    
+    // Enable the server
+    spinner.start(`Enabling ${name} in Docker MCP Toolkit...`)
+    await enableDockerMCPServer(name)
+    
+    // Update BWC config to track it
+    await configManager.addInstalledMCPServer(name)
+    
+    spinner.succeed(`Server "${name}" added successfully!`)
+    
+    logger.info('\n✅ The server is now available through the Docker MCP gateway')
+    logger.info('   Try using it in Claude Code!')
+    
+  } catch (error: any) {
+    spinner.fail(`Failed to add server "${name}"`)
+    logger.error(error.message)
+  }
+}
+
+async function interactiveAddDockerMCP(configManager: ConfigManager): Promise<void> {
+  logger.heading('Add Docker MCP Servers')
+  
+  const spinner = logger.spinner('Fetching available servers...')
+  
+  try {
+    const available = await listAvailableDockerMCPServers()
+    const installed = await listInstalledDockerMCPServers()
+    
+    spinner.stop()
+    
+    if (available.length === 0) {
+      logger.warn('No servers available in Docker MCP catalog')
+      return
+    }
+    
+    // Filter out already installed servers
+    const notInstalled = available.filter(s => !installed.includes(s))
+    
+    if (notInstalled.length === 0) {
+      logger.info('All available servers are already installed!')
+      logger.info(`Installed servers: ${installed.join(', ')}`)
+      return
+    }
+    
+    logger.info(`Found ${available.length} servers (${installed.length} installed)`)
+    logger.info('Use SPACE to select, ENTER to confirm')
+    
+    const { selected } = await inquirer.prompt([{
+      type: 'checkbox',
+      name: 'selected',
+      message: 'Select servers to install:',
+      choices: notInstalled.map(name => ({
+        name: name,
+        value: name,
+        checked: false
+      })),
+      pageSize: 15,
+      validate: (answer: string[]) => {
+        if (answer.length < 1) {
+          return 'You must select at least one server!'
+        }
+        return true
+      }
+    }])
+    
+    if (!selected || selected.length === 0) {
+      logger.warn('No servers selected')
+      return
+    }
+    
+    logger.info(`\nInstalling ${selected.length} server(s)...`)
+    
+    for (const name of selected) {
+      await addDockerMCPServer(name, configManager)
+    }
+    
+    logger.success('\n🎉 All selected servers have been added!')
+    logger.info('They are now available through the Docker MCP gateway in Claude Code')
+    
+  } catch (error: any) {
+    spinner.fail('Failed to fetch servers')
+    logger.error(error.message)
   }
 }

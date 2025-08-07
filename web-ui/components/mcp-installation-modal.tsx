@@ -31,16 +31,16 @@ export function MCPInstallationModal({
   claudeCommand,
   serverType
 }: MCPInstallationModalProps) {
-  const [copiedCommand, setCopiedCommand] = useState(false)
+  const [copiedBWC, setCopiedBWC] = useState(false)
   const [copiedJSON, setCopiedJSON] = useState(false)
   const [copiedClaude, setCopiedClaude] = useState(false)
   
   const bwcCommand = `bwc add --mcp ${serverName}`
   
-  const handleCopyCommand = async () => {
+  const handleCopyBWC = async () => {
     await navigator.clipboard.writeText(bwcCommand)
-    setCopiedCommand(true)
-    setTimeout(() => setCopiedCommand(false), 2000)
+    setCopiedBWC(true)
+    setTimeout(() => setCopiedBWC(false), 2000)
   }
   
   const handleCopyJSON = async () => {
@@ -67,71 +67,70 @@ export function MCPInstallationModal({
           </DialogDescription>
         </DialogHeader>
         
-        <Tabs defaultValue={claudeCommand ? "claude" : "json"} className="flex-1 flex flex-col">
-          <TabsList className={`grid w-full ${claudeCommand ? 'grid-cols-2' : 'grid-cols-1'}`}>
-            {claudeCommand && (
-              <TabsTrigger value="claude" className="flex items-center gap-2">
-                <Terminal className="h-4 w-4" />
-                Claude Code
-              </TabsTrigger>
-            )}
+        <Tabs defaultValue="bwc" className="flex-1 flex flex-col">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="bwc" className="flex items-center gap-2">
+              <Terminal className="h-4 w-4" />
+              BWC CLI
+            </TabsTrigger>
             <TabsTrigger value="json" className="flex items-center gap-2">
               <FileJson className="h-4 w-4" />
               Manual Config
             </TabsTrigger>
           </TabsList>
           
-          {claudeCommand && (
-            <TabsContent value="claude" className="flex-1 overflow-auto space-y-4">
-              <div className="space-y-3">
-                <div className="space-y-2">
-                  <p className="text-sm text-muted-foreground">
-                    Install this MCP server using Claude Code CLI:
-                  </p>
-                  {serverType && (
-                    <div className="text-xs text-muted-foreground">
-                      Server type: <span className="font-semibold">{serverType}</span>
-                    </div>
-                  )}
-                </div>
-                
-                <div className="flex items-center justify-between p-3 bg-muted rounded-lg font-mono text-sm">
-                  <span className="break-all">{claudeCommand}</span>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={handleCopyClaude}
-                    className="ml-2 flex-shrink-0"
-                  >
-                    {copiedClaude ? (
-                      <Check className="h-4 w-4 text-green-600" />
-                    ) : (
-                      <Copy className="h-4 w-4" />
-                    )}
-                  </Button>
-                </div>
-                
-                <div className="space-y-2 text-xs text-muted-foreground">
-                  <p>This command will:</p>
-                  <ul className="list-disc list-inside space-y-1 ml-2">
-                    <li>Install the MCP server to your Claude Code configuration</li>
-                    <li>Make it available in your Claude conversations</li>
-                    {serverType === 'sse' && <li>Connect to the remote server via Server-Sent Events</li>}
-                    {serverType === 'stdio' && <li>Run the server locally on your machine</li>}
-                  </ul>
-                </div>
-                
-                <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-950 rounded-lg text-xs">
-                  <p className="font-semibold mb-1">Prerequisites:</p>
-                  <ul className="list-disc list-inside space-y-1 ml-2">
-                    <li>Claude Code must be installed</li>
-                    {serverType === 'stdio' && <li>Node.js and npm must be installed</li>}
-                    <li>Run the command in your terminal</li>
-                  </ul>
-                </div>
+          <TabsContent value="bwc" className="flex-1 overflow-auto space-y-4">
+            <div className="space-y-3">
+              <div className="space-y-2">
+                <p className="text-sm text-muted-foreground">
+                  Install this MCP server using BWC CLI:
+                </p>
               </div>
-            </TabsContent>
-          )}
+              
+              <div className="flex items-center justify-between p-3 bg-muted rounded-lg font-mono text-sm">
+                <span className="break-all">{bwcCommand}</span>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={handleCopyBWC}
+                  className="ml-2 flex-shrink-0"
+                >
+                  {copiedBWC ? (
+                    <Check className="h-4 w-4 text-green-600" />
+                  ) : (
+                    <Copy className="h-4 w-4" />
+                  )}
+                </Button>
+              </div>
+              
+              <div className="space-y-2 text-xs text-muted-foreground">
+                <p>This command will:</p>
+                <ul className="list-disc list-inside space-y-1 ml-2">
+                  <li>Enable the MCP server in Docker MCP Toolkit</li>
+                  <li>Make it available through the Docker MCP gateway</li>
+                  <li>Allow Claude Code to access the server</li>
+                </ul>
+              </div>
+              
+              <div className="mt-4 p-3 bg-secondary/50 rounded-lg text-sm">
+                <p className="font-semibold mb-2 text-foreground">Prerequisites:</p>
+                <ul className="list-disc list-inside space-y-1 ml-2 text-muted-foreground">
+                  <li>BWC CLI must be installed: <code className="bg-muted px-1.5 py-0.5 rounded text-xs font-mono">npm install -g @bwc/cli</code></li>
+                  <li>Docker Desktop with MCP Toolkit enabled</li>
+                  <li>Docker MCP gateway configured: <code className="bg-muted px-1.5 py-0.5 rounded text-xs font-mono">bwc add --setup</code></li>
+                </ul>
+              </div>
+              
+              <div className="mt-4 p-3 bg-secondary/50 rounded-lg text-sm">
+                <p className="font-semibold mb-2 text-foreground">Quick Start:</p>
+                <ol className="list-decimal list-inside space-y-1 ml-2 text-muted-foreground">
+                  <li><code className="bg-muted px-1.5 py-0.5 rounded text-xs font-mono">npm install -g @bwc/cli</code></li>
+                  <li><code className="bg-muted px-1.5 py-0.5 rounded text-xs font-mono">bwc add --setup</code></li>
+                  <li><code className="bg-muted px-1.5 py-0.5 rounded text-xs font-mono">{bwcCommand}</code></li>
+                </ol>
+              </div>
+            </div>
+          </TabsContent>
           
           <TabsContent value="json" className="flex-1 overflow-auto">
             <div className="space-y-3">

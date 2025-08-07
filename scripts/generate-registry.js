@@ -3,6 +3,7 @@
 const fs = require('fs').promises;
 const path = require('path');
 const matter = require('gray-matter');
+const { fetchDockerMCPServers } = require('./fetch-docker-mcp');
 
 const REPO_ROOT = path.join(__dirname, '..');
 const SUBAGENTS_DIR = path.join(REPO_ROOT, 'subagents');
@@ -114,11 +115,23 @@ async function generateRegistry() {
   try {
     console.log('Generating registry.json...');
     
-    const [subagents, commands, mcpServers] = await Promise.all([
+    const [subagents, commands, mcpServers, dockerMCPServers] = await Promise.all([
       getSubagents(),
       getCommands(),
-      getMCPServers()
+      getMCPServers(),
+      fetchDockerMCPServers()
     ]);
+
+    // Merge Docker MCP servers with existing MCP servers
+    const allMCPServers = [...mcpServers, ...dockerMCPServers];
+    
+    // Remove duplicates based on server name
+    const uniqueServers = allMCPServers.reduce((acc, server) => {
+      if (!acc.find(s => s.name === server.name)) {
+        acc.push(server);
+      }
+      return acc;
+    }, []);
 
     const registry = {
       $schema: 'https://buildwithclaude.com/schema/registry.json',
@@ -126,7 +139,7 @@ async function generateRegistry() {
       lastUpdated: new Date().toISOString(),
       subagents,
       commands,
-      mcpServers
+      mcpServers: uniqueServers.sort((a, b) => a.name.localeCompare(b.name))
     };
 
     // Ensure the public directory exists
@@ -138,7 +151,7 @@ async function generateRegistry() {
     console.log(`✓ Registry generated successfully!`);
     console.log(`  - ${subagents.length} subagents`);
     console.log(`  - ${commands.length} commands`);
-    console.log(`  - ${mcpServers.length} MCP servers`);
+    console.log(`  - ${uniqueServers.length} MCP servers (${dockerMCPServers.length} from Docker MCP)`);
     console.log(`  - Output: ${OUTPUT_PATH}`);
   } catch (error) {
     console.error('Error generating registry:', error);

@@ -11,3 +11,5 @@ bwc.config.json
 .env.local
 .env.*.local
 scripts/mcp-importers/.env
+.mcp.json
+docs

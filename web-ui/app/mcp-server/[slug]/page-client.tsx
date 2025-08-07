@@ -268,6 +268,17 @@ export default function MCPServerPageClient({ server }: MCPServerPageClientProps
                     </div>
                   )}
                   
+                  {method.type === 'bwc' && (
+                    <div className="space-y-2">
+                      <p className="text-sm text-muted-foreground">This command will:</p>
+                      <ul className="list-disc list-inside space-y-1 ml-2 text-sm text-muted-foreground">
+                        <li>Enable the MCP server in Docker MCP Toolkit</li>
+                        <li>Make it available through the Docker MCP gateway</li>
+                        <li>Allow Claude Code to access the server</li>
+                      </ul>
+                    </div>
+                  )}
+                  
                   {method.config_example && (
                     <div>
                       <div className="flex items-center justify-between mb-2">

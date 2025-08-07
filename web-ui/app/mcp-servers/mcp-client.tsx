@@ -293,9 +293,6 @@ export default function MCPPageClient({
               <TabsTrigger value="remote">
                 {EXECUTION_INDICATORS.remote.icon} Remote
               </TabsTrigger>
-              <TabsTrigger value="hybrid">
-                {EXECUTION_INDICATORS.hybrid.icon} Hybrid
-              </TabsTrigger>
             </TabsList>
           </Tabs>
           
@@ -303,12 +300,6 @@ export default function MCPPageClient({
           <Tabs value={selectedSource} onValueChange={setSelectedSource}>
             <TabsList>
               <TabsTrigger value="all">All Sources</TabsTrigger>
-              <TabsTrigger value="github">
-                {SOURCE_INDICATORS.github.icon} GitHub
-              </TabsTrigger>
-              <TabsTrigger value="smithery">
-                {SOURCE_INDICATORS.smithery.icon} Smithery
-              </TabsTrigger>
               <TabsTrigger value="docker">
                 {SOURCE_INDICATORS.docker.icon} Docker
               </TabsTrigger>

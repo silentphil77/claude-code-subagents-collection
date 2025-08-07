@@ -6,6 +6,7 @@ import { ConfigManager } from '../config/manager.js'
 import { logger } from '../utils/logger.js'
 import { deleteFile, fileExists } from '../utils/files.js'
 import { removeServerFromMCPJson } from '../utils/mcp-json.js'
+import { checkDockerMCPStatus, disableDockerMCPServer, listInstalledDockerMCPServers } from '../utils/docker-mcp.js'
 
 export function createRemoveCommand() {
   const remove = new Command('remove')
@@ -135,6 +136,19 @@ async function removeMCPServer(
   configManager: ConfigManager,
   skipConfirmation: boolean
 ): Promise<void> {
+  // Check if Docker MCP is available
+  const dockerStatus = await checkDockerMCPStatus()
+  
+  if (dockerStatus.dockerInstalled && dockerStatus.mcpToolkitAvailable) {
+    // Check if it's a Docker MCP server
+    const dockerInstalled = await listInstalledDockerMCPServers()
+    if (dockerInstalled.includes(name)) {
+      await removeDockerMCPServer(name, configManager, skipConfirmation)
+      return
+    }
+  }
+  
+  // Fallback to regular removal
   const installed = await configManager.getInstalledMCPServers()
   
   if (!installed.includes(name)) {
@@ -176,6 +190,44 @@ async function removeMCPServer(
     logger.info(chalk.gray('Note: You may need to manually remove the server from Claude Code using "claude mcp remove"'))
   } catch (error) {
     spinner.fail('Failed to remove MCP server')
+    throw error
+  }
+}
+
+async function removeDockerMCPServer(
+  name: string,
+  configManager: ConfigManager,
+  skipConfirmation: boolean
+): Promise<void> {
+  if (!skipConfirmation) {
+    const { confirm } = await inquirer.prompt([
+      {
+        type: 'confirm',
+        name: 'confirm',
+        message: `Are you sure you want to remove Docker MCP server "${name}"?`,
+        default: false
+      }
+    ])
+    
+    if (!confirm) {
+      logger.info('Removal cancelled')
+      return
+    }
+  }
+  
+  const spinner = logger.spinner(`Removing Docker MCP server: ${name}`)
+  
+  try {
+    // Disable the server in Docker MCP
+    await disableDockerMCPServer(name)
+    
+    // Remove from BWC config
+    await configManager.removeInstalledMCPServer(name)
+    
+    spinner.succeed(`Successfully removed Docker MCP server: ${name}`)
+    logger.info('The server has been disabled in Docker MCP Toolkit')
+  } catch (error) {
+    spinner.fail('Failed to remove Docker MCP server')
     throw error
   }
 }

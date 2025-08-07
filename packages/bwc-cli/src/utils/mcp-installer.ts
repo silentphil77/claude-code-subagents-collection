@@ -2,6 +2,7 @@ import { execa } from 'execa'
 import { MCPServer, MCPInstallationMethod } from '../registry/types.js'
 import { logger } from './logger.js'
 import chalk from 'chalk'
+import { execClaudeCLI, isClaudeCLIAvailable } from './claude-cli.js'
 
 /**
  * Install an MCP server based on the installation method
@@ -186,15 +187,11 @@ async function installBwcServer(
 }
 
 /**
- * Check if Claude CLI is available for MCP configuration
+ * Check if Claude Code is available (exports from claude-cli.ts)
+ * Re-exporting for backward compatibility
  */
-export async function isClaudeCLIAvailable(): Promise<boolean> {
-  try {
-    await execa('claude', ['--version'])
-    return true
-  } catch {
-    return false
-  }
+export async function isClaudeCodeAvailable(): Promise<boolean> {
+  return isClaudeCLIAvailable()
 }
 
 /**
@@ -210,7 +207,7 @@ export async function configureInClaudeCode(
   method: MCPInstallationMethod,
   options: MCPConfigOptions = { scope: 'local', envVars: [] }
 ): Promise<void> {
-  const hasClaudeCLI = await isClaudeCLIAvailable()
+  const hasClaudeCLI = await isClaudeCodeAvailable()
   
   if (!hasClaudeCLI) {
     logger.warn('Claude CLI is not installed. Please install Claude Code first.')
@@ -277,7 +274,7 @@ export async function configureInClaudeCode(
         logger.info('\nConfiguring MCP server with Claude Code...')
         logger.info(`Running: claude ${args.join(' ')}`)
         
-        const result = await execa('claude', args)
+        const result = await execClaudeCLI(args)
         logger.success(`MCP server "${server.name}" configured successfully (${options.scope} scope)`)
         
         if (result.stdout) {

@@ -181,11 +181,6 @@ export function MCPCard({ server }: MCPCardProps) {
         onClose={() => setShowInstallModal(false)}
         serverName={server.name}
         displayName={server.display_name}
-        claudeCommand={(() => {
-          // Find claude-cli installation method
-          const claudeMethod = server.installation_methods.find(m => m.type === 'claude-cli')
-          return claudeMethod?.command
-        })()}
         serverType={server.server_type}
         jsonConfig={(() => {
           // Find the first installation method with config_example

@@ -11,9 +11,7 @@ import { fileURLToPath } from 'url'
 import { dirname } from 'path'
 import dotenv from 'dotenv'
 import { program } from 'commander'
-import { GitHubFetcher } from './registry-fetchers/github.js'
-import { SmitheryFetcher } from './registry-fetchers/smithery.js'
-import { DockerHubFetcher } from './registry-fetchers/docker.js'
+import { DockerMCPFetcher } from './registry-fetchers/docker-mcp.js'
 import { generateMarkdown } from './utils/markdown-generator.js'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -25,8 +23,8 @@ dotenv.config({ path: path.join(__dirname, '.env') })
 // Configure CLI
 program
   .name('fetch-from-registries')
-  .description('Fetch MCP servers from registries and generate markdown files')
-  .option('-r, --registry <registry>', 'Registry to fetch from (all, github, smithery, docker, mcpmarket)', 'all')
+  .description('Fetch Docker MCP servers from registry and generate markdown files')
+  .option('-r, --registry <registry>', 'Registry to fetch from (docker-mcp)', 'docker-mcp')
   .option('-o, --output <path>', 'Output directory', '../../mcp-servers')
   .option('--limit <number>', 'Limit number of servers to fetch', '0')
   .option('--dry-run', 'Preview without writing files')
@@ -34,12 +32,9 @@ program
 
 const options = program.opts()
 
-// Registry fetchers
+// Registry fetcher - now only Docker MCP
 const fetchers = {
-  github: new GitHubFetcher(),
-  smithery: new SmitheryFetcher(process.env.SMITHERY_API_KEY),
-  docker: new DockerHubFetcher(),
-  // mcpmarket: new MCPMarketFetcher(), // TODO: Implement when API is available
+  'docker-mcp': new DockerMCPFetcher()
 }
 
 async function ensureDir(dirPath) {

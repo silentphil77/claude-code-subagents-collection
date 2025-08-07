@@ -5,7 +5,7 @@ export interface MCPServer {
   description: string
   server_type: 'stdio' | 'http' | 'websocket' | 'sse' | 'streaming-http'
   protocol_version: string
-  execution_type?: 'local' | 'remote' | 'hybrid'
+  execution_type?: 'local' | 'remote'
   verification: MCPVerification
   sources: MCPSources
   security?: MCPSecurity
@@ -49,7 +49,7 @@ export interface MCPStats {
 }
 
 export interface MCPInstallationMethod {
-  type: 'docker' | 'npm' | 'manual' | 'binary' | 'bwc' | 'claude-cli'
+  type: 'docker' | 'npm' | 'manual' | 'binary' | 'bwc' | 'claude-cli' | 'docker-mcp'
   recommended?: boolean
   command?: string
   config_example?: string
@@ -226,7 +226,7 @@ export function getVerificationBadge(status: VerificationStatus) {
 
 // Source registry metadata
 export interface SourceRegistry {
-  type: 'github' | 'smithery' | 'docker' | 'mcpmarket' | 'manual' | 'community'
+  type: 'docker' | 'mcpmarket' | 'manual' | 'community'
   url?: string
   id?: string
   last_fetched?: string
@@ -258,18 +258,6 @@ export interface UserInput {
 
 // Source registry indicators
 export const SOURCE_INDICATORS = {
-  github: {
-    icon: '📦',
-    label: 'GitHub',
-    color: '#24292e',
-    description: 'Official MCP Repository',
-  },
-  smithery: {
-    icon: '🏪',
-    label: 'Smithery',
-    color: '#7c3aed',
-    description: 'Smithery.ai Registry',
-  },
   docker: {
     icon: '🐳',
     label: 'Docker',
@@ -310,13 +298,15 @@ export const EXECUTION_INDICATORS = {
     color: '#3b82f6',
     description: 'Runs on external server',
   },
-  hybrid: {
-    icon: '🔄',
-    label: 'Hybrid',
-    color: '#a855f7',
-    description: 'Can run locally or remotely',
-  },
 } as const
 
 export type SourceRegistryType = keyof typeof SOURCE_INDICATORS
 export type ExecutionType = keyof typeof EXECUTION_INDICATORS
+
+// Docker MCP Category type
+export interface DockerMCPCategory {
+  id: string
+  name: string
+  icon: string
+  description: string
+}
