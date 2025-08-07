@@ -102,6 +102,8 @@ Provide:
 
 #### System Prompt Sections
 
+> **Note on Formatting**: Section headers can be written with or without bold formatting. Both `**When invoked:**` and `When invoked:` are acceptable. Choose the style that best fits your documentation preferences.
+
 1. **Opening Statement** (Required):
    - Start with "You are a..."
    - Define expertise in one sentence
