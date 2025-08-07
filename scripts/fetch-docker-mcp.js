@@ -154,6 +154,11 @@ async function fetchDockerMCPServers() {
           docker: `https://hub.docker.com/r/mcp/${name.toLowerCase()}`,
           official: `https://hub.docker.com/r/mcp/${name.toLowerCase()}`
         },
+        security: {
+          auth_type: 'none',
+          permissions: [],
+          resource_indicators: false
+        },
         source_registry: {
           type: 'docker',
           url: `https://hub.docker.com/r/mcp/${name.toLowerCase()}`,
@@ -224,6 +229,11 @@ function getMockDockerServers() {
     sources: {
       docker: `https://hub.docker.com/r/mcp/${server.name.toLowerCase()}`,
       official: `https://hub.docker.com/r/mcp/${server.name.toLowerCase()}`
+    },
+    security: {
+      auth_type: 'none',
+      permissions: [],
+      resource_indicators: false
     },
     source_registry: {
       type: 'docker',

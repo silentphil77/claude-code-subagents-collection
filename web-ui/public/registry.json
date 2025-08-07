@@ -1,7 +1,7 @@
 {
   "$schema": "https://buildwithclaude.com/schema/registry.json",
   "version": "1.0.0",
-  "lastUpdated": "2025-08-07T13:34:54.795Z",
+  "lastUpdated": "2025-08-07T14:09:51.200Z",
   "subagents": [
     {
       "name": "academic-research-synthesizer",
@@ -1642,11 +1642,16 @@
         "docker": "https://hub.docker.com/r/mcp/arxiv-mcp-server",
         "official": "https://hub.docker.com/r/mcp/arxiv-mcp-server"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/arxiv-mcp-server",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.793Z"
+        "last_fetched": "2025-08-07T14:09:51.197Z"
       },
       "installation_methods": [
         {
@@ -1696,11 +1701,16 @@
         "docker": "https://hub.docker.com/r/mcp/astra-db",
         "official": "https://hub.docker.com/r/mcp/astra-db"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/astra-db",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.793Z"
+        "last_fetched": "2025-08-07T14:09:51.197Z"
       },
       "installation_methods": [
         {
@@ -1749,11 +1759,16 @@
         "docker": "https://hub.docker.com/r/mcp/atlan",
         "official": "https://hub.docker.com/r/mcp/atlan"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/atlan",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.793Z"
+        "last_fetched": "2025-08-07T14:09:51.198Z"
       },
       "installation_methods": [
         {
@@ -1802,11 +1817,16 @@
         "docker": "https://hub.docker.com/r/mcp/atlas-docs",
         "official": "https://hub.docker.com/r/mcp/atlas-docs"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/atlas-docs",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.793Z"
+        "last_fetched": "2025-08-07T14:09:51.198Z"
       },
       "installation_methods": [
         {
@@ -1853,11 +1873,16 @@
         "docker": "https://hub.docker.com/r/mcp/atlassian",
         "official": "https://hub.docker.com/r/mcp/atlassian"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/atlassian",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.793Z"
+        "last_fetched": "2025-08-07T14:09:51.198Z"
       },
       "installation_methods": [
         {
@@ -1904,11 +1929,16 @@
         "docker": "https://hub.docker.com/r/mcp/audiense-insights",
         "official": "https://hub.docker.com/r/mcp/audiense-insights"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/audiense-insights",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.793Z"
+        "last_fetched": "2025-08-07T14:09:51.198Z"
       },
       "installation_methods": [
         {
@@ -1955,11 +1985,16 @@
         "docker": "https://hub.docker.com/r/mcp/aws-cdk-mcp-server",
         "official": "https://hub.docker.com/r/mcp/aws-cdk-mcp-server"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/aws-cdk-mcp-server",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.793Z"
+        "last_fetched": "2025-08-07T14:09:51.198Z"
       },
       "installation_methods": [
         {
@@ -2009,11 +2044,16 @@
         "docker": "https://hub.docker.com/r/mcp/aws-core-mcp-server",
         "official": "https://hub.docker.com/r/mcp/aws-core-mcp-server"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/aws-core-mcp-server",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.793Z"
+        "last_fetched": "2025-08-07T14:09:51.198Z"
       },
       "installation_methods": [
         {
@@ -2062,11 +2102,16 @@
         "docker": "https://hub.docker.com/r/mcp/aws-diagram",
         "official": "https://hub.docker.com/r/mcp/aws-diagram"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/aws-diagram",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.793Z"
+        "last_fetched": "2025-08-07T14:09:51.198Z"
       },
       "installation_methods": [
         {
@@ -2116,11 +2161,16 @@
         "docker": "https://hub.docker.com/r/mcp/aws-documentation",
         "official": "https://hub.docker.com/r/mcp/aws-documentation"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/aws-documentation",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.793Z"
+        "last_fetched": "2025-08-07T14:09:51.198Z"
       },
       "installation_methods": [
         {
@@ -2170,11 +2220,16 @@
         "docker": "https://hub.docker.com/r/mcp/aws-kb-retrieval-server",
         "official": "https://hub.docker.com/r/mcp/aws-kb-retrieval-server"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/aws-kb-retrieval-server",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.793Z"
+        "last_fetched": "2025-08-07T14:09:51.198Z"
       },
       "installation_methods": [
         {
@@ -2223,11 +2278,16 @@
         "docker": "https://hub.docker.com/r/mcp/aws-terraform",
         "official": "https://hub.docker.com/r/mcp/aws-terraform"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/aws-terraform",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.794Z"
+        "last_fetched": "2025-08-07T14:09:51.198Z"
       },
       "installation_methods": [
         {
@@ -2277,11 +2337,16 @@
         "docker": "https://hub.docker.com/r/mcp/beagle-security",
         "official": "https://hub.docker.com/r/mcp/beagle-security"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/beagle-security",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.794Z"
+        "last_fetched": "2025-08-07T14:09:51.198Z"
       },
       "installation_methods": [
         {
@@ -2332,11 +2397,16 @@
         "docker": "https://hub.docker.com/r/mcp/bitrefill",
         "official": "https://hub.docker.com/r/mcp/bitrefill"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/bitrefill",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.794Z"
+        "last_fetched": "2025-08-07T14:09:51.198Z"
       },
       "installation_methods": [
         {
@@ -2387,11 +2457,16 @@
         "docker": "https://hub.docker.com/r/mcp/box",
         "official": "https://hub.docker.com/r/mcp/box"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/box",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.794Z"
+        "last_fetched": "2025-08-07T14:09:51.198Z"
       },
       "installation_methods": [
         {
@@ -2440,11 +2515,16 @@
         "docker": "https://hub.docker.com/r/mcp/brave",
         "official": "https://hub.docker.com/r/mcp/brave"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/brave",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.794Z"
+        "last_fetched": "2025-08-07T14:09:51.198Z"
       },
       "installation_methods": [
         {
@@ -2494,11 +2574,16 @@
         "docker": "https://hub.docker.com/r/mcp/buildkite",
         "official": "https://hub.docker.com/r/mcp/buildkite"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/buildkite",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.794Z"
+        "last_fetched": "2025-08-07T14:09:51.198Z"
       },
       "installation_methods": [
         {
@@ -2545,11 +2630,16 @@
         "docker": "https://hub.docker.com/r/mcp/cdata-connectcloud",
         "official": "https://hub.docker.com/r/mcp/cdata-connectcloud"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/cdata-connectcloud",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.794Z"
+        "last_fetched": "2025-08-07T14:09:51.198Z"
       },
       "installation_methods": [
         {
@@ -2596,11 +2686,16 @@
         "docker": "https://hub.docker.com/r/mcp/chroma",
         "official": "https://hub.docker.com/r/mcp/chroma"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/chroma",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.794Z"
+        "last_fetched": "2025-08-07T14:09:51.198Z"
       },
       "installation_methods": [
         {
@@ -2649,11 +2744,16 @@
         "docker": "https://hub.docker.com/r/mcp/circleci",
         "official": "https://hub.docker.com/r/mcp/circleci"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/circleci",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.794Z"
+        "last_fetched": "2025-08-07T14:09:51.198Z"
       },
       "installation_methods": [
         {
@@ -2702,11 +2802,16 @@
         "docker": "https://hub.docker.com/r/mcp/clickhouse",
         "official": "https://hub.docker.com/r/mcp/clickhouse"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/clickhouse",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.794Z"
+        "last_fetched": "2025-08-07T14:09:51.198Z"
       },
       "installation_methods": [
         {
@@ -2753,11 +2858,16 @@
         "docker": "https://hub.docker.com/r/mcp/cockroachdb",
         "official": "https://hub.docker.com/r/mcp/cockroachdb"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/cockroachdb",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.794Z"
+        "last_fetched": "2025-08-07T14:09:51.198Z"
       },
       "installation_methods": [
         {
@@ -2807,11 +2917,16 @@
         "docker": "https://hub.docker.com/r/mcp/context7",
         "official": "https://hub.docker.com/r/mcp/context7"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/context7",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.794Z"
+        "last_fetched": "2025-08-07T14:09:51.198Z"
       },
       "installation_methods": [
         {
@@ -2860,11 +2975,16 @@
         "docker": "https://hub.docker.com/r/mcp/couchbase",
         "official": "https://hub.docker.com/r/mcp/couchbase"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/couchbase",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.794Z"
+        "last_fetched": "2025-08-07T14:09:51.198Z"
       },
       "installation_methods": [
         {
@@ -2914,11 +3034,16 @@
         "docker": "https://hub.docker.com/r/mcp/curl",
         "official": "https://hub.docker.com/r/mcp/curl"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/curl",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.794Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -2965,11 +3090,16 @@
         "docker": "https://hub.docker.com/r/mcp/cyreslab-ai-shodan",
         "official": "https://hub.docker.com/r/mcp/cyreslab-ai-shodan"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/cyreslab-ai-shodan",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.794Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -3019,11 +3149,16 @@
         "docker": "https://hub.docker.com/r/mcp/dappier",
         "official": "https://hub.docker.com/r/mcp/dappier"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/dappier",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.794Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -3073,11 +3208,16 @@
         "docker": "https://hub.docker.com/r/mcp/dart",
         "official": "https://hub.docker.com/r/mcp/dart"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/dart",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.794Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -3126,11 +3266,16 @@
         "docker": "https://hub.docker.com/r/mcp/databutton",
         "official": "https://hub.docker.com/r/mcp/databutton"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/databutton",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.794Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -3177,11 +3322,16 @@
         "docker": "https://hub.docker.com/r/mcp/descope",
         "official": "https://hub.docker.com/r/mcp/descope"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/descope",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.794Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -3231,11 +3381,16 @@
         "docker": "https://hub.docker.com/r/mcp/desktop-commander",
         "official": "https://hub.docker.com/r/mcp/desktop-commander"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/desktop-commander",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.794Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -3285,11 +3440,16 @@
         "docker": "https://hub.docker.com/r/mcp/devhub-cms",
         "official": "https://hub.docker.com/r/mcp/devhub-cms"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/devhub-cms",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.794Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -3336,11 +3496,16 @@
         "docker": "https://hub.docker.com/r/mcp/docker",
         "official": "https://hub.docker.com/r/mcp/docker"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/docker",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.794Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -3389,11 +3554,16 @@
         "docker": "https://hub.docker.com/r/mcp/dockerhub",
         "official": "https://hub.docker.com/r/mcp/dockerhub"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/dockerhub",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.794Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -3442,11 +3612,16 @@
         "docker": "https://hub.docker.com/r/mcp/duckduckgo",
         "official": "https://hub.docker.com/r/mcp/duckduckgo"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/duckduckgo",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.794Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -3495,11 +3670,16 @@
         "docker": "https://hub.docker.com/r/mcp/e2b",
         "official": "https://hub.docker.com/r/mcp/e2b"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/e2b",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.794Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -3546,11 +3726,16 @@
         "docker": "https://hub.docker.com/r/mcp/edubase",
         "official": "https://hub.docker.com/r/mcp/edubase"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/edubase",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.794Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -3597,11 +3782,16 @@
         "docker": "https://hub.docker.com/r/mcp/elasticsearch",
         "official": "https://hub.docker.com/r/mcp/elasticsearch"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/elasticsearch",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.794Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -3650,11 +3840,16 @@
         "docker": "https://hub.docker.com/r/mcp/elevenlabs",
         "official": "https://hub.docker.com/r/mcp/elevenlabs"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/elevenlabs",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.794Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -3703,11 +3898,16 @@
         "docker": "https://hub.docker.com/r/mcp/everart",
         "official": "https://hub.docker.com/r/mcp/everart"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/everart",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.794Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -3756,11 +3956,16 @@
         "docker": "https://hub.docker.com/r/mcp/exa",
         "official": "https://hub.docker.com/r/mcp/exa"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/exa",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.794Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -3810,11 +4015,16 @@
         "docker": "https://hub.docker.com/r/mcp/fetch",
         "official": "https://hub.docker.com/r/mcp/fetch"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/fetch",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.794Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -3861,11 +4071,16 @@
         "docker": "https://hub.docker.com/r/mcp/ffmpeg",
         "official": "https://hub.docker.com/r/mcp/ffmpeg"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/ffmpeg",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.794Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -3912,11 +4127,16 @@
         "docker": "https://hub.docker.com/r/mcp/fibery",
         "official": "https://hub.docker.com/r/mcp/fibery"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/fibery",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.794Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -3963,11 +4183,16 @@
         "docker": "https://hub.docker.com/r/mcp/filesystem",
         "official": "https://hub.docker.com/r/mcp/filesystem"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/filesystem",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.794Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -4014,11 +4239,16 @@
         "docker": "https://hub.docker.com/r/mcp/firecrawl",
         "official": "https://hub.docker.com/r/mcp/firecrawl"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/firecrawl",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.794Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -4067,11 +4297,16 @@
         "docker": "https://hub.docker.com/r/mcp/firewalla-mcp-server",
         "official": "https://hub.docker.com/r/mcp/firewalla-mcp-server"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/firewalla-mcp-server",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.794Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -4121,11 +4356,16 @@
         "docker": "https://hub.docker.com/r/mcp/flexprice",
         "official": "https://hub.docker.com/r/mcp/flexprice"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/flexprice",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.794Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -4172,11 +4412,16 @@
         "docker": "https://hub.docker.com/r/mcp/git",
         "official": "https://hub.docker.com/r/mcp/git"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/git",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -4223,11 +4468,16 @@
         "docker": "https://hub.docker.com/r/mcp/github",
         "official": "https://hub.docker.com/r/mcp/github"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/github",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -4278,11 +4528,16 @@
         "docker": "https://hub.docker.com/r/mcp/github-chat",
         "official": "https://hub.docker.com/r/mcp/github-chat"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/github-chat",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -4332,11 +4587,16 @@
         "docker": "https://hub.docker.com/r/mcp/github-official",
         "official": "https://hub.docker.com/r/mcp/github-official"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/github-official",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -4387,11 +4647,16 @@
         "docker": "https://hub.docker.com/r/mcp/gitlab",
         "official": "https://hub.docker.com/r/mcp/gitlab"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/gitlab",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -4440,11 +4705,16 @@
         "docker": "https://hub.docker.com/r/mcp/glif",
         "official": "https://hub.docker.com/r/mcp/glif"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/glif",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -4493,11 +4763,16 @@
         "docker": "https://hub.docker.com/r/mcp/google-maps",
         "official": "https://hub.docker.com/r/mcp/google-maps"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/google-maps",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -4546,11 +4821,16 @@
         "docker": "https://hub.docker.com/r/mcp/grafana",
         "official": "https://hub.docker.com/r/mcp/grafana"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/grafana",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -4597,11 +4877,16 @@
         "docker": "https://hub.docker.com/r/mcp/gyazo",
         "official": "https://hub.docker.com/r/mcp/gyazo"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/gyazo",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -4648,11 +4933,16 @@
         "docker": "https://hub.docker.com/r/mcp/hackle",
         "official": "https://hub.docker.com/r/mcp/hackle"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/hackle",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -4699,11 +4989,16 @@
         "docker": "https://hub.docker.com/r/mcp/handwriting-ocr",
         "official": "https://hub.docker.com/r/mcp/handwriting-ocr"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/handwriting-ocr",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -4750,11 +5045,16 @@
         "docker": "https://hub.docker.com/r/mcp/heroku",
         "official": "https://hub.docker.com/r/mcp/heroku"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/heroku",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -4801,11 +5101,16 @@
         "docker": "https://hub.docker.com/r/mcp/hostinger-mcp-server",
         "official": "https://hub.docker.com/r/mcp/hostinger-mcp-server"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/hostinger-mcp-server",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -4854,11 +5159,16 @@
         "docker": "https://hub.docker.com/r/mcp/hoverfly-mcp-server",
         "official": "https://hub.docker.com/r/mcp/hoverfly-mcp-server"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/hoverfly-mcp-server",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -4909,11 +5219,16 @@
         "docker": "https://hub.docker.com/r/mcp/husqvarna-automower",
         "official": "https://hub.docker.com/r/mcp/husqvarna-automower"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/husqvarna-automower",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -4960,11 +5275,16 @@
         "docker": "https://hub.docker.com/r/mcp/hyperbrowser",
         "official": "https://hub.docker.com/r/mcp/hyperbrowser"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/hyperbrowser",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -5011,11 +5331,16 @@
         "docker": "https://hub.docker.com/r/mcp/hyperspell",
         "official": "https://hub.docker.com/r/mcp/hyperspell"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/hyperspell",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -5062,11 +5387,16 @@
         "docker": "https://hub.docker.com/r/mcp/iaptic",
         "official": "https://hub.docker.com/r/mcp/iaptic"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/iaptic",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -5113,11 +5443,16 @@
         "docker": "https://hub.docker.com/r/mcp/inspektor-gadget",
         "official": "https://hub.docker.com/r/mcp/inspektor-gadget"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/inspektor-gadget",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -5167,11 +5502,16 @@
         "docker": "https://hub.docker.com/r/mcp/jetbrains",
         "official": "https://hub.docker.com/r/mcp/jetbrains"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/jetbrains",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -5220,11 +5560,16 @@
         "docker": "https://hub.docker.com/r/mcp/kagisearch",
         "official": "https://hub.docker.com/r/mcp/kagisearch"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/kagisearch",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -5273,11 +5618,16 @@
         "docker": "https://hub.docker.com/r/mcp/keboola-mcp",
         "official": "https://hub.docker.com/r/mcp/keboola-mcp"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/keboola-mcp",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -5326,11 +5676,16 @@
         "docker": "https://hub.docker.com/r/mcp/kong",
         "official": "https://hub.docker.com/r/mcp/kong"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/kong",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -5380,11 +5735,16 @@
         "docker": "https://hub.docker.com/r/mcp/kubernetes",
         "official": "https://hub.docker.com/r/mcp/kubernetes"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/kubernetes",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -5433,11 +5793,16 @@
         "docker": "https://hub.docker.com/r/mcp/lara",
         "official": "https://hub.docker.com/r/mcp/lara"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/lara",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -5486,11 +5851,16 @@
         "docker": "https://hub.docker.com/r/mcp/line",
         "official": "https://hub.docker.com/r/mcp/line"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/line",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -5541,11 +5911,16 @@
         "docker": "https://hub.docker.com/r/mcp/linkedin-mcp-server",
         "official": "https://hub.docker.com/r/mcp/linkedin-mcp-server"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/linkedin-mcp-server",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -5595,11 +5970,16 @@
         "docker": "https://hub.docker.com/r/mcp/mcp-api-gateway",
         "official": "https://hub.docker.com/r/mcp/mcp-api-gateway"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/mcp-api-gateway",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -5649,11 +6029,16 @@
         "docker": "https://hub.docker.com/r/mcp/mcp-discord",
         "official": "https://hub.docker.com/r/mcp/mcp-discord"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/mcp-discord",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -5700,11 +6085,16 @@
         "docker": "https://hub.docker.com/r/mcp/memory",
         "official": "https://hub.docker.com/r/mcp/memory"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/memory",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -5751,11 +6141,16 @@
         "docker": "https://hub.docker.com/r/mcp/metabase",
         "official": "https://hub.docker.com/r/mcp/metabase"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/metabase",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -5802,11 +6197,16 @@
         "docker": "https://hub.docker.com/r/mcp/minecraft-wiki",
         "official": "https://hub.docker.com/r/mcp/minecraft-wiki"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/minecraft-wiki",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -5853,11 +6253,16 @@
         "docker": "https://hub.docker.com/r/mcp/mongodb",
         "official": "https://hub.docker.com/r/mcp/mongodb"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/mongodb",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -5906,11 +6311,16 @@
         "docker": "https://hub.docker.com/r/mcp/multiversx-mx",
         "official": "https://hub.docker.com/r/mcp/multiversx-mx"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/multiversx-mx",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -5957,11 +6367,16 @@
         "docker": "https://hub.docker.com/r/mcp/nasdaq-data-link",
         "official": "https://hub.docker.com/r/mcp/nasdaq-data-link"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/nasdaq-data-link",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.199Z"
       },
       "installation_methods": [
         {
@@ -6010,11 +6425,16 @@
         "docker": "https://hub.docker.com/r/mcp/needle-mcp",
         "official": "https://hub.docker.com/r/mcp/needle-mcp"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/needle-mcp",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -6063,11 +6483,16 @@
         "docker": "https://hub.docker.com/r/mcp/neo4j-cloud-aura-api",
         "official": "https://hub.docker.com/r/mcp/neo4j-cloud-aura-api"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/neo4j-cloud-aura-api",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -6117,11 +6542,16 @@
         "docker": "https://hub.docker.com/r/mcp/neo4j-cypher",
         "official": "https://hub.docker.com/r/mcp/neo4j-cypher"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/neo4j-cypher",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -6168,11 +6598,16 @@
         "docker": "https://hub.docker.com/r/mcp/neo4j-memory",
         "official": "https://hub.docker.com/r/mcp/neo4j-memory"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/neo4j-memory",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -6221,11 +6656,16 @@
         "docker": "https://hub.docker.com/r/mcp/neon",
         "official": "https://hub.docker.com/r/mcp/neon"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/neon",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -6275,11 +6715,16 @@
         "docker": "https://hub.docker.com/r/mcp/node-code-sandbox",
         "official": "https://hub.docker.com/r/mcp/node-code-sandbox"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/node-code-sandbox",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -6330,11 +6775,16 @@
         "docker": "https://hub.docker.com/r/mcp/notion",
         "official": "https://hub.docker.com/r/mcp/notion"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/notion",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -6381,11 +6831,16 @@
         "docker": "https://hub.docker.com/r/mcp/novita",
         "official": "https://hub.docker.com/r/mcp/novita"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/novita",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -6434,11 +6889,16 @@
         "docker": "https://hub.docker.com/r/mcp/npm-sentinel",
         "official": "https://hub.docker.com/r/mcp/npm-sentinel"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/npm-sentinel",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -6487,11 +6947,16 @@
         "docker": "https://hub.docker.com/r/mcp/obsidian",
         "official": "https://hub.docker.com/r/mcp/obsidian"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/obsidian",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -6540,11 +7005,16 @@
         "docker": "https://hub.docker.com/r/mcp/okta-mcp-fctr",
         "official": "https://hub.docker.com/r/mcp/okta-mcp-fctr"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/okta-mcp-fctr",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -6594,11 +7064,16 @@
         "docker": "https://hub.docker.com/r/mcp/omi",
         "official": "https://hub.docker.com/r/mcp/omi"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/omi",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -6647,11 +7122,16 @@
         "docker": "https://hub.docker.com/r/mcp/onlyoffice-docspace",
         "official": "https://hub.docker.com/r/mcp/onlyoffice-docspace"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/onlyoffice-docspace",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -6698,11 +7178,16 @@
         "docker": "https://hub.docker.com/r/mcp/openapi-schema",
         "official": "https://hub.docker.com/r/mcp/openapi-schema"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/openapi-schema",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -6751,11 +7236,16 @@
         "docker": "https://hub.docker.com/r/mcp/openbnb-airbnb",
         "official": "https://hub.docker.com/r/mcp/openbnb-airbnb"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/openbnb-airbnb",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -6805,11 +7295,16 @@
         "docker": "https://hub.docker.com/r/mcp/openweather",
         "official": "https://hub.docker.com/r/mcp/openweather"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/openweather",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -6858,11 +7353,16 @@
         "docker": "https://hub.docker.com/r/mcp/opik",
         "official": "https://hub.docker.com/r/mcp/opik"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/opik",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -6911,11 +7411,16 @@
         "docker": "https://hub.docker.com/r/mcp/osp_marketing_tools",
         "official": "https://hub.docker.com/r/mcp/osp_marketing_tools"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/osp_marketing_tools",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -6962,11 +7467,16 @@
         "docker": "https://hub.docker.com/r/mcp/oxylabs",
         "official": "https://hub.docker.com/r/mcp/oxylabs"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/oxylabs",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -7016,11 +7526,16 @@
         "docker": "https://hub.docker.com/r/mcp/paper-search",
         "official": "https://hub.docker.com/r/mcp/paper-search"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/paper-search",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -7069,11 +7584,16 @@
         "docker": "https://hub.docker.com/r/mcp/perplexity-ask",
         "official": "https://hub.docker.com/r/mcp/perplexity-ask"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/perplexity-ask",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -7123,11 +7643,16 @@
         "docker": "https://hub.docker.com/r/mcp/pinecone",
         "official": "https://hub.docker.com/r/mcp/pinecone"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/pinecone",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -7174,11 +7699,16 @@
         "docker": "https://hub.docker.com/r/mcp/playwright",
         "official": "https://hub.docker.com/r/mcp/playwright"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/playwright",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -7225,11 +7755,16 @@
         "docker": "https://hub.docker.com/r/mcp/playwright-mcp-server",
         "official": "https://hub.docker.com/r/mcp/playwright-mcp-server"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/playwright-mcp-server",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -7278,11 +7813,16 @@
         "docker": "https://hub.docker.com/r/mcp/pluggedin-mcp-proxy",
         "official": "https://hub.docker.com/r/mcp/pluggedin-mcp-proxy"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/pluggedin-mcp-proxy",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -7331,11 +7871,16 @@
         "docker": "https://hub.docker.com/r/mcp/postgres",
         "official": "https://hub.docker.com/r/mcp/postgres"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/postgres",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -7384,11 +7929,16 @@
         "docker": "https://hub.docker.com/r/mcp/pref-editor",
         "official": "https://hub.docker.com/r/mcp/pref-editor"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/pref-editor",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -7435,11 +7985,16 @@
         "docker": "https://hub.docker.com/r/mcp/pulumi",
         "official": "https://hub.docker.com/r/mcp/pulumi"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/pulumi",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -7486,11 +8041,16 @@
         "docker": "https://hub.docker.com/r/mcp/puppeteer",
         "official": "https://hub.docker.com/r/mcp/puppeteer"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/puppeteer",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -7539,11 +8099,16 @@
         "docker": "https://hub.docker.com/r/mcp/razorpay",
         "official": "https://hub.docker.com/r/mcp/razorpay"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/razorpay",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -7590,11 +8155,16 @@
         "docker": "https://hub.docker.com/r/mcp/redis",
         "official": "https://hub.docker.com/r/mcp/redis"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/redis",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -7643,11 +8213,16 @@
         "docker": "https://hub.docker.com/r/mcp/redis-cloud",
         "official": "https://hub.docker.com/r/mcp/redis-cloud"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/redis-cloud",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -7696,11 +8271,16 @@
         "docker": "https://hub.docker.com/r/mcp/ref",
         "official": "https://hub.docker.com/r/mcp/ref"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/ref",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.792Z"
+        "last_fetched": "2025-08-07T14:09:51.197Z"
       },
       "installation_methods": [
         {
@@ -7750,11 +8330,16 @@
         "docker": "https://hub.docker.com/r/mcp/render",
         "official": "https://hub.docker.com/r/mcp/render"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/render",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -7801,11 +8386,16 @@
         "docker": "https://hub.docker.com/r/mcp/resend",
         "official": "https://hub.docker.com/r/mcp/resend"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/resend",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -7854,11 +8444,16 @@
         "docker": "https://hub.docker.com/r/mcp/risken",
         "official": "https://hub.docker.com/r/mcp/risken"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/risken",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -7905,11 +8500,16 @@
         "docker": "https://hub.docker.com/r/mcp/root",
         "official": "https://hub.docker.com/r/mcp/root"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/root",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -7958,11 +8558,16 @@
         "docker": "https://hub.docker.com/r/mcp/schogini-mcp-image-border",
         "official": "https://hub.docker.com/r/mcp/schogini-mcp-image-border"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/schogini-mcp-image-border",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -8009,11 +8614,16 @@
         "docker": "https://hub.docker.com/r/mcp/scrapegraph",
         "official": "https://hub.docker.com/r/mcp/scrapegraph"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/scrapegraph",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -8060,11 +8670,16 @@
         "docker": "https://hub.docker.com/r/mcp/scrapezy",
         "official": "https://hub.docker.com/r/mcp/scrapezy"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/scrapezy",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -8113,11 +8728,16 @@
         "docker": "https://hub.docker.com/r/mcp/sec-edgar",
         "official": "https://hub.docker.com/r/mcp/sec-edgar"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/sec-edgar",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -8167,11 +8787,16 @@
         "docker": "https://hub.docker.com/r/mcp/securenote-link-mcp-server",
         "official": "https://hub.docker.com/r/mcp/securenote-link-mcp-server"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/securenote-link-mcp-server",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -8220,11 +8845,16 @@
         "docker": "https://hub.docker.com/r/mcp/sentry",
         "official": "https://hub.docker.com/r/mcp/sentry"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/sentry",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -8271,11 +8901,16 @@
         "docker": "https://hub.docker.com/r/mcp/sequentialthinking",
         "official": "https://hub.docker.com/r/mcp/sequentialthinking"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/sequentialthinking",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -8322,11 +8957,16 @@
         "docker": "https://hub.docker.com/r/mcp/shopify",
         "official": "https://hub.docker.com/r/mcp/shopify"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/shopify",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -8373,11 +9013,16 @@
         "docker": "https://hub.docker.com/r/mcp/singlestore",
         "official": "https://hub.docker.com/r/mcp/singlestore"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/singlestore",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -8426,11 +9071,16 @@
         "docker": "https://hub.docker.com/r/mcp/slack",
         "official": "https://hub.docker.com/r/mcp/slack"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/slack",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -8479,11 +9129,16 @@
         "docker": "https://hub.docker.com/r/mcp/smartbear",
         "official": "https://hub.docker.com/r/mcp/smartbear"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/smartbear",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -8532,11 +9187,16 @@
         "docker": "https://hub.docker.com/r/mcp/sonarqube",
         "official": "https://hub.docker.com/r/mcp/sonarqube"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/sonarqube",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -8586,11 +9246,16 @@
         "docker": "https://hub.docker.com/r/mcp/sqlite",
         "official": "https://hub.docker.com/r/mcp/sqlite"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/sqlite",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.793Z"
+        "last_fetched": "2025-08-07T14:09:51.197Z"
       },
       "installation_methods": [
         {
@@ -8639,11 +9304,16 @@
         "docker": "https://hub.docker.com/r/mcp/stripe",
         "official": "https://hub.docker.com/r/mcp/stripe"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/stripe",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -8692,11 +9362,16 @@
         "docker": "https://hub.docker.com/r/mcp/suzieq",
         "official": "https://hub.docker.com/r/mcp/suzieq"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/suzieq",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -8745,11 +9420,16 @@
         "docker": "https://hub.docker.com/r/mcp/task-orchestrator",
         "official": "https://hub.docker.com/r/mcp/task-orchestrator"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/task-orchestrator",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -8798,11 +9478,16 @@
         "docker": "https://hub.docker.com/r/mcp/tavily",
         "official": "https://hub.docker.com/r/mcp/tavily"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/tavily",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -8852,11 +9537,16 @@
         "docker": "https://hub.docker.com/r/mcp/tembo",
         "official": "https://hub.docker.com/r/mcp/tembo"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/tembo",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -8905,11 +9595,16 @@
         "docker": "https://hub.docker.com/r/mcp/terraform",
         "official": "https://hub.docker.com/r/mcp/terraform"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/terraform",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -8958,11 +9653,16 @@
         "docker": "https://hub.docker.com/r/mcp/text-to-graphql",
         "official": "https://hub.docker.com/r/mcp/text-to-graphql"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/text-to-graphql",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -9011,11 +9711,16 @@
         "docker": "https://hub.docker.com/r/mcp/tigris",
         "official": "https://hub.docker.com/r/mcp/tigris"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/tigris",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -9062,11 +9767,16 @@
         "docker": "https://hub.docker.com/r/mcp/time",
         "official": "https://hub.docker.com/r/mcp/time"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/time",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -9113,11 +9823,16 @@
         "docker": "https://hub.docker.com/r/mcp/triplewhale",
         "official": "https://hub.docker.com/r/mcp/triplewhale"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/triplewhale",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -9164,11 +9879,16 @@
         "docker": "https://hub.docker.com/r/mcp/veyrax",
         "official": "https://hub.docker.com/r/mcp/veyrax"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/veyrax",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -9215,11 +9935,16 @@
         "docker": "https://hub.docker.com/r/mcp/vizro",
         "official": "https://hub.docker.com/r/mcp/vizro"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/vizro",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -9331,11 +10056,16 @@
         "docker": "https://hub.docker.com/r/mcp/webflow",
         "official": "https://hub.docker.com/r/mcp/webflow"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/webflow",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -9384,11 +10114,16 @@
         "docker": "https://hub.docker.com/r/mcp/wikipedia-mcp",
         "official": "https://hub.docker.com/r/mcp/wikipedia-mcp"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/wikipedia-mcp",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -9435,11 +10170,16 @@
         "docker": "https://hub.docker.com/r/mcp/wolfram-alpha",
         "official": "https://hub.docker.com/r/mcp/wolfram-alpha"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/wolfram-alpha",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
@@ -9486,11 +10226,16 @@
         "docker": "https://hub.docker.com/r/mcp/youtube_transcript",
         "official": "https://hub.docker.com/r/mcp/youtube_transcript"
       },
+      "security": {
+        "auth_type": "none",
+        "permissions": [],
+        "resource_indicators": false
+      },
       "source_registry": {
         "type": "docker",
         "url": "https://hub.docker.com/r/mcp/youtube_transcript",
         "verified_by": "Docker",
-        "last_fetched": "2025-08-07T13:34:54.795Z"
+        "last_fetched": "2025-08-07T14:09:51.200Z"
       },
       "installation_methods": [
         {
