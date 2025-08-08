@@ -2,8 +2,37 @@
 
 const { exec } = require('child_process');
 const { promisify } = require('util');
+const yaml = require('js-yaml');
 
 const execAsync = promisify(exec);
+
+/**
+ * Fetch icon URL from Docker MCP registry
+ */
+async function fetchServerIcon(serverName) {
+  try {
+    const url = `https://raw.githubusercontent.com/docker/mcp-registry/main/servers/${serverName}/server.yaml`;
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      console.warn(`Failed to fetch server.yaml for ${serverName}: ${response.status}`);
+      return null;
+    }
+    
+    const yamlContent = await response.text();
+    const serverConfig = yaml.load(yamlContent);
+    
+    // Extract icon URL from the YAML
+    if (serverConfig && serverConfig.about && serverConfig.about.icon) {
+      return serverConfig.about.icon;
+    }
+    
+    return null;
+  } catch (error) {
+    console.warn(`Error fetching icon for ${serverName}:`, error.message);
+    return null;
+  }
+}
 
 /**
  * Categorize a Docker MCP server based on its name and description
@@ -86,6 +115,99 @@ function formatServerName(name) {
 }
 
 /**
+ * Extract vendor from server name
+ */
+function extractVendor(name) {
+  const nameLower = name.toLowerCase();
+  
+  // Extract vendor from common patterns
+  if (nameLower.includes('atlassian')) return 'Atlassian';
+  if (nameLower.includes('github')) return 'GitHub';
+  if (nameLower.includes('aws')) return 'AWS';
+  if (nameLower.includes('azure')) return 'Microsoft';
+  if (nameLower.includes('google')) return 'Google';
+  if (nameLower.includes('elastic')) return 'Elastic';
+  if (nameLower.includes('duckduckgo')) return 'DuckDuckGo';
+  if (nameLower.includes('grafana')) return 'Grafana';
+  if (nameLower.includes('arxiv')) return 'arXiv';
+  if (nameLower.includes('astra')) return 'DataStax';
+  if (nameLower.includes('atlan')) return 'Atlan';
+  if (nameLower.includes('couchbase')) return 'Couchbase';
+  if (nameLower.includes('fetch')) return 'Fetch';
+  if (nameLower.includes('git') && !nameLower.includes('github')) return 'Git';
+  if (nameLower.includes('slack')) return 'Slack';
+  if (nameLower.includes('notion')) return 'Notion';
+  if (nameLower.includes('docker')) return 'Docker';
+  if (nameLower.includes('kubernetes') || nameLower.includes('k8s')) return 'Kubernetes';
+  if (nameLower.includes('terraform')) return 'HashiCorp';
+  if (nameLower.includes('mongodb')) return 'MongoDB';
+  if (nameLower.includes('postgres')) return 'PostgreSQL';
+  if (nameLower.includes('redis')) return 'Redis';
+  if (nameLower.includes('mysql')) return 'MySQL';
+  if (nameLower.includes('sqlite')) return 'SQLite';
+  if (nameLower.includes('supabase')) return 'Supabase';
+  if (nameLower.includes('firebase')) return 'Firebase';
+  if (nameLower.includes('vercel')) return 'Vercel';
+  if (nameLower.includes('netlify')) return 'Netlify';
+  if (nameLower.includes('cloudflare')) return 'Cloudflare';
+  if (nameLower.includes('stripe')) return 'Stripe';
+  if (nameLower.includes('twilio')) return 'Twilio';
+  if (nameLower.includes('sendgrid')) return 'SendGrid';
+  if (nameLower.includes('mailgun')) return 'Mailgun';
+  if (nameLower.includes('jira')) return 'Atlassian';
+  if (nameLower.includes('confluence')) return 'Atlassian';
+  if (nameLower.includes('bitbucket')) return 'Atlassian';
+  if (nameLower.includes('trello')) return 'Atlassian';
+  
+  // Default to generic MCP
+  return 'MCP';
+}
+
+/**
+ * Get logo URL for vendor
+ */
+function getVendorLogoUrl(vendor) {
+  const vendorLogos = {
+    'Atlassian': 'https://wac-cdn.atlassian.com/dam/jcr:89e146b4-642e-41fc-8e65-7848337d7bdd/atlassian_logo_blue.svg',
+    'GitHub': 'https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png',
+    'AWS': 'https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg',
+    'Microsoft': 'https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg',
+    'Google': 'https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg',
+    'Elastic': 'https://images.contentstack.io/v3/assets/bltefdd0b53724fa2ce/blt5ebe80fb665aef6b/5ea8c8f26b62d4563b6ecda2/elastic-logo-only.svg',
+    'DuckDuckGo': 'https://duckduckgo.com/assets/logo_homepage.normal.v108.svg',
+    'Grafana': 'https://grafana.com/static/img/menu/grafana2.svg',
+    'arXiv': 'https://info.arxiv.org/brand/images/brand-logo-primary.jpg',
+    'DataStax': 'https://www.datastax.com/sites/default/files/2021-07/datastax-logo-blue-vector.svg',
+    'Atlan': 'https://assets.atlan.com/assets/atlan-logo.svg',
+    'Couchbase': 'https://www.couchbase.com/wp-content/uploads/2023/11/CB_logo_R_B_RGB.svg',
+    'Git': 'https://git-scm.com/images/logos/downloads/Git-Icon-1788C.png',
+    'Slack': 'https://a.slack-edge.com/80588/marketing/img/meta/slack_hash_256.png',
+    'Notion': 'https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png',
+    'Docker': 'https://www.docker.com/wp-content/uploads/2022/03/vertical-logo-monochromatic.png',
+    'Kubernetes': 'https://kubernetes.io/images/kubernetes-horizontal-color.png',
+    'HashiCorp': 'https://www.datocms-assets.com/2885/1620155104-brandhclogoprimar.svg',
+    'MongoDB': 'https://webimages.mongodb.com/_com_assets/cms/kuyjf3vea2hg34taa-horizontal_default_slate_blue.svg',
+    'PostgreSQL': 'https://wiki.postgresql.org/images/a/a4/PostgreSQL_logo.3colors.svg',
+    'Redis': 'https://redis.io/wp-content/uploads/2024/04/Logotype.svg',
+    'MySQL': 'https://labs.mysql.com/common/logos/mysql-logo.svg',
+    'SQLite': 'https://sqlite.org/images/sqlite370_banner.gif',
+    'Supabase': 'https://supabase.com/brand-assets/supabase-logo-icon.svg',
+    'Firebase': 'https://firebase.google.com/static/downloads/brand-guidelines/SVG/logo-logomark.svg',
+    'Vercel': 'https://assets.vercel.com/image/upload/v1588805858/repositories/vercel/logo.png',
+    'Netlify': 'https://www.netlify.com/v3/img/components/logomark.svg',
+    'Cloudflare': 'https://www.cloudflare.com/img/cf-facebook-card.png',
+    'Stripe': 'https://stripe.com/img/v3/home/twitter.png',
+    'Twilio': 'https://www.twilio.com/content/dam/twilio-com/global/en/brand-sales-development/logos/twilio-logo-red.svg',
+    'SendGrid': 'https://sendgrid.com/brand/sg-logo-300.png',
+    'Mailgun': 'https://www.mailgun.com/img/mailgun-logo-red.svg',
+    'MCP': 'https://avatars.githubusercontent.com/u/191408084?s=200&v=4',  // Model Context Protocol org
+    'Fetch': 'https://avatars.githubusercontent.com/u/191408084?s=200&v=4'  // Use MCP logo as fallback
+  };
+  
+  return vendorLogos[vendor] || vendorLogos['MCP'];
+}
+
+/**
  * Extract tags from name and description
  */
 function extractTags(name, description) {
@@ -135,6 +257,13 @@ async function fetchDockerMCPServers() {
       if (!name || !description) continue;
       
       const category = categorizeDockerMCPServer(name, description);
+      const vendor = extractVendor(name);
+      
+      // Try to fetch official icon first, fallback to vendor logo
+      let logoUrl = await fetchServerIcon(name);
+      if (!logoUrl) {
+        logoUrl = getVendorLogoUrl(vendor);
+      }
       
       servers.push({
         name: name.toLowerCase().replace(/[^a-z0-9-]/g, '-'),
@@ -144,6 +273,8 @@ async function fetchDockerMCPServers() {
         server_type: 'stdio',
         protocol_version: '1.0.0',
         execution_type: 'local', // Docker MCP servers run locally
+        vendor,
+        logo_url: logoUrl,
         verification: {
           status: 'verified',
           maintainer: 'Docker',
@@ -197,7 +328,7 @@ async function fetchDockerMCPServers() {
 /**
  * Get mock Docker servers for development
  */
-function getMockDockerServers() {
+async function getMockDockerServers() {
   const mockServers = [
     { name: 'Ref', description: 'Ref powerful search tool connects your coding tools with documentation context' },
     { name: 'SQLite', description: 'Database interaction and business intelligence capabilities' },
@@ -212,14 +343,27 @@ function getMockDockerServers() {
     { name: 'terraform', description: 'Infrastructure as code with Terraform' }
   ];
   
-  return mockServers.map(server => ({
-    name: server.name.toLowerCase().replace(/[^a-z0-9-]/g, '-'),
-    display_name: formatServerName(server.name),
-    category: categorizeDockerMCPServer(server.name, server.description),
-    description: server.description,
-    server_type: 'stdio',
-    protocol_version: '1.0.0',
-    execution_type: 'local',
+  const processedServers = [];
+  
+  for (const server of mockServers) {
+    const vendor = extractVendor(server.name);
+    
+    // Try to fetch official icon first, fallback to vendor logo
+    let logoUrl = await fetchServerIcon(server.name);
+    if (!logoUrl) {
+      logoUrl = getVendorLogoUrl(vendor);
+    }
+    
+    processedServers.push({
+      name: server.name.toLowerCase().replace(/[^a-z0-9-]/g, '-'),
+      display_name: formatServerName(server.name),
+      category: categorizeDockerMCPServer(server.name, server.description),
+      description: server.description,
+      server_type: 'stdio',
+      protocol_version: '1.0.0',
+      execution_type: 'local',
+      vendor,
+      logo_url: logoUrl,
     verification: {
       status: 'verified',
       maintainer: 'Docker',
@@ -257,7 +401,10 @@ function getMockDockerServers() {
     tags: extractTags(server.name, server.description),
     file: `docker-mcp/${server.name.toLowerCase()}.md`,
     path: `docker-mcp/${server.name.toLowerCase()}`
-  }));
+    });
+  }
+  
+  return processedServers;
 }
 
 // Export for use in other scripts

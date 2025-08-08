@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -28,9 +29,33 @@ interface MCPCardProps {
 
 export function MCPCard({ server }: MCPCardProps) {
   const [showInstallModal, setShowInstallModal] = useState(false)
+  const [logoError, setLogoError] = useState(false)
   const verificationStatus = VERIFICATION_STATUS[server.verification.status]
   const categoryName = getMCPCategoryDisplayName(server.category)
   const categoryIcon = getMCPCategoryIcon(server.category)
+  
+  // Generate logo URL based on source
+  const getLogoUrl = () => {
+    if (server.logo_url) return server.logo_url
+    
+    // Docker Hub servers
+    if (server.source_registry?.type === 'docker' && server.vendor) {
+      return `https://hub.docker.com/public/images/logos/${server.vendor}.png`
+    }
+    
+    // GitHub-based servers
+    if (server.sources.github) {
+      const match = server.sources.github.match(/github\.com\/([^/]+)/)
+      if (match) {
+        return `https://github.com/${match[1]}.png?size=40`
+      }
+    }
+    
+    return null
+  }
+  
+  const logoUrl = getLogoUrl()
+  const showLogo = logoUrl && !logoError
   
   
   // Generate href for the detail page
@@ -67,7 +92,20 @@ export function MCPCard({ server }: MCPCardProps) {
           <CardHeader>
             <div className="flex items-start justify-between mb-2">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-2xl">{categoryIcon}</span>
+                {showLogo ? (
+                  <div className="relative w-8 h-8 flex items-center justify-center">
+                    <Image
+                      src={logoUrl}
+                      alt={`${server.vendor || server.display_name} logo`}
+                      width={32}
+                      height={32}
+                      className="object-contain"
+                      onError={() => setLogoError(true)}
+                    />
+                  </div>
+                ) : (
+                  <span className="text-2xl">{categoryIcon}</span>
+                )}
                 {/* Special badges */}
                 {server.badges?.includes('popular') && (
                   <Badge variant="default" className="bg-orange-500 hover:bg-orange-600">

@@ -17,6 +17,8 @@ export interface MCPServer {
   user_inputs?: UserInput[]
   file: string
   path: string
+  vendor?: string
+  logo_url?: string
 }
 
 export interface MCPVerification {
