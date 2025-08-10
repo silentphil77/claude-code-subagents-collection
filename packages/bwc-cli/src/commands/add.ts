@@ -24,21 +24,32 @@ export function createAddCommand() {
     .option('-a, --agent <name>', 'add a specific subagent')
     .option('-c, --command <name>', 'add a specific command')
     .option('-m, --mcp <name>', 'add a specific MCP server')
-    .option('-g, --global', 'force global installation (for subagents/commands)')
+    .option('-g, --global', 'force user-level installation (for subagents/commands)')
+    .option('-u, --user', 'force user-level installation (alias for --global)')
     .option('-s, --scope <scope>', 'configuration scope for MCP servers: local, user, or project (default: "local")')
     .option('-e, --env <env...>', 'set environment variables for MCP servers (e.g. -e KEY=value)')
     .option('--setup', 'setup Docker MCP gateway in Claude Code')
     .option('--docker-mcp', 'use Docker MCP Toolkit for MCP servers')
     .action(async (options) => {
       try {
-        const configManager = new ConfigManager()
+        const configManager = ConfigManager.getInstance()
         const registryClient = new RegistryClient(configManager)
+
+        // Handle --user as alias for --global
+        const forceUserLevel = options.global || options.user
+        
+        // If force user level is requested, load user config
+        if (forceUserLevel) {
+          await configManager.loadUserConfig()
+        }
 
         // Check if using project config
         const isProject = await configManager.isUsingProjectConfig()
         
-        if (isProject && !options.global) {
+        if (isProject && !forceUserLevel) {
           logger.info('Installing to project configuration')
+        } else if (forceUserLevel) {
+          logger.info('Installing to user configuration')
         }
 
         // Handle Docker MCP setup
@@ -48,9 +59,9 @@ export function createAddCommand() {
         }
 
         if (options.agent) {
-          await addSubagent(options.agent, configManager, registryClient)
+          await addSubagent(options.agent, configManager, registryClient, forceUserLevel)
         } else if (options.command) {
-          await addCommand(options.command, configManager, registryClient)
+          await addCommand(options.command, configManager, registryClient, forceUserLevel)
         } else if (options.mcp) {
           // Validate scope
           const validScopes = ['local', 'user', 'project']
@@ -69,7 +80,7 @@ export function createAddCommand() {
             })
           }
         } else {
-          await interactiveAdd(configManager, registryClient)
+          await interactiveAdd(configManager, registryClient, forceUserLevel)
         }
       } catch (error) {
         logger.error(error instanceof Error ? error.message : 'Unknown error')
@@ -83,7 +94,8 @@ export function createAddCommand() {
 async function addSubagent(
   name: string, 
   configManager: ConfigManager, 
-  registryClient: RegistryClient
+  registryClient: RegistryClient,
+  forceUserLevel: boolean = false
 ): Promise<void> {
   const spinner = logger.spinner(`Fetching subagent: ${name}`)
   
@@ -116,7 +128,8 @@ async function addSubagent(
 async function addCommand(
   name: string, 
   configManager: ConfigManager, 
-  registryClient: RegistryClient
+  registryClient: RegistryClient,
+  forceUserLevel: boolean = false
 ): Promise<void> {
   const spinner = logger.spinner(`Fetching command: ${name}`)
   
@@ -147,7 +160,8 @@ async function addCommand(
 
 async function interactiveAdd(
   configManager: ConfigManager, 
-  registryClient: RegistryClient
+  registryClient: RegistryClient,
+  forceUserLevel: boolean = false
 ): Promise<void> {
   try {
     const { type } = await inquirer.prompt([
@@ -164,9 +178,9 @@ async function interactiveAdd(
     ])
 
     if (type === 'subagent') {
-      await interactiveAddSubagent(configManager, registryClient)
+      await interactiveAddSubagent(configManager, registryClient, forceUserLevel)
     } else if (type === 'command') {
-      await interactiveAddCommand(configManager, registryClient)
+      await interactiveAddCommand(configManager, registryClient, forceUserLevel)
     } else {
       await interactiveAddMCP(configManager, registryClient)
     }
@@ -182,7 +196,8 @@ async function interactiveAdd(
 
 async function interactiveAddSubagent(
   configManager: ConfigManager, 
-  registryClient: RegistryClient
+  registryClient: RegistryClient,
+  forceUserLevel: boolean = false
 ): Promise<void> {
   const subagents = await registryClient.getSubagents()
   
@@ -230,13 +245,14 @@ async function interactiveAddSubagent(
   logger.info(`Installing ${selected.length} subagent(s)...`)
   
   for (const name of selected) {
-    await addSubagent(name, configManager, registryClient)
+    await addSubagent(name, configManager, registryClient, forceUserLevel)
   }
 }
 
 async function interactiveAddCommand(
   configManager: ConfigManager, 
-  registryClient: RegistryClient
+  registryClient: RegistryClient,
+  forceUserLevel: boolean = false
 ): Promise<void> {
   const commands = await registryClient.getCommands()
   
@@ -284,7 +300,7 @@ async function interactiveAddCommand(
   logger.info(`Installing ${selected.length} command(s)...`)
   
   for (const name of selected) {
-    await addCommand(name, configManager, registryClient)
+    await addCommand(name, configManager, registryClient, forceUserLevel)
   }
 }
 

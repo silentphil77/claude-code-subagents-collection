@@ -14,19 +14,38 @@ export function createRemoveCommand() {
     .option('-a, --agent <name>', 'remove a specific subagent')
     .option('-c, --command <name>', 'remove a specific command')
     .option('-m, --mcp <name>', 'remove a specific MCP server')
+    .option('-g, --global', 'force user-level removal (for subagents/commands)')
+    .option('-u, --user', 'force user-level removal (alias for --global)')
     .option('-y, --yes', 'skip confirmation prompt')
     .action(async (options) => {
       try {
-        const configManager = new ConfigManager()
+        const configManager = ConfigManager.getInstance()
+        
+        // Handle --user as alias for --global
+        const forceUserLevel = options.global || options.user
+        
+        // If force user level is requested, load user config
+        if (forceUserLevel) {
+          await configManager.loadUserConfig()
+        }
+        
+        // Check if using project config
+        const isProject = await configManager.isUsingProjectConfig()
+        
+        if (isProject && !forceUserLevel) {
+          logger.info('Removing from project configuration')
+        } else if (forceUserLevel) {
+          logger.info('Removing from user configuration')
+        }
 
         if (options.agent) {
-          await removeSubagent(options.agent, configManager, options.yes)
+          await removeSubagent(options.agent, configManager, options.yes, forceUserLevel)
         } else if (options.command) {
-          await removeCommand(options.command, configManager, options.yes)
+          await removeCommand(options.command, configManager, options.yes, forceUserLevel)
         } else if (options.mcp) {
           await removeMCPServer(options.mcp, configManager, options.yes)
         } else {
-          await interactiveRemove(configManager)
+          await interactiveRemove(configManager, forceUserLevel)
         }
       } catch (error) {
         logger.error(error instanceof Error ? error.message : 'Unknown error')
@@ -40,7 +59,8 @@ export function createRemoveCommand() {
 async function removeSubagent(
   name: string,
   configManager: ConfigManager,
-  skipConfirmation: boolean
+  skipConfirmation: boolean,
+  forceUserLevel: boolean = false
 ): Promise<void> {
   const installed = await configManager.getInstalledSubagents()
   
@@ -87,7 +107,8 @@ async function removeSubagent(
 async function removeCommand(
   name: string,
   configManager: ConfigManager,
-  skipConfirmation: boolean
+  skipConfirmation: boolean,
+  forceUserLevel: boolean = false
 ): Promise<void> {
   const installed = await configManager.getInstalledCommands()
   
@@ -232,7 +253,7 @@ async function removeDockerMCPServer(
   }
 }
 
-async function interactiveRemove(configManager: ConfigManager): Promise<void> {
+async function interactiveRemove(configManager: ConfigManager, forceUserLevel: boolean = false): Promise<void> {
   const { type } = await inquirer.prompt([
     {
       type: 'list',
@@ -247,15 +268,15 @@ async function interactiveRemove(configManager: ConfigManager): Promise<void> {
   ])
 
   if (type === 'subagent') {
-    await interactiveRemoveSubagent(configManager)
+    await interactiveRemoveSubagent(configManager, forceUserLevel)
   } else if (type === 'command') {
-    await interactiveRemoveCommand(configManager)
+    await interactiveRemoveCommand(configManager, forceUserLevel)
   } else {
     await interactiveRemoveMCP(configManager)
   }
 }
 
-async function interactiveRemoveSubagent(configManager: ConfigManager): Promise<void> {
+async function interactiveRemoveSubagent(configManager: ConfigManager, forceUserLevel: boolean = false): Promise<void> {
   const installed = await configManager.getInstalledSubagents()
   
   if (installed.length === 0) {
@@ -293,11 +314,11 @@ async function interactiveRemoveSubagent(configManager: ConfigManager): Promise<
   }
   
   for (const name of selected) {
-    await removeSubagent(name, configManager, true)
+    await removeSubagent(name, configManager, true, forceUserLevel)
   }
 }
 
-async function interactiveRemoveCommand(configManager: ConfigManager): Promise<void> {
+async function interactiveRemoveCommand(configManager: ConfigManager, forceUserLevel: boolean = false): Promise<void> {
   const installed = await configManager.getInstalledCommands()
   
   if (installed.length === 0) {
@@ -335,7 +356,7 @@ async function interactiveRemoveCommand(configManager: ConfigManager): Promise<v
   }
   
   for (const name of selected) {
-    await removeCommand(name, configManager, true)
+    await removeCommand(name, configManager, true, forceUserLevel)
   }
 }
 

@@ -15,13 +15,16 @@ npx bwc-cli@latest init
 ## Quick Start
 
 ```bash
-# Initialize configuration
+# Initialize user configuration (default)
 bwc init
 
-# Add a subagent
+# Or initialize project configuration (team sharing)
+bwc init --project
+
+# Add a subagent (goes to project if project config exists)
 bwc add --agent python-pro
 
-# Add a command
+# Add a command (goes to project if project config exists)
 bwc add --command dockerize
 
 # Browse and select interactively
@@ -35,7 +38,7 @@ bwc add
 Initialize bwc configuration.
 
 ```bash
-# Initialize global configuration (default)
+# Initialize user configuration (default)
 bwc init
 
 # Initialize project-level configuration
@@ -45,6 +48,8 @@ bwc init --project
 Options:
 - `-p, --project` - Create project-level configuration
 - `-f, --force` - Overwrite existing configuration
+
+**Important**: When you initialize with `--project`, all subsequent `bwc add` commands will install to the project by default (`.claude/agents/` and `.claude/commands/`)
 
 ### `bwc add`
 
@@ -59,11 +64,22 @@ bwc add --command dockerize
 
 # Interactive mode (browse and select multiple items)
 bwc add
+
+# Force user-level installation even with project config
+bwc add --agent python-pro --global
+# Or use the --user flag (same effect)
+bwc add --agent python-pro --user
 ```
 
 Options:
 - `-a, --agent <name>` - Add a specific subagent
 - `-c, --command <name>` - Add a specific command
+- `-g, --global` - Force user-level installation (when project config exists)
+- `-u, --user` - Force user-level installation (alias for --global)
+
+**Default Behavior**:
+- If `./bwc.config.json` exists → installs to project (`.claude/agents/`, `.claude/commands/`)
+- Otherwise → installs to user level (`~/.claude/agents/`, `~/.claude/commands/`)
 
 **Interactive Mode Tips:**
 - Use **SPACE** to select/deselect items
@@ -127,13 +143,51 @@ bwc install
 
 This reads from either:
 - Project configuration (`./bwc.config.json`) if it exists
-- Global configuration (`~/.bwc/config.json`) otherwise
+- User configuration (`~/.bwc/config.json`) otherwise
+
+### `bwc remove`
+
+Remove installed subagents, commands, or MCP servers.
+
+```bash
+# Remove a specific subagent
+bwc remove --agent python-pro
+
+# Remove a specific command
+bwc remove --command dockerize
+
+# Remove an MCP server
+bwc remove --mcp postgres
+
+# Force user-level removal (when project config exists)
+bwc remove --agent python-pro --global
+bwc remove --agent python-pro --user    # Same as --global
+
+# Skip confirmation prompt
+bwc remove --agent python-pro --yes
+
+# Interactive mode
+bwc remove
+```
+
+Options:
+- `-a, --agent <name>` - Remove a specific subagent
+- `-c, --command <name>` - Remove a specific command
+- `-m, --mcp <name>` - Remove a specific MCP server
+- `-g, --global` - Force user-level removal (when project config exists)
+- `-u, --user` - Force user-level removal (alias for --global)
+- `-y, --yes` - Skip confirmation prompt
+
+**Default Behavior**:
+- If `./bwc.config.json` exists → removes from project
+- Otherwise → removes from user level
+- Use `--global` or `--user` to force user-level removal
 
 ## Configuration
 
-### Global Configuration
+### User Configuration
 
-Located at `~/.bwc/config.json`:
+Located at `~/.bwc/config.json` (available across all your projects):
 
 ```json
 {
@@ -171,6 +225,26 @@ Located at `./bwc.config.json`:
 
 **Note:** Add `.claude/` to your `.gitignore` to avoid committing installed files.
 
+## Configuration Scope Behavior
+
+When you initialize BWC with `bwc init --project`, it creates a project configuration that becomes the default for all installations:
+
+```bash
+# Initialize project configuration
+bwc init --project
+
+# These all install to PROJECT by default (./claude/agents/, ./claude/commands/)
+bwc add --agent python-pro      # → ./claude/agents/python-pro.md
+bwc add --command dockerize     # → ./claude/commands/dockerize.md
+
+# MCP servers need explicit scope
+bwc add --mcp postgres --scope project  # → ./bwc.config.json
+
+# Override to install at user level
+bwc add --agent golang-pro --global     # → ~/.claude/agents/golang-pro.md
+bwc add --agent rust-pro --user         # → ~/.claude/agents/rust-pro.md (same as --global)
+```
+
 ## Use Cases
 
 ### Team Onboarding
@@ -181,7 +255,7 @@ Share your Claude Code setup with your team:
 # Initialize project configuration
 bwc init --project
 
-# Add project-specific subagents
+# Add project-specific subagents (automatically project-scoped)
 bwc add --agent backend-architect
 bwc add --agent database-admin
 bwc add --command dockerize
@@ -224,19 +298,139 @@ Automate Claude Code setup in your pipelines:
   run: bwc install
 ```
 
-## MCP Servers
+## MCP Servers (Docker Gateway Only)
 
-### Adding MCP Servers
+### 🔌 Connect Claude to External Tools
 
-BWC CLI supports Model Context Protocol (MCP) servers:
+BWC CLI supports 100+ Model Context Protocol (MCP) servers through **secure Docker containers**. We exclusively use Docker MCP Gateway for maximum security.
+
+### Prerequisites
+
+**Docker Desktop Required**: Download from [docker.com/products/docker-desktop](https://docker.com/products/docker-desktop)
+
+### Quick Start
 
 ```bash
-# Add an MCP server
-bwc add --mcp filesystem
+# Browse available MCP servers
+bwc mcp list
 
-# List available MCP servers
-bwc list --mcp
+# Install for current user (all projects)
+bwc add --mcp postgres
+
+# Install for project only (team sharing)
+bwc add --mcp postgres --project
+
+# Search for specific functionality
+bwc mcp search database
+
+# View server details
+bwc mcp info postgres
 ```
+
+### Installation Scopes
+
+#### User Scope
+- **Location**: `~/.bwc/config.json` (under `installed.mcpServers`)
+- **Availability**: All your projects
+- **API Keys**: Personal, stored in Docker Desktop
+- **Use Case**: Personal tools and services
+- **Default when**: No project config exists
+
+```bash
+# Install for user (explicit)
+bwc add --mcp supabase --scope user
+
+# List user-installed servers
+bwc mcp list --user
+```
+
+#### Project Scope
+- **Location**: `./bwc.config.json` (under `installed.mcpServers`)
+- **Availability**: Current project only
+- **API Keys**: Via environment variables
+- **Use Case**: Team collaboration
+- **Default when**: Project config exists (requires explicit `--scope project` for MCP)
+
+```bash
+# Install for project (must be explicit for MCP)
+bwc add --mcp postgres --scope project
+
+# List project servers
+bwc mcp list --project
+
+# Commit configuration for team
+git add bwc.config.json
+git commit -m "Add MCP servers for team"
+```
+
+### Team Collaboration Example
+
+```bash
+# Team lead sets up project MCP servers
+bwc init --project
+bwc add --mcp postgres --project
+bwc add --mcp github --project
+
+# Commit configuration
+git add bwc.config.json
+git commit -m "Add team MCP servers"
+
+# Team members clone and install
+git clone <repo>
+bwc install  # Installs all configured MCP servers
+```
+
+### Why Docker-Only?
+
+- 🔒 **Container Isolation**: Complete system protection
+- 🔑 **Secure Secrets**: Docker manages all API keys
+- ✅ **Verified Images**: All servers signed by Docker
+- 🌐 **Single Gateway**: One secure endpoint for all servers
+
+### Available MCP Commands
+
+```bash
+# List all available servers
+bwc mcp list
+
+# Search for servers
+bwc mcp search <query>
+
+# View server information
+bwc mcp info <server>
+
+# Check Docker MCP Gateway status
+bwc mcp status
+
+# List by installation scope
+bwc mcp list --user     # User-installed only
+bwc mcp list --project  # Project-installed only
+```
+
+### Example: Adding Supabase
+
+```bash
+$ bwc add --mcp supabase
+? Installation scope?
+  ❯ User (all projects)
+    Project (this project only)
+? Enter your Supabase access token: ****
+✓ Enabled supabase in Docker MCP Gateway
+✓ Server available at docker://mcp-supabase
+```
+
+### Popular MCP Servers
+
+- **postgres**: PostgreSQL database operations
+- **github**: GitHub API integration
+- **supabase**: Supabase backend services
+- **stripe**: Payment processing
+- **slack**: Team communication
+- **notion**: Knowledge management
+- **linear**: Issue tracking
+- **elasticsearch**: Search and analytics
+
+View all 100+ servers at [buildwithclaude.com/mcp-servers](https://buildwithclaude.com/mcp-servers)
 
 
 ## Categories
