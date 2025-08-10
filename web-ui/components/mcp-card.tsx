@@ -123,18 +123,7 @@ export function MCPCard({ server }: MCPCardProps) {
                     📈 Trending
                   </Badge>
                 )}
-                {server.execution_type && (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Badge variant="secondary" className="text-xs">
-                        {EXECUTION_INDICATORS[server.execution_type].icon} {EXECUTION_INDICATORS[server.execution_type].label}
-                      </Badge>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>{EXECUTION_INDICATORS[server.execution_type].description}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                )}
+                {/* Hidden: Execution type badge - data still available in server.execution_type */}
                 {server.source_registry && (
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -163,18 +152,12 @@ export function MCPCard({ server }: MCPCardProps) {
           
           <CardContent className="space-y-3">
             {/* Stats */}
-            {server.stats && (
+            {server.stats && (server.stats.github_stars || server.stats.npm_downloads) && (
               <div className="flex items-center gap-3 text-xs text-muted-foreground">
                 {server.stats.github_stars && (
                   <div className="flex items-center gap-1">
                     <Star className="h-3 w-3" />
                     <span>{server.stats.github_stars.toLocaleString()}</span>
-                  </div>
-                )}
-                {server.stats.docker_pulls && (
-                  <div className="flex items-center gap-1">
-                    <Box className="h-3 w-3" />
-                    <span>{server.stats.docker_pulls.toLocaleString()}</span>
                   </div>
                 )}
                 {server.stats.npm_downloads && (
@@ -211,6 +194,14 @@ export function MCPCard({ server }: MCPCardProps) {
               </div>
             )}
           </CardContent>
+          
+          {/* Docker pulls counter in bottom right */}
+          {server.stats?.docker_pulls && (
+            <div className="absolute bottom-3 right-4 flex items-center gap-1 text-xs text-muted-foreground">
+              <Box className="h-3 w-3" />
+              <span>{server.stats.docker_pulls.toLocaleString()}</span>
+            </div>
+          )}
         </Card>
       </Link>
       

@@ -8,6 +8,14 @@ import { CategoryFilter } from '@/components/category-filter'
 import { SearchBar } from '@/components/search-bar'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
+import { ArrowUpDown, TrendingDown, TrendingUp, Calendar, CalendarDays, SortAsc, SortDesc } from 'lucide-react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Button } from '@/components/ui/button'
 import {
   Pagination,
   PaginationContent,
@@ -48,6 +56,7 @@ export default function MCPPageClient({
   const [selectedSource, setSelectedSource] = useState<string>('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
+  const [sortBy, setSortBy] = useState<'downloads-desc' | 'downloads-asc' | 'newest' | 'oldest' | 'name-asc' | 'name-desc'>('downloads-desc')
   
   // Pagination configuration
   const ITEMS_PER_PAGE = 24 // Divisible by 2 and 3 for responsive grid
@@ -56,6 +65,7 @@ export default function MCPPageClient({
   useEffect(() => {
     const categoryParam = searchParams.get('category')
     const verificationParam = searchParams.get('verification')
+    const sortParam = searchParams.get('sort')
     
     if (categoryParam && categories.some(cat => cat.id === categoryParam)) {
       setSelectedCategory(categoryParam)
@@ -63,6 +73,10 @@ export default function MCPPageClient({
     
     if (verificationParam && ['verified', 'community', 'experimental'].includes(verificationParam)) {
       setSelectedVerification(verificationParam)
+    }
+    
+    if (sortParam && ['downloads-desc', 'downloads-asc', 'newest', 'oldest', 'name-asc', 'name-desc'].includes(sortParam)) {
+      setSortBy(sortParam as typeof sortBy)
     }
   }, [searchParams, categories])
   
@@ -79,7 +93,7 @@ export default function MCPPageClient({
   }
   
   // Update URL with new parameters
-  const updateURL = (newParams: { category?: string | 'all', verification?: string }) => {
+  const updateURL = (newParams: { category?: string | 'all', verification?: string, sort?: string }) => {
     const params = new URLSearchParams(searchParams.toString())
     
     if (newParams.category !== undefined) {
@@ -95,6 +109,14 @@ export default function MCPPageClient({
         params.delete('verification')
       } else {
         params.set('verification', newParams.verification)
+      }
+    }
+    
+    if (newParams.sort !== undefined) {
+      if (newParams.sort === 'downloads-desc') {
+        params.delete('sort') // Remove if it's the default
+      } else {
+        params.set('sort', newParams.sort)
       }
     }
     
@@ -136,8 +158,28 @@ export default function MCPPageClient({
       )
     }
     
-    return filtered
-  }, [allServers, selectedCategory, selectedVerification, selectedExecutionType, selectedSource, searchQuery])
+    // Apply sorting
+    const sorted = [...filtered].sort((a, b) => {
+      switch(sortBy) {
+        case 'downloads-desc':
+          return (b.stats?.docker_pulls || 0) - (a.stats?.docker_pulls || 0)
+        case 'downloads-asc':
+          return (a.stats?.docker_pulls || 0) - (b.stats?.docker_pulls || 0)
+        case 'newest':
+          return new Date(b.stats?.last_updated || 0).getTime() - new Date(a.stats?.last_updated || 0).getTime()
+        case 'oldest':
+          return new Date(a.stats?.last_updated || 0).getTime() - new Date(b.stats?.last_updated || 0).getTime()
+        case 'name-asc':
+          return a.display_name.localeCompare(b.display_name)
+        case 'name-desc':
+          return b.display_name.localeCompare(a.display_name)
+        default:
+          return 0
+      }
+    })
+    
+    return sorted
+  }, [allServers, selectedCategory, selectedVerification, selectedExecutionType, selectedSource, searchQuery, sortBy])
   
   // Group servers by verification status
   const groupedServers = useMemo(() => {
@@ -286,20 +328,7 @@ export default function MCPPageClient({
         </Tabs>
         
         {/* Additional Filters */}
-        <div className="flex gap-4 mb-6">
-          {/* Execution Type Filter */}
-          <Tabs value={selectedExecutionType} onValueChange={setSelectedExecutionType}>
-            <TabsList>
-              <TabsTrigger value="all">All Types</TabsTrigger>
-              <TabsTrigger value="local">
-                {EXECUTION_INDICATORS.local.icon} Local
-              </TabsTrigger>
-              <TabsTrigger value="remote">
-                {EXECUTION_INDICATORS.remote.icon} Remote
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-          
+        <div className="flex justify-between mb-6 flex-wrap gap-4">
           {/* Source Filter */}
           <Tabs value={selectedSource} onValueChange={setSelectedSource}>
             <TabsList>
@@ -309,6 +338,68 @@ export default function MCPPageClient({
               </TabsTrigger>
             </TabsList>
           </Tabs>
+          
+          {/* Sort Dropdown - aligned to the right */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="flex items-center gap-2">
+                <ArrowUpDown className="h-4 w-4" />
+                Sort: {
+                  sortBy === 'downloads-desc' ? 'Most Downloaded' :
+                  sortBy === 'downloads-asc' ? 'Least Downloaded' :
+                  sortBy === 'newest' ? 'Newest First' :
+                  sortBy === 'oldest' ? 'Oldest First' :
+                  sortBy === 'name-asc' ? 'A to Z' :
+                  sortBy === 'name-desc' ? 'Z to A' :
+                  'Most Downloaded'
+                }
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem onClick={() => {
+                setSortBy('downloads-desc')
+                updateURL({ sort: 'downloads-desc' })
+              }}>
+                <TrendingUp className="h-4 w-4 mr-2" />
+                Most Downloaded
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => {
+                setSortBy('downloads-asc')
+                updateURL({ sort: 'downloads-asc' })
+              }}>
+                <TrendingDown className="h-4 w-4 mr-2" />
+                Least Downloaded
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => {
+                setSortBy('newest')
+                updateURL({ sort: 'newest' })
+              }}>
+                <Calendar className="h-4 w-4 mr-2" />
+                Newest First
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => {
+                setSortBy('oldest')
+                updateURL({ sort: 'oldest' })
+              }}>
+                <CalendarDays className="h-4 w-4 mr-2" />
+                Oldest First
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => {
+                setSortBy('name-asc')
+                updateURL({ sort: 'name-asc' })
+              }}>
+                <SortAsc className="h-4 w-4 mr-2" />
+                A to Z
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => {
+                setSortBy('name-desc')
+                updateURL({ sort: 'name-desc' })
+              }}>
+                <SortDesc className="h-4 w-4 mr-2" />
+                Z to A
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
         
         {/* Featured Sections - Only show when no filters are active and on first page */}

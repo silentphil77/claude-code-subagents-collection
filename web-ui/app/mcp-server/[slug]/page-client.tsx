@@ -77,11 +77,7 @@ export default function MCPServerPageClient({ server }: MCPServerPageClientProps
             <Badge variant="secondary">{categoryName}</Badge>
             <Badge variant="outline">Protocol v{server.protocol_version}</Badge>
             <Badge variant="outline">{server.server_type}</Badge>
-            {server.execution_type && (
-              <Badge variant="secondary">
-                {EXECUTION_INDICATORS[server.execution_type].icon} {EXECUTION_INDICATORS[server.execution_type].label}
-              </Badge>
-            )}
+            {/* Hidden: Execution type badge - data still available in server.execution_type */}
             {server.source_registry && (
               <Badge variant="outline">
                 {SOURCE_INDICATORS[server.source_registry.type]?.icon} {SOURCE_INDICATORS[server.source_registry.type]?.label}

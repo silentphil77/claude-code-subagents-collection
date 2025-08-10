@@ -26,6 +26,7 @@ export function CommandPageClient({ command }: CommandPageClientProps) {
   const categoryName = generateCategoryDisplayName(command.category)
   const categoryIcon = getCategoryIcon(command.category)
   const commandName = `/${command.slug.replace(/-/g, '_')}`
+  const bwcCommands = generateBWCCommands('command', command.slug)
   
   const handleCopy = async () => {
     const markdown = generateCommandMarkdown(command)
@@ -222,12 +223,12 @@ export function CommandPageClient({ command }: CommandPageClientProps) {
                 <div className="space-y-2">
                   <p className="text-sm text-muted-foreground">Install and manage this command with a single command:</p>
                   <div className="bg-background rounded p-3 font-mono text-sm flex items-center justify-between">
-                    <span>bwc command add {command.slug}</span>
+                    <span>{bwcCommands.install}</span>
                     <Button
                       size="sm"
                       variant="ghost"
                       onClick={async () => {
-                        await navigator.clipboard.writeText(`bwc command add ${command.slug}`)
+                        await navigator.clipboard.writeText(bwcCommands.install)
                         setCopiedCommand('install')
                         setTimeout(() => setCopiedCommand(null), 2000)
                       }}

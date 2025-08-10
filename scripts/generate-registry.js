@@ -4,6 +4,7 @@ const fs = require('fs').promises;
 const path = require('path');
 const matter = require('gray-matter');
 const { fetchDockerMCPServers } = require('./fetch-docker-mcp');
+const { enhanceMCPServersWithDockerStats } = require('./enhance-docker-stats');
 
 const REPO_ROOT = path.join(__dirname, '..');
 const SUBAGENTS_DIR = path.join(REPO_ROOT, 'subagents');
@@ -132,6 +133,9 @@ async function generateRegistry() {
       }
       return acc;
     }, []);
+    
+    // Enhance MCP servers with Docker Hub stats
+    const enhancedServers = await enhanceMCPServersWithDockerStats(uniqueServers);
 
     const registry = {
       $schema: 'https://buildwithclaude.com/schema/registry.json',
@@ -139,7 +143,7 @@ async function generateRegistry() {
       lastUpdated: new Date().toISOString(),
       subagents,
       commands,
-      mcpServers: uniqueServers.sort((a, b) => a.name.localeCompare(b.name))
+      mcpServers: enhancedServers.sort((a, b) => a.name.localeCompare(b.name))
     };
 
     // Ensure the public directory exists

@@ -21,6 +21,7 @@ interface SubagentPageClientProps {
 export function SubagentPageClient({ subagent }: SubagentPageClientProps) {
   const [copied, setCopied] = useState(false)
   const [copiedCommand, setCopiedCommand] = useState<string | null>(null)
+  const bwcCommands = generateBWCCommands('subagent', subagent.name)
   
   
   const handleCopy = async () => {
@@ -184,12 +185,12 @@ export function SubagentPageClient({ subagent }: SubagentPageClientProps) {
                 <div className="space-y-2">
                   <p className="text-sm text-muted-foreground">Install and manage this subagent with a single command:</p>
                   <div className="bg-background rounded p-3 font-mono text-sm flex items-center justify-between">
-                    <span>bwc subagent add {subagent.name}</span>
+                    <span>{bwcCommands.install}</span>
                     <Button
                       size="sm"
                       variant="ghost"
                       onClick={async () => {
-                        await navigator.clipboard.writeText(`bwc subagent add ${subagent.name}`)
+                        await navigator.clipboard.writeText(bwcCommands.install)
                         setCopiedCommand('install')
                         setTimeout(() => setCopiedCommand(null), 2000)
                       }}
