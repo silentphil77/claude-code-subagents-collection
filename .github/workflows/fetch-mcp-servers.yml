@@ -55,6 +55,8 @@ jobs:
           npm install gray-matter
           
       - name: Generate registry.json
+        env:
+          CI: 'true'
         run: |
           npm run generate:registry
           

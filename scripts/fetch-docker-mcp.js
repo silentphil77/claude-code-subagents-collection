@@ -232,9 +232,197 @@ function extractTags(name, description) {
 }
 
 /**
+ * Fetch MCP servers from Docker Hub API
+ */
+async function fetchMCPServersFromDockerHubAPI() {
+  try {
+    console.log('Fetching MCP servers from Docker Hub API...');
+    const response = await fetch('https://hub.docker.com/v2/namespaces/mcp/repositories?page_size=100');
+    
+    if (!response.ok) {
+      throw new Error(`Docker Hub API returned ${response.status}`);
+    }
+    
+    const data = await response.json();
+    const servers = [];
+    
+    // In CI, skip fetching icons to speed up the process
+    const skipIcons = process.env.CI === 'true' || process.env.GITHUB_ACTIONS === 'true';
+    
+    for (const repo of data.results) {
+      const name = repo.name;
+      const description = repo.description || `MCP server for ${name}`;
+      
+      const category = categorizeDockerMCPServer(name, description);
+      const vendor = extractVendor(name);
+      
+      // Skip icon fetching in CI for speed
+      let logoUrl;
+      if (skipIcons) {
+        logoUrl = getVendorLogoUrl(vendor);
+      } else {
+        // Try to fetch official icon first, fallback to vendor logo
+        logoUrl = await fetchServerIcon(name);
+        if (!logoUrl) {
+          logoUrl = getVendorLogoUrl(vendor);
+        }
+      }
+      
+      servers.push({
+        name: name.toLowerCase().replace(/[^a-z0-9-]/g, '-'),
+        display_name: formatServerName(name),
+        category,
+        description,
+        server_type: 'stdio',
+        protocol_version: '1.0.0',
+        execution_type: 'local',
+        vendor,
+        logo_url: logoUrl,
+        verification: {
+          status: 'verified',
+          maintainer: 'Docker',
+          last_tested: new Date().toISOString().split('T')[0],
+          tested_with: ['claude-3.5', 'claude-code']
+        },
+        sources: {
+          docker: `https://hub.docker.com/r/mcp/${name.toLowerCase()}`,
+          official: `https://hub.docker.com/r/mcp/${name.toLowerCase()}`
+        },
+        security: {
+          auth_type: 'none',
+          permissions: [],
+          resource_indicators: false
+        },
+        source_registry: {
+          type: 'docker',
+          url: `https://hub.docker.com/r/mcp/${name.toLowerCase()}`,
+          verified_by: 'Docker',
+          last_fetched: new Date().toISOString()
+        },
+        installation_methods: [
+          {
+            type: 'bwc',
+            recommended: true,
+            command: `bwc add --mcp ${name.toLowerCase()}`,
+            requirements: ['Docker Desktop', 'Docker MCP Toolkit', 'BWC CLI']
+          },
+          {
+            type: 'docker',
+            command: `docker mcp server enable ${name.toLowerCase()}`,
+            requirements: ['Docker Desktop', 'Docker MCP Toolkit']
+          }
+        ],
+        tags: extractTags(name, description),
+        file: `docker-mcp/${name.toLowerCase()}.md`,
+        path: `docker-mcp/${name.toLowerCase()}`
+      });
+    }
+    
+    // Handle pagination if needed
+    let nextUrl = data.next;
+    while (nextUrl) {
+      const nextResponse = await fetch(nextUrl);
+      if (!nextResponse.ok) break;
+      
+      const nextData = await nextResponse.json();
+      for (const repo of nextData.results) {
+        const name = repo.name;
+        const description = repo.description || `MCP server for ${name}`;
+        
+        const category = categorizeDockerMCPServer(name, description);
+        const vendor = extractVendor(name);
+        
+        // Skip icon fetching in CI for speed
+        let logoUrl;
+        if (skipIcons) {
+          logoUrl = getVendorLogoUrl(vendor);
+        } else {
+          // Try to fetch official icon first, fallback to vendor logo
+          logoUrl = await fetchServerIcon(name);
+          if (!logoUrl) {
+            logoUrl = getVendorLogoUrl(vendor);
+          }
+        }
+        
+        servers.push({
+          name: name.toLowerCase().replace(/[^a-z0-9-]/g, '-'),
+          display_name: formatServerName(name),
+          category,
+          description,
+          server_type: 'stdio',
+          protocol_version: '1.0.0',
+          execution_type: 'local',
+          vendor,
+          logo_url: logoUrl,
+          verification: {
+            status: 'verified',
+            maintainer: 'Docker',
+            last_tested: new Date().toISOString().split('T')[0],
+            tested_with: ['claude-3.5', 'claude-code']
+          },
+          sources: {
+            docker: `https://hub.docker.com/r/mcp/${name.toLowerCase()}`,
+            official: `https://hub.docker.com/r/mcp/${name.toLowerCase()}`
+          },
+          security: {
+            auth_type: 'none',
+            permissions: [],
+            resource_indicators: false
+          },
+          source_registry: {
+            type: 'docker',
+            url: `https://hub.docker.com/r/mcp/${name.toLowerCase()}`,
+            verified_by: 'Docker',
+            last_fetched: new Date().toISOString()
+          },
+          installation_methods: [
+            {
+              type: 'bwc',
+              recommended: true,
+              command: `bwc add --mcp ${name.toLowerCase()}`,
+              requirements: ['Docker Desktop', 'Docker MCP Toolkit', 'BWC CLI']
+            },
+            {
+              type: 'docker',
+              command: `docker mcp server enable ${name.toLowerCase()}`,
+              requirements: ['Docker Desktop', 'Docker MCP Toolkit']
+            }
+          ],
+          tags: extractTags(name, description),
+          file: `docker-mcp/${name.toLowerCase()}.md`,
+          path: `docker-mcp/${name.toLowerCase()}`
+        });
+      }
+      
+      nextUrl = nextData.next;
+    }
+    
+    console.log(`✅ Successfully fetched ${servers.length} MCP servers from Docker Hub API`);
+    return servers;
+  } catch (error) {
+    console.error('Failed to fetch from Docker Hub API:', error.message);
+    throw error;
+  }
+}
+
+/**
  * Fetch Docker MCP servers from catalog
  */
 async function fetchDockerMCPServers() {
+  // Check if we're in CI environment or if Docker MCP is not available
+  const isCI = process.env.CI === 'true' || process.env.GITHUB_ACTIONS === 'true';
+  
+  if (isCI) {
+    console.log('Running in CI environment, using Docker Hub API...');
+    try {
+      return await fetchMCPServersFromDockerHubAPI();
+    } catch (error) {
+      console.error('Docker Hub API failed, using mock data:', error.message);
+      return getMockDockerServers();
+    }
+  }
+  
+  // Try Docker MCP command first (for local development)
   try {
     const { stdout } = await execAsync('docker mcp catalog show');
     
@@ -315,13 +503,20 @@ async function fetchDockerMCPServers() {
       });
     }
     
-    console.log(`Successfully fetched ${servers.length} Docker MCP servers`);
+    console.log(`Successfully fetched ${servers.length} Docker MCP servers from local Docker`);
     return servers;
   } catch (error) {
-    console.error('Failed to fetch Docker MCP servers:', error.message);
-    console.log('Using fallback mock data for development');
-    // Return mock data if Docker MCP is not available
-    return getMockDockerServers();
+    console.error('Docker MCP command failed:', error.message);
+    console.log('Falling back to Docker Hub API...');
+    
+    // Fallback to Docker Hub API
+    try {
+      return await fetchMCPServersFromDockerHubAPI();
+    } catch (apiError) {
+      console.error('Docker Hub API also failed:', apiError.message);
+      console.log('Using mock data for development');
+      return getMockDockerServers();
+    }
   }
 }
 

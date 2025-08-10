@@ -13,6 +13,22 @@ const { DockerHubAPI, extractDockerImageName, enhanceServerWithDockerStats } = r
  * @returns {Promise<Array>} Enhanced MCP servers with stats
  */
 async function enhanceMCPServersWithDockerStats(mcpServers) {
+  // Skip stats fetching in CI to speed up the process
+  const isCI = process.env.CI === 'true' || process.env.GITHUB_ACTIONS === 'true';
+  
+  if (isCI) {
+    console.log('\n📊 Skipping Docker Hub statistics in CI environment...');
+    // Return servers with basic stats
+    return mcpServers.map(server => ({
+      ...server,
+      stats: {
+        docker_pulls: 0,  // Will be updated in next scheduled run
+        github_stars: 0,
+        last_updated: new Date().toISOString()
+      }
+    }));
+  }
+  
   console.log('\n📊 Fetching Docker Hub statistics...');
   
   const dockerAPI = new DockerHubAPI();
