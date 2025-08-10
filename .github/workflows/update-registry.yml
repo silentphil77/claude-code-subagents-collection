@@ -6,7 +6,6 @@ on:
     paths:
       - 'subagents/**'
       - 'commands/**'
-      - 'mcp-servers/**'
       - 'scripts/generate-registry.js'
       - 'scripts/fetch-docker-mcp.js'
   workflow_dispatch:

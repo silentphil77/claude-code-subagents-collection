@@ -8,7 +8,6 @@ on:
     paths:
       - 'subagents/*.md'
       - 'commands/*.md'
-      - 'mcp-servers/**/*.md'
       - '!README.md'
       - '!CONTRIBUTING.md'
       - '.github/workflows/validate-subagents.yml'
@@ -38,9 +37,6 @@ jobs:
     - name: Validate commands
       run: node scripts/validate-commands.js
       
-    - name: Validate MCP servers
-      run: node scripts/validate-mcp-servers.js
-      
     - name: Check for naming inconsistencies
       run: |
         # Check if any subagent files have mismatched names (commands don't have name field)
@@ -56,24 +52,6 @@ jobs:
           fi
         done
         echo "✅ All subagent file names match their name fields"
-        
-        # Check MCP server files
-        for dir in mcp-servers/*/; do
-          if [[ -d "$dir" ]]; then
-            for file in "$dir"*.md; do
-              if [[ -f "$file" && "$file" != *"TEMPLATE.md" ]]; then
-                name=$(grep -E "^name:" "$file" | sed 's/name: //')
-                basename=$(basename "$file")
-                expected="${basename%.md}"
-                if [[ "$name" != "$expected" ]]; then
-                  echo "❌ File $file has name field '$name' but should be '$expected'"
-                  exit 1
-                fi
-              fi
-            done
-          fi
-        done
-        echo "✅ All MCP server file names match their name fields"
         
     - name: Upload validation report
       if: failure()

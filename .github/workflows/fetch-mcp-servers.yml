@@ -44,10 +44,11 @@ jobs:
         env:
           SMITHERY_API_KEY: ${{ secrets.SMITHERY_API_KEY }}
         run: |
-          cd scripts/mcp-importers
-          node fetch-from-registries.js \
-            --registry ${{ github.event.inputs.registry || 'all' }} \
-            --output ../../mcp-servers
+          echo "Skipping MCP markdown file generation - we only use Docker MCP now"
+          # cd scripts/mcp-importers
+          # node fetch-from-registries.js \
+          #   --registry ${{ github.event.inputs.registry || 'all' }} \
+          #   --output ../../mcp-servers
             
       - name: Install dependencies for registry generation
         run: |

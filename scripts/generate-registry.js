@@ -67,49 +67,9 @@ async function getCommands() {
 }
 
 async function getMCPServers() {
-  const mcpServers = [];
-  
-  // Process all subdirectories (verified, community, experimental)
-  const subdirs = ['verified', 'community', 'experimental'];
-  
-  for (const subdir of subdirs) {
-    const dirPath = path.join(MCP_SERVERS_DIR, subdir);
-    
-    try {
-      const files = await fs.readdir(dirPath);
-      
-      for (const file of files) {
-        if (!file.endsWith('.md') || file === 'TEMPLATE.md') continue;
-        
-        const filePath = path.join(dirPath, file);
-        const content = await fs.readFile(filePath, 'utf-8');
-        const { data } = matter(content);
-        
-        // Add subdirectory info to the server data
-        mcpServers.push({
-          name: data.name || file.replace('.md', ''),
-          display_name: data.display_name || data.name,
-          category: data.category || 'uncategorized',
-          description: data.description || '',
-          server_type: data.server_type || 'stdio',
-          protocol_version: data.protocol_version || '1.0.0',
-          verification: data.verification || { status: subdir },
-          sources: data.sources || {},
-          security: data.security || {},
-          stats: data.stats || {},
-          installation_methods: data.installation_methods || [],
-          tags: data.tags || [],
-          file: `mcp-servers/${subdir}/${file}`,
-          path: `${subdir}/${file.replace('.md', '')}`
-        });
-      }
-    } catch (error) {
-      // Directory might not exist yet
-      console.warn(`Warning: ${dirPath} not found, skipping...`);
-    }
-  }
-  
-  return mcpServers.sort((a, b) => a.name.localeCompare(b.name));
+  // We only use Docker MCP servers now, no markdown files
+  // All MCP servers come from fetchDockerMCPServers()
+  return [];
 }
 
 async function generateRegistry() {
