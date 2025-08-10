@@ -211,6 +211,7 @@ export function MCPCard({ server }: MCPCardProps) {
         serverName={server.name}
         displayName={server.display_name}
         serverType={server.server_type}
+        dockerHubUrl={server.sources?.docker || `https://hub.docker.com/r/mcp/${server.name}`}
         jsonConfig={(() => {
           // Find the first installation method with config_example
           const methodWithConfig = server.installation_methods.find(m => m.config_example)

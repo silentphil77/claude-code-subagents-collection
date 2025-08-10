@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Copy, Check, Terminal, FileJson } from 'lucide-react'
+import { Copy, Check, Terminal } from 'lucide-react'
 
 interface MCPInstallationModalProps {
   isOpen: boolean
@@ -20,6 +20,7 @@ interface MCPInstallationModalProps {
   jsonConfig: string
   claudeCommand?: string
   serverType?: string
+  dockerHubUrl?: string
 }
 
 export function MCPInstallationModal({
@@ -29,13 +30,15 @@ export function MCPInstallationModal({
   displayName,
   jsonConfig,
   claudeCommand,
-  serverType
+  serverType,
+  dockerHubUrl
 }: MCPInstallationModalProps) {
   const [copiedBWC, setCopiedBWC] = useState(false)
-  const [copiedJSON, setCopiedJSON] = useState(false)
+  const [copiedDocker, setCopiedDocker] = useState(false)
   const [copiedClaude, setCopiedClaude] = useState(false)
   
   const bwcCommand = `bwc add --mcp ${serverName}`
+  const dockerCommand = `docker mcp server enable ${serverName}`
   
   const handleCopyBWC = async () => {
     await navigator.clipboard.writeText(bwcCommand)
@@ -43,10 +46,10 @@ export function MCPInstallationModal({
     setTimeout(() => setCopiedBWC(false), 2000)
   }
   
-  const handleCopyJSON = async () => {
-    await navigator.clipboard.writeText(jsonConfig)
-    setCopiedJSON(true)
-    setTimeout(() => setCopiedJSON(false), 2000)
+  const handleCopyDocker = async () => {
+    await navigator.clipboard.writeText(dockerCommand)
+    setCopiedDocker(true)
+    setTimeout(() => setCopiedDocker(false), 2000)
   }
   
   const handleCopyClaude = async () => {
@@ -71,11 +74,11 @@ export function MCPInstallationModal({
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="bwc" className="flex items-center gap-2">
               <Terminal className="h-4 w-4" />
-              BWC CLI
+              BWC CLI ⭐
             </TabsTrigger>
-            <TabsTrigger value="json" className="flex items-center gap-2">
-              <FileJson className="h-4 w-4" />
-              Manual Config
+            <TabsTrigger value="docker" className="flex items-center gap-2">
+              <Terminal className="h-4 w-4" />
+              Docker MCP
             </TabsTrigger>
           </TabsList>
           
@@ -132,37 +135,54 @@ export function MCPInstallationModal({
             </div>
           </TabsContent>
           
-          <TabsContent value="json" className="flex-1 overflow-auto">
+          <TabsContent value="docker" className="flex-1 overflow-auto space-y-4">
             <div className="space-y-3">
-              <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center justify-between">
                 <p className="text-sm text-muted-foreground">
-                  Copy the JSON configuration for manual setup:
+                  Enable this server using Docker MCP Toolkit:
                 </p>
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={handleCopyJSON}
+                  onClick={handleCopyDocker}
                   className="gap-2"
                 >
-                  {copiedJSON ? (
+                  {copiedDocker ? (
                     <>
                       <Check className="h-4 w-4 text-green-600" />
                       Copied!
                     </>
                   ) : (
-                    <>
-                      <Copy className="h-4 w-4" />
-                      Copy JSON
-                    </>
+                    <Copy className="h-4 w-4" />
                   )}
                 </Button>
               </div>
               
               <div className="relative">
-                <pre className="p-4 bg-muted rounded-lg overflow-auto max-h-[400px] font-mono text-sm">
-                  <code>{jsonConfig}</code>
+                <pre className="p-4 bg-muted rounded-lg overflow-auto">
+                  <code className="text-sm font-mono">{dockerCommand}</code>
                 </pre>
               </div>
+              
+              <div className="space-y-2 text-xs text-muted-foreground">
+                <p>This command will:</p>
+                <ul className="list-disc list-inside space-y-1 ml-2">
+                  <li>Enable the MCP server in Docker MCP Toolkit</li>
+                  <li>Configure it with default settings</li>
+                  <li>Make it available through the Docker MCP gateway</li>
+                  <li>Allow Claude Code to access the server</li>
+                </ul>
+              </div>
+              
+              <div className="mt-4 p-3 bg-secondary/50 rounded-lg text-sm">
+                <p className="font-semibold mb-2 text-foreground">Prerequisites:</p>
+                <ul className="list-disc list-inside space-y-1 ml-2 text-muted-foreground">
+                  <li>Docker Desktop must be installed and running</li>
+                  <li>Docker MCP Toolkit must be enabled</li>
+                </ul>
+              </div>
+              
+             
             </div>
           </TabsContent>
         </Tabs>
