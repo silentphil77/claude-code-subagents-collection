@@ -2,18 +2,20 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowLeft, Copy, Check, ExternalLink, Github, Box, Package } from 'lucide-react'
+import { HiMiniCheckBadge } from 'react-icons/hi2'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { 
-  MCPServer, 
+import {
+  MCPServer,
   VERIFICATION_STATUS,
   SOURCE_INDICATORS,
-  EXECUTION_INDICATORS, 
-  getMCPCategoryDisplayName, 
-  getMCPCategoryIcon 
+  EXECUTION_INDICATORS,
+  getMCPCategoryDisplayName,
+  getMCPCategoryIcon
 } from '@/lib/mcp-types'
 
 interface MCPServerPageClientProps {
@@ -22,45 +24,56 @@ interface MCPServerPageClientProps {
 
 export default function MCPServerPageClient({ server }: MCPServerPageClientProps) {
   const [copiedConfig, setCopiedConfig] = useState<string | null>(null)
-  
+  const [logoError, setLogoError] = useState(false)
+
   const verificationStatus = VERIFICATION_STATUS[server.verification.status]
   const categoryName = getMCPCategoryDisplayName(server.category)
   const categoryIcon = getMCPCategoryIcon(server.category)
-  
+
   const handleCopyConfig = async (methodType: string, config: string) => {
     await navigator.clipboard.writeText(config)
     setCopiedConfig(methodType)
     setTimeout(() => setCopiedConfig(null), 2000)
   }
-  
+
   return (
     <div className="min-h-screen">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Back button */}
-        <Link href="/mcp-servers">
-          <Button variant="ghost" className="mb-6">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to MCP Servers
-          </Button>
+        <Link href="/mcp-servers" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary mb-6">
+          <ArrowLeft className="h-4 w-4" />
+          Back to MCP Servers
         </Link>
-        
+
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-start gap-4 mb-4">
-            <span className="text-4xl">{categoryIcon}</span>
+            {server.logo_url && !logoError ? (
+              <div className="relative w-16 h-16 flex items-center justify-center flex-shrink-0">
+                <Image
+                  src={server.logo_url}
+                  alt={`${server.vendor || server.display_name} logo`}
+                  width={64}
+                  height={64}
+                  className="object-contain"
+                  onError={() => setLogoError(true)}
+                />
+              </div>
+            ) : (
+              <span className="text-4xl flex-shrink-0">{categoryIcon}</span>
+            )}
             <div className="flex-1">
-              <h1 className="text-3xl font-bold mb-2">{server.display_name}</h1>
+              <h1 className="text-3xl font-bold mb-2 flex items-center gap-2">
+                {server.display_name}
+                {server.verification.status === 'verified' && (
+                  <HiMiniCheckBadge className="h-7 w-7 text-blue-500" />
+                )}
+              </h1>
               <p className="text-lg text-muted-foreground">{server.description}</p>
             </div>
           </div>
-          
+
           <div className="flex flex-wrap gap-2 items-center">
-            <Badge 
-              variant="outline"
-              className={verificationStatus.className}
-            >
-              {verificationStatus.icon} {verificationStatus.label}
-            </Badge>
             <Badge variant="secondary">{categoryName}</Badge>
             <Badge variant="outline">Protocol v{server.protocol_version}</Badge>
             <Badge variant="outline">{server.server_type}</Badge>
@@ -76,7 +89,7 @@ export default function MCPServerPageClient({ server }: MCPServerPageClientProps
             )}
           </div>
         </div>
-        
+
         {/* Stats and Sources */}
         <div className="grid md:grid-cols-2 gap-6 mb-8">
           {/* Stats Card */}
@@ -113,131 +126,143 @@ export default function MCPServerPageClient({ server }: MCPServerPageClientProps
               </CardContent>
             </Card>
           )}
-          
+
           {/* Sources Card */}
           <Card>
             <CardHeader>
               <CardTitle className="text-lg">Sources</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-              {server.sources.github && (
-                <a 
-                  href={server.sources.github} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-between hover:text-primary transition-colors"
-                >
-                  <span className="flex items-center gap-2">
-                    <Github className="h-4 w-4" />
-                    GitHub Repository
-                  </span>
-                  <ExternalLink className="h-4 w-4" />
-                </a>
-              )}
-              {server.sources.docker && (
-                <a 
-                  href={server.sources.docker} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-between hover:text-primary transition-colors"
-                >
-                  <span className="flex items-center gap-2">
-                    <Box className="h-4 w-4" />
-                    Docker Hub
-                  </span>
-                  <ExternalLink className="h-4 w-4" />
-                </a>
-              )}
-              {server.sources.npm && (
-                <a 
-                  href={server.sources.npm} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-between hover:text-primary transition-colors"
-                >
-                  <span className="flex items-center gap-2">
-                    <Package className="h-4 w-4" />
-                    NPM Package
-                  </span>
-                  <ExternalLink className="h-4 w-4" />
-                </a>
-              )}
-              {server.sources.documentation && (
-                <a 
-                  href={server.sources.documentation} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-between hover:text-primary transition-colors"
-                >
-                  <span className="flex items-center gap-2">
-                    📚 Documentation
-                  </span>
-                  <ExternalLink className="h-4 w-4" />
-                </a>
-              )}
-              {server.source_registry?.url && (
-                <div className="pt-2 mt-2 border-t">
-                  <a 
-                    href={server.source_registry.url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-between hover:text-primary transition-colors"
-                  >
-                    <span className="flex items-center gap-2">
-                      {SOURCE_INDICATORS[server.source_registry.type]?.icon} 
-                      Source: {SOURCE_INDICATORS[server.source_registry.type]?.label}
-                    </span>
-                    <ExternalLink className="h-4 w-4" />
-                  </a>
-                  {server.source_registry.last_fetched && (
-                    <div className="text-xs text-muted-foreground mt-1">
-                      Last fetched: {new Date(server.source_registry.last_fetched).toLocaleDateString('en-US', { 
-                        year: 'numeric', 
-                        month: '2-digit', 
-                        day: '2-digit' 
-                      })}
+              {(() => {
+                const displayedUrls = new Set<string>()
+                const sources = []
+                
+                // Add GitHub source if unique
+                if (server.sources.github && !displayedUrls.has(server.sources.github)) {
+                  displayedUrls.add(server.sources.github)
+                  sources.push(
+                    <a
+                      key="github"
+                      href={server.sources.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-between hover:text-primary transition-colors"
+                    >
+                      <span className="flex items-center gap-2">
+                        <Github className="h-4 w-4" />
+                        GitHub Repository
+                      </span>
+                      <ExternalLink className="h-4 w-4" />
+                    </a>
+                  )
+                }
+                
+                // Add Docker source if unique
+                if (server.sources.docker && !displayedUrls.has(server.sources.docker)) {
+                  displayedUrls.add(server.sources.docker)
+                  sources.push(
+                    <div key="docker">
+                      <a
+                        href={server.sources.docker}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-between hover:text-primary transition-colors"
+                      >
+                        <span className="flex items-center gap-2">
+                          <Box className="h-4 w-4" />
+                          Docker Hub
+                        </span>
+                        <ExternalLink className="h-4 w-4" />
+                      </a>
+                      {/* Add last fetched info if this Docker URL matches source_registry */}
+                      {server.source_registry?.url === server.sources.docker && 
+                       server.source_registry.last_fetched && (
+                        <div className="text-xs text-muted-foreground mt-1 ml-6">
+                          Last fetched: {new Date(server.source_registry.last_fetched).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit'
+                          })}
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-              )}
+                  )
+                }
+                
+                // Add NPM source if unique
+                if (server.sources.npm && !displayedUrls.has(server.sources.npm)) {
+                  displayedUrls.add(server.sources.npm)
+                  sources.push(
+                    <a
+                      key="npm"
+                      href={server.sources.npm}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-between hover:text-primary transition-colors"
+                    >
+                      <span className="flex items-center gap-2">
+                        <Package className="h-4 w-4" />
+                        NPM Package
+                      </span>
+                      <ExternalLink className="h-4 w-4" />
+                    </a>
+                  )
+                }
+                
+                // Add Documentation if unique
+                if (server.sources.documentation && !displayedUrls.has(server.sources.documentation)) {
+                  displayedUrls.add(server.sources.documentation)
+                  sources.push(
+                    <a
+                      key="docs"
+                      href={server.sources.documentation}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-between hover:text-primary transition-colors"
+                    >
+                      <span className="flex items-center gap-2">
+                        📚 Documentation
+                      </span>
+                      <ExternalLink className="h-4 w-4" />
+                    </a>
+                  )
+                }
+                
+                // Only add source_registry if it's a unique URL
+                if (server.source_registry?.url && !displayedUrls.has(server.source_registry.url)) {
+                  sources.push(
+                    <div key="registry" className="pt-2 mt-2 border-t">
+                      <a
+                        href={server.source_registry.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-between hover:text-primary transition-colors"
+                      >
+                        <span className="flex items-center gap-2">
+                          {SOURCE_INDICATORS[server.source_registry.type]?.icon}
+                          Source: {SOURCE_INDICATORS[server.source_registry.type]?.label}
+                        </span>
+                        <ExternalLink className="h-4 w-4" />
+                      </a>
+                      {server.source_registry.last_fetched && (
+                        <div className="text-xs text-muted-foreground mt-1">
+                          Last fetched: {new Date(server.source_registry.last_fetched).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit'
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  )
+                }
+                
+                return sources
+              })()}
             </CardContent>
           </Card>
         </div>
-        
-        {/* Security Information */}
-        {server.security && (
-          <Card className="mb-8">
-            <CardHeader>
-              <CardTitle className="text-lg">Security Information</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div>
-                <span className="font-semibold">Authentication:</span> {server.security.auth_type}
-              </div>
-              <div>
-                <span className="font-semibold">Required Permissions:</span>
-                <div className="flex flex-wrap gap-1 mt-1">
-                  {server.security.permissions.map((perm) => (
-                    <Badge key={perm} variant="secondary" className="text-xs">
-                      {perm}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-              {server.security.data_handling && (
-                <div>
-                  <span className="font-semibold">Data Handling:</span> {server.security.data_handling}
-                </div>
-              )}
-              {server.security.audit_log !== undefined && (
-                <div>
-                  <span className="font-semibold">Audit Logging:</span> {server.security.audit_log ? 'Yes' : 'No'}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        )}
-        
+
         {/* Installation Methods */}
         <Card className="mb-8">
           <CardHeader>
@@ -256,7 +281,7 @@ export default function MCPServerPageClient({ server }: MCPServerPageClientProps
                   </TabsTrigger>
                 ))}
               </TabsList>
-              
+
               {server.installation_methods.map((method) => (
                 <TabsContent key={method.type} value={method.type} className="space-y-4">
                   {method.command && (
@@ -267,7 +292,7 @@ export default function MCPServerPageClient({ server }: MCPServerPageClientProps
                       </pre>
                     </div>
                   )}
-                  
+
                   {method.type === 'bwc' && (
                     <div className="space-y-2">
                       <p className="text-sm text-muted-foreground">This command will:</p>
@@ -278,7 +303,7 @@ export default function MCPServerPageClient({ server }: MCPServerPageClientProps
                       </ul>
                     </div>
                   )}
-                  
+
                   {method.config_example && (
                     <div>
                       <div className="flex items-center justify-between mb-2">
@@ -306,7 +331,7 @@ export default function MCPServerPageClient({ server }: MCPServerPageClientProps
                       </pre>
                     </div>
                   )}
-                  
+
                   {method.steps && (
                     <div>
                       <h4 className="font-semibold mb-2">Manual Installation Steps:</h4>
@@ -319,7 +344,7 @@ export default function MCPServerPageClient({ server }: MCPServerPageClientProps
                       </ol>
                     </div>
                   )}
-                  
+
                   {method.requirements && (
                     <div>
                       <h4 className="font-semibold mb-2">Requirements:</h4>
@@ -337,7 +362,7 @@ export default function MCPServerPageClient({ server }: MCPServerPageClientProps
             </Tabs>
           </CardContent>
         </Card>
-        
+
         {/* Additional Information */}
         <Card>
           <CardHeader>
@@ -356,19 +381,19 @@ export default function MCPServerPageClient({ server }: MCPServerPageClientProps
                 </div>
               </div>
             )}
-            
+
             {server.verification.maintainer && (
               <div>
                 <span className="font-semibold">Maintainer:</span> {server.verification.maintainer}
               </div>
             )}
-            
+
             {server.verification.last_tested && (
               <div>
                 <span className="font-semibold">Last Tested:</span> {server.verification.last_tested}
               </div>
             )}
-            
+
             {server.tags.length > 0 && (
               <div>
                 <span className="font-semibold">Tags:</span>

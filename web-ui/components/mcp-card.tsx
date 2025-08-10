@@ -13,6 +13,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { Copy, Star, Package, Box } from 'lucide-react'
+import { HiMiniCheckBadge } from 'react-icons/hi2'
 import { 
   MCPServer, 
   VERIFICATION_STATUS, 
@@ -65,7 +66,7 @@ export function MCPCard({ server }: MCPCardProps) {
   return (
     <TooltipProvider>
       <Link href={href}>
-        <Card className="h-full hover:shadow-lg transition-all duration-200 border-muted hover:border-primary/50 group relative overflow-hidden">
+        <Card className="h-full card-hover border-border/50 hover:border-primary/20 transition-all duration-300 cursor-pointer group relative overflow-hidden">
           {/* Hover actions */}
           <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
             <Tooltip>
@@ -122,12 +123,6 @@ export function MCPCard({ server }: MCPCardProps) {
                     📈 Trending
                   </Badge>
                 )}
-                <Badge 
-                  variant="outline"
-                  className={verificationStatus.className}
-                >
-                  {verificationStatus.icon} {verificationStatus.label}
-                </Badge>
                 {server.execution_type && (
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -155,7 +150,12 @@ export function MCPCard({ server }: MCPCardProps) {
               </div>
             </div>
             
-            <CardTitle className="text-lg pr-20">{server.display_name}</CardTitle>
+            <CardTitle className="text-lg pr-20 flex items-center gap-1">
+              {server.display_name}
+              {server.verification.status === 'verified' && (
+                <HiMiniCheckBadge className="h-5 w-5 text-blue-500" />
+              )}
+            </CardTitle>
             <CardDescription className="text-sm line-clamp-2">
               {server.description}
             </CardDescription>

@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
+import { HiMiniCheckBadge, HiUserGroup, HiBeaker } from 'react-icons/hi2'
 import { MCPCard } from '@/components/mcp-card'
 import { CategoryFilter } from '@/components/category-filter'
 import { SearchBar } from '@/components/search-bar'
@@ -261,19 +262,22 @@ export default function MCPPageClient({
               </Badge>
             </TabsTrigger>
             <TabsTrigger value="verified">
-              {VERIFICATION_STATUS.verified.icon} Verified
+              <HiMiniCheckBadge className="h-4 w-4 text-blue-500 mr-1" />
+              Verified
               <Badge variant="secondary" className="ml-2">
                 {groupedServers.verified.length}
               </Badge>
             </TabsTrigger>
             <TabsTrigger value="community">
-              {VERIFICATION_STATUS.community.icon} Community
+              <HiUserGroup className="h-4 w-4 text-blue-600 mr-1" />
+              Community
               <Badge variant="secondary" className="ml-2">
                 {groupedServers.community.length}
               </Badge>
             </TabsTrigger>
             <TabsTrigger value="experimental">
-              {VERIFICATION_STATUS.experimental.icon} Experimental
+              <HiBeaker className="h-4 w-4 text-amber-600 mr-1" />
+              Experimental
               <Badge variant="secondary" className="ml-2">
                 {groupedServers.experimental.length}
               </Badge>
