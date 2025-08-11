@@ -13,7 +13,6 @@ interface PackageManagerSwitcherProps {
 
 function PackageManagerSwitcher({ selected, onSelect }: PackageManagerSwitcherProps) {
   const managers = ['npm', 'yarn', 'pnpm', 'bun'] as const
-
   return (
     <div className="flex items-center gap-0.5 p-0.5 bg-muted rounded-md w-fit mb-3">
       {managers.map((pm) => (
@@ -38,7 +37,6 @@ function PackageManagerSwitcher({ selected, onSelect }: PackageManagerSwitcherPr
 export default function CLIPage() {
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
   const [packageManager, setPackageManager] = useState<'npm' | 'yarn' | 'pnpm' | 'bun'>('npm')
-
   const copyToClipboard = async (text: string, index: number) => {
     await navigator.clipboard.writeText(text)
     setCopiedIndex(index)
@@ -84,7 +82,6 @@ export default function CLIPage() {
     // Installation
     globalInstall: 'npm install -g bwc-cli',
     npxUsage: 'npx bwc-cli@latest init',
-
     // Basic commands
     init: 'bwc init',
     initProject: 'bwc init --project',
@@ -138,7 +135,6 @@ bwc mcp list --project`,
     "commands": ["api-tester", "dockerize"]
   }
 }`,
-
     // Examples
     teamSetup: `# Initialize project configuration
 bwc init --project
@@ -155,7 +151,6 @@ git commit -m "Add Claude Code configuration"
 # Team members install dependencies
 git clone <repo>
 bwc install`,
-
     bulkInstall: `# Search for testing-related tools
 bwc search test
 
@@ -165,7 +160,6 @@ bwc add
 # Select category or "All"
 # Use SPACE to select multiple items
 # Press ENTER to install all`,
-
     cicdExample: `# .github/workflows/setup.yml
 - name: Install bwc CLI
   run: npm install -g bwc-cli
@@ -181,13 +175,11 @@ bwc add
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Documentation
         </Link>
-
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-4">CLI Tool for Claude Code</h1>
           <p className="text-lg text-muted-foreground mb-6">
             Add subagents and commands from your terminal with the bwc CLI
           </p>
-
           {/* Quick install */}
           <div className="bg-card p-6 rounded-lg border border-border/50 mb-8">
             <h3 className="font-semibold mb-3 flex items-center gap-2">
@@ -265,7 +257,6 @@ ${getInstallCommand('dlx', packageManager)} list --agents`}</code>
                 </Button>
               </div>
             </TabsContent>
-
             <TabsContent value="project" className="space-y-4">
               <p className="text-muted-foreground">Install as a project dependency</p>
               <PackageManagerSwitcher selected={packageManager} onSelect={setPackageManager} />
@@ -324,7 +315,6 @@ bwc init`}</code>
         {/* Core Commands */}
         <section className="mb-12">
           <h2 className="text-2xl font-bold mb-4">Core Commands</h2>
-
           <div className="space-y-6">
             {/* init */}
             <div className="border border-border/50 rounded-lg p-6">
@@ -841,17 +831,14 @@ bwc install  # Installs all configured MCP servers`}</code>
               <h3 className="font-semibold mb-2">Configuration not found</h3>
               <p className="text-muted-foreground">Run <code className="text-sm bg-muted px-2 py-1 rounded">bwc init</code> to create configuration</p>
             </div>
-
             <div className="border border-border/50 rounded-lg p-4">
               <h3 className="font-semibold mb-2">Failed to fetch registry</h3>
               <p className="text-muted-foreground">Check your internet connection. The CLI needs access to <code className="text-sm bg-muted px-2 py-1 rounded">buildwithclaude.com</code></p>
             </div>
-
             <div className="border border-border/50 rounded-lg p-4">
               <h3 className="font-semibold mb-2">Permission denied</h3>
               <p className="text-muted-foreground">On macOS/Linux, you may need to use <code className="text-sm bg-muted px-2 py-1 rounded">sudo npm install -g bwc-cli</code></p>
             </div>
-
             <div className="border border-border/50 rounded-lg p-4">
               <h3 className="font-semibold mb-2">Interactive mode not selecting</h3>
               <p className="text-muted-foreground">Use <strong>SPACE</strong> to select items (not Enter). Selected items show a ● marker. Press <strong>ENTER</strong> only to confirm.</p>
