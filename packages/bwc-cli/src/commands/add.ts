@@ -607,7 +607,31 @@ async function addDockerMCPServer(name: string, configManager: ConfigManager): P
     // Check if already installed
     const installed = await listInstalledDockerMCPServers()
     if (installed.includes(name)) {
-      logger.warn(`Server "${name}" is already installed`)
+      // Check if it's already in BWC config
+      const trackedServers = await configManager.getInstalledMCPServers()
+      if (trackedServers.includes(name)) {
+        logger.warn(`Server "${name}" is already installed and tracked in BWC config`)
+        return
+      }
+      
+      // Server is installed but not tracked in BWC config
+      logger.warn(`Server "${name}" is already installed in Docker MCP`)
+      
+      const { shouldTrack } = await inquirer.prompt([
+        {
+          type: 'confirm',
+          name: 'shouldTrack',
+          message: 'Would you like to add it to your BWC config file for tracking?',
+          default: true
+        }
+      ])
+      
+      if (shouldTrack) {
+        await configManager.addInstalledMCPServer(name)
+        spinner.succeed(`Server "${name}" added to BWC config for tracking`)
+      } else {
+        logger.info('Server not added to BWC config')
+      }
       return
     }
     

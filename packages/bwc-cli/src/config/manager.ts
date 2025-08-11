@@ -22,7 +22,8 @@ const DEFAULT_CONFIG: BwcConfig = {
   },
   installed: {
     subagents: [],
-    commands: []
+    commands: [],
+    mcpServers: []
   }
 }
 
@@ -35,7 +36,8 @@ const DEFAULT_PROJECT_CONFIG: BwcConfig = {
   },
   installed: {
     subagents: [],
-    commands: []
+    commands: [],
+    mcpServers: []
   }
 }
 
