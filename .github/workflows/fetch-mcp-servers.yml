@@ -9,14 +9,10 @@ on:
       registry:
         description: 'Registry to fetch from'
         required: false
-        default: 'all'
+        default: 'docker'
         type: choice
         options:
-          - all
-          - github
-          - smithery
           - docker
-          - mcpmarket
 
 jobs:
   fetch-servers:
@@ -41,13 +37,11 @@ jobs:
           npm install
           
       - name: Fetch MCP servers from registries
-        env:
-          SMITHERY_API_KEY: ${{ secrets.SMITHERY_API_KEY }}
         run: |
           echo "Skipping MCP markdown file generation - we only use Docker MCP now"
           # cd scripts/mcp-importers
           # node fetch-from-registries.js \
-          #   --registry ${{ github.event.inputs.registry || 'all' }} \
+          #   --registry ${{ github.event.inputs.registry || 'docker' }} \
           #   --output ../../mcp-servers
             
       - name: Install dependencies for registry generation
@@ -55,8 +49,6 @@ jobs:
           npm install gray-matter
           
       - name: Generate registry.json
-        env:
-          CI: 'true'
         run: |
           npm run generate:registry
           

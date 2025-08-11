@@ -6,9 +6,6 @@ yarn.lock
 .claude
 bwc.config.json
 
-# Generated files
-web-ui/public/registry.json
-
 # Environment files
 .env
 .env.local

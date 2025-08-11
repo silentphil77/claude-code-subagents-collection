@@ -24,6 +24,7 @@ interface MCPServerPageClientProps {
 
 export default function MCPServerPageClient({ server }: MCPServerPageClientProps) {
   const [copiedConfig, setCopiedConfig] = useState<string | null>(null)
+  const [copiedCommand, setCopiedCommand] = useState<string | null>(null)
   const [logoError, setLogoError] = useState(false)
 
   const verificationStatus = VERIFICATION_STATUS[server.verification.status]
@@ -34,6 +35,12 @@ export default function MCPServerPageClient({ server }: MCPServerPageClientProps
     await navigator.clipboard.writeText(config)
     setCopiedConfig(methodType)
     setTimeout(() => setCopiedConfig(null), 2000)
+  }
+
+  const handleCopyCommand = async (methodType: string, command: string) => {
+    await navigator.clipboard.writeText(command)
+    setCopiedCommand(methodType)
+    setTimeout(() => setCopiedCommand(null), 2000)
   }
 
   return (
@@ -283,9 +290,21 @@ export default function MCPServerPageClient({ server }: MCPServerPageClientProps
                   {method.command && (
                     <div>
                       <h4 className="font-semibold mb-2">Installation Command:</h4>
-                      <pre className="bg-muted p-4 rounded-lg overflow-x-auto">
+                      <div className="bg-muted p-4 rounded-lg overflow-x-auto flex items-center justify-between">
                         <code>{method.command}</code>
-                      </pre>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleCopyCommand(method.type, method.command!)}
+                          className="ml-2 flex-shrink-0"
+                        >
+                          {copiedCommand === method.type ? (
+                            <Check className="h-4 w-4 text-green-600" />
+                          ) : (
+                            <Copy className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </div>
                     </div>
                   )}
 
@@ -302,29 +321,22 @@ export default function MCPServerPageClient({ server }: MCPServerPageClientProps
 
                   {method.config_example && (
                     <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-semibold">Configuration:</h4>
+                      <h4 className="font-semibold mb-2">Configuration:</h4>
+                      <div className="bg-muted p-4 rounded-lg overflow-x-auto flex items-start justify-between">
+                        <code className="whitespace-pre">{method.config_example}</code>
                         <Button
-                          variant="ghost"
                           size="sm"
+                          variant="ghost"
                           onClick={() => handleCopyConfig(method.type, method.config_example!)}
+                          className="ml-2 flex-shrink-0"
                         >
                           {copiedConfig === method.type ? (
-                            <>
-                              <Check className="h-4 w-4 mr-2 text-green-600" />
-                              Copied!
-                            </>
+                            <Check className="h-4 w-4 text-green-600" />
                           ) : (
-                            <>
-                              <Copy className="h-4 w-4 mr-2" />
-                              Copy
-                            </>
+                            <Copy className="h-4 w-4" />
                           )}
                         </Button>
                       </div>
-                      <pre className="bg-muted p-4 rounded-lg overflow-x-auto">
-                        <code>{method.config_example}</code>
-                      </pre>
                     </div>
                   )}
 

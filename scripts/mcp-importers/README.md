@@ -5,10 +5,9 @@ Internal maintenance scripts for fetching MCP servers from various registries an
 ## Overview
 
 These scripts are used to automatically import MCP server definitions from:
-- GitHub (ModelContextProtocol official servers)
-- Smithery.ai (Community and hosted servers)
 - Docker Hub (Official MCP Docker images)
-- MCPMarket (Coming soon)
+- GitHub (ModelContextProtocol official servers) - Coming soon
+- MCPMarket - Coming soon
 
 The fetched servers are converted to our markdown format and stored in `/mcp-servers/auto-imported/`.
 
@@ -20,10 +19,10 @@ cd scripts/mcp-importers
 npm install
 ```
 
-2. Configure API keys:
+2. Configure API keys (if needed):
 ```bash
 cp .env.example .env
-# Edit .env and add your Smithery API key
+# Edit .env if you need to add API keys
 ```
 
 ## Usage
@@ -35,18 +34,17 @@ npm run fetch:all
 
 ### Fetch from specific registry:
 ```bash
-npm run fetch:github
-npm run fetch:smithery
 npm run fetch:docker
+# npm run fetch:github (coming soon)
 ```
 
 ### Advanced options:
 ```bash
 # Limit number of servers
-node fetch-from-registries.js --registry smithery --limit 10
+node fetch-from-registries.js --registry docker --limit 10
 
 # Dry run (preview without writing)
-node fetch-from-registries.js --registry all --dry-run
+node fetch-from-registries.js --registry docker --dry-run
 
 # Custom output directory
 node fetch-from-registries.js --output ../../custom-output
@@ -59,18 +57,15 @@ The fetch process runs automatically via GitHub Actions:
 - **Manual trigger**: Via Actions tab in GitHub
 - **Output**: Creates PR with updates
 
-To enable:
-1. Add `SMITHERY_API_KEY` as repository secret
-2. The workflow will run automatically
+The workflow runs automatically and fetches Docker MCP servers.
 
 ## Directory Structure
 
 Generated files are organized by source:
 ```
 /mcp-servers/auto-imported/
-├── github/       # Official MCP servers from GitHub
-├── smithery/     # Servers from Smithery.ai
 ├── docker/       # Docker Hub MCP images
+├── github/       # Future: Official MCP servers from GitHub
 └── mcpmarket/    # Future: MCPMarket servers
 ```
 

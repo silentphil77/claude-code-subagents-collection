@@ -179,6 +179,11 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
       {
+        protocol: 'https',
+        hostname: 'www.plugged.in',
+        pathname: '/**',
+      },
+      {
         protocol: 'https', 
         hostname: '*.amazonaws.com',
         pathname: '/**',

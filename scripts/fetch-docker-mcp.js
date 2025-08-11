@@ -7,31 +7,78 @@ const yaml = require('js-yaml');
 const execAsync = promisify(exec);
 
 /**
+ * Normalize Docker Hub name to GitHub registry name
+ */
+function normalizeNameForGitHub(dockerHubName) {
+  // Direct mappings for known differences
+  const directMappings = {
+    'brave-search': 'brave',
+    'github-mcp-server': 'github',
+    'basic-memory': 'memory',
+    'github-chat': 'github-chat',
+    'github-official': 'github-official',
+  };
+  
+  if (directMappings[dockerHubName]) {
+    return directMappings[dockerHubName];
+  }
+  
+  // Try removing common suffixes
+  let normalized = dockerHubName.toLowerCase();
+  
+  // Remove -mcp-server suffix first (most specific)
+  if (normalized.endsWith('-mcp-server')) {
+    return normalized.replace(/-mcp-server$/, '');
+  }
+  
+  // Remove -server suffix
+  if (normalized.endsWith('-server')) {
+    return normalized.replace(/-server$/, '');
+  }
+  
+  // Remove -mcp suffix
+  if (normalized.endsWith('-mcp')) {
+    return normalized.replace(/-mcp$/, '');
+  }
+  
+  // Return as-is if no transformation needed
+  return normalized;
+}
+
+/**
  * Fetch icon URL from Docker MCP registry
  */
 async function fetchServerIcon(serverName) {
-  try {
-    const url = `https://raw.githubusercontent.com/docker/mcp-registry/main/servers/${serverName}/server.yaml`;
-    const response = await fetch(url);
-    
-    if (!response.ok) {
-      console.warn(`Failed to fetch server.yaml for ${serverName}: ${response.status}`);
-      return null;
-    }
-    
-    const yamlContent = await response.text();
-    const serverConfig = yaml.load(yamlContent);
-    
-    // Extract icon URL from the YAML
-    if (serverConfig && serverConfig.about && serverConfig.about.icon) {
-      return serverConfig.about.icon;
-    }
-    
-    return null;
-  } catch (error) {
-    console.warn(`Error fetching icon for ${serverName}:`, error.message);
-    return null;
+  // Try normalized name first
+  const normalizedName = normalizeNameForGitHub(serverName);
+  
+  const namesToTry = [normalizedName];
+  // Only add original if different from normalized
+  if (normalizedName !== serverName) {
+    namesToTry.push(serverName);
   }
+  
+  for (const name of namesToTry) {
+    try {
+      const url = `https://raw.githubusercontent.com/docker/mcp-registry/main/servers/${name}/server.yaml`;
+      const response = await fetch(url);
+      
+      if (response.ok) {
+        const yamlContent = await response.text();
+        const serverConfig = yaml.load(yamlContent);
+        
+        // Extract icon URL from the YAML
+        if (serverConfig && serverConfig.about && serverConfig.about.icon) {
+          return serverConfig.about.icon;
+        }
+      }
+    } catch (error) {
+      // Silently continue to next name
+    }
+  }
+  
+  // No icon found
+  return null;
 }
 
 /**
@@ -123,6 +170,7 @@ function extractVendor(name) {
   // Extract vendor from common patterns
   if (nameLower.includes('atlassian')) return 'Atlassian';
   if (nameLower.includes('github')) return 'GitHub';
+  if (nameLower.includes('youtube')) return 'YouTube';
   if (nameLower.includes('aws')) return 'AWS';
   if (nameLower.includes('azure')) return 'Microsoft';
   if (nameLower.includes('google')) return 'Google';
@@ -170,6 +218,7 @@ function getVendorLogoUrl(vendor) {
   const vendorLogos = {
     'Atlassian': 'https://wac-cdn.atlassian.com/dam/jcr:89e146b4-642e-41fc-8e65-7848337d7bdd/atlassian_logo_blue.svg',
     'GitHub': 'https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png',
+    'YouTube': 'https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg',
     'AWS': 'https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg',
     'Microsoft': 'https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg',
     'Google': 'https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg',
@@ -246,7 +295,7 @@ async function fetchMCPServersFromDockerHubAPI() {
     const data = await response.json();
     const servers = [];
     
-    // In CI, skip fetching icons to speed up the process
+    // Skip icon fetching in CI to speed up the process
     const skipIcons = process.env.CI === 'true' || process.env.GITHUB_ACTIONS === 'true';
     
     for (const repo of data.results) {
@@ -256,12 +305,11 @@ async function fetchMCPServersFromDockerHubAPI() {
       const category = categorizeDockerMCPServer(name, description);
       const vendor = extractVendor(name);
       
-      // Skip icon fetching in CI for speed
+      // Try to fetch official icon first, fallback to vendor logo
       let logoUrl;
       if (skipIcons) {
         logoUrl = getVendorLogoUrl(vendor);
       } else {
-        // Try to fetch official icon first, fallback to vendor logo
         logoUrl = await fetchServerIcon(name);
         if (!logoUrl) {
           logoUrl = getVendorLogoUrl(vendor);
@@ -285,8 +333,13 @@ async function fetchMCPServersFromDockerHubAPI() {
           tested_with: ['claude-3.5', 'claude-code']
         },
         sources: {
-          docker: `https://hub.docker.com/r/mcp/${name.toLowerCase()}`,
-          official: `https://hub.docker.com/r/mcp/${name.toLowerCase()}`
+          docker: `https://hub.docker.com/r/mcp/${name}`,
+          official: `https://hub.docker.com/r/mcp/${name}`
+        },
+        stats: {
+          docker_pulls: repo.pull_count || 0,
+          docker_stars: repo.star_count || 0,
+          last_updated: repo.last_updated || new Date().toISOString()
         },
         security: {
           auth_type: 'none',
@@ -332,12 +385,11 @@ async function fetchMCPServersFromDockerHubAPI() {
         const category = categorizeDockerMCPServer(name, description);
         const vendor = extractVendor(name);
         
-        // Skip icon fetching in CI for speed
+        // Try to fetch official icon first, fallback to vendor logo
         let logoUrl;
         if (skipIcons) {
           logoUrl = getVendorLogoUrl(vendor);
         } else {
-          // Try to fetch official icon first, fallback to vendor logo
           logoUrl = await fetchServerIcon(name);
           if (!logoUrl) {
             logoUrl = getVendorLogoUrl(vendor);
@@ -361,8 +413,13 @@ async function fetchMCPServersFromDockerHubAPI() {
             tested_with: ['claude-3.5', 'claude-code']
           },
           sources: {
-            docker: `https://hub.docker.com/r/mcp/${name.toLowerCase()}`,
-            official: `https://hub.docker.com/r/mcp/${name.toLowerCase()}`
+            docker: `https://hub.docker.com/r/mcp/${name}`,
+            official: `https://hub.docker.com/r/mcp/${name}`
+          },
+          stats: {
+            docker_pulls: repo.pull_count || 0,
+            docker_stars: repo.star_count || 0,
+            last_updated: repo.last_updated || new Date().toISOString()
           },
           security: {
             auth_type: 'none',
@@ -409,22 +466,21 @@ async function fetchMCPServersFromDockerHubAPI() {
  * Fetch Docker MCP servers from catalog
  */
 async function fetchDockerMCPServers() {
-  // Check if we're in CI environment or if Docker MCP is not available
-  const isCI = process.env.CI === 'true' || process.env.GITHUB_ACTIONS === 'true';
+  // Always use Docker Hub API as the primary source
+  // This ensures we get correct repository names and can fetch stats
+  console.log('Fetching MCP servers from Docker Hub API (primary source)...');
   
-  if (isCI) {
-    console.log('Running in CI environment, using Docker Hub API...');
-    try {
-      return await fetchMCPServersFromDockerHubAPI();
-    } catch (error) {
-      console.error('Docker Hub API failed, using mock data:', error.message);
-      return getMockDockerServers();
-    }
-  }
-  
-  // Try Docker MCP command first (for local development)
   try {
-    const { stdout } = await execAsync('docker mcp catalog show');
+    return await fetchMCPServersFromDockerHubAPI();
+  } catch (error) {
+    console.error('Docker Hub API failed:', error.message);
+    
+    // Fallback to local Docker MCP command if API fails
+    const isCI = process.env.CI === 'true' || process.env.GITHUB_ACTIONS === 'true';
+    if (!isCI) {
+      console.log('Attempting fallback to local Docker MCP catalog...');
+      try {
+        const { stdout } = await execAsync('docker mcp catalog show');
     
     // Parse the catalog output - handle the actual format
     const lines = stdout.split('\n');
@@ -503,20 +559,16 @@ async function fetchDockerMCPServers() {
       });
     }
     
-    console.log(`Successfully fetched ${servers.length} Docker MCP servers from local Docker`);
-    return servers;
-  } catch (error) {
-    console.error('Docker MCP command failed:', error.message);
-    console.log('Falling back to Docker Hub API...');
-    
-    // Fallback to Docker Hub API
-    try {
-      return await fetchMCPServersFromDockerHubAPI();
-    } catch (apiError) {
-      console.error('Docker Hub API also failed:', apiError.message);
-      console.log('Using mock data for development');
-      return getMockDockerServers();
+        console.log(`Successfully fetched ${servers.length} Docker MCP servers from local Docker`);
+        return servers;
+      } catch (localError) {
+        console.error('Local Docker MCP command also failed:', localError.message);
+      }
     }
+    
+    // If all else fails, use mock data
+    console.log('Using mock data for development');
+    return getMockDockerServers();
   }
 }
 
