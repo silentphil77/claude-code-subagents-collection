@@ -7,6 +7,7 @@ import { logger } from '../utils/logger.js'
 import { deleteFile, fileExists } from '../utils/files.js'
 import { removeServerFromMCPJson } from '../utils/mcp-json.js'
 import { checkDockerMCPStatus, disableDockerMCPServer, listInstalledDockerMCPServers } from '../utils/docker-mcp.js'
+import { removeFromClaudeCode } from '../utils/mcp-remover.js'
 
 export function createRemoveCommand() {
   const remove = new Command('remove')
@@ -16,6 +17,7 @@ export function createRemoveCommand() {
     .option('-m, --mcp <name>', 'remove a specific MCP server')
     .option('-g, --global', 'force user-level removal (for subagents/commands)')
     .option('-u, --user', 'force user-level removal (alias for --global)')
+    .option('-s, --scope <scope>', 'configuration scope for MCP servers: local, user, or project')
     .option('-y, --yes', 'skip confirmation prompt')
     .action(async (options) => {
       try {
@@ -43,7 +45,14 @@ export function createRemoveCommand() {
         } else if (options.command) {
           await removeCommand(options.command, configManager, options.yes, forceUserLevel)
         } else if (options.mcp) {
-          await removeMCPServer(options.mcp, configManager, options.yes)
+          // Validate scope if provided
+          if (options.scope) {
+            const validScopes = ['local', 'user', 'project']
+            if (!validScopes.includes(options.scope)) {
+              throw new Error(`Invalid scope: ${options.scope}. Must be one of: ${validScopes.join(', ')}`)
+            }
+          }
+          await removeMCPServer(options.mcp, configManager, options.yes, options.scope)
         } else {
           await interactiveRemove(configManager, forceUserLevel)
         }
@@ -155,7 +164,8 @@ async function removeCommand(
 async function removeMCPServer(
   name: string,
   configManager: ConfigManager,
-  skipConfirmation: boolean
+  skipConfirmation: boolean,
+  scope?: 'local' | 'user' | 'project'
 ): Promise<void> {
   // Check if Docker MCP is available
   const dockerStatus = await checkDockerMCPStatus()
@@ -164,7 +174,7 @@ async function removeMCPServer(
     // Check if it's a Docker MCP server
     const dockerInstalled = await listInstalledDockerMCPServers()
     if (dockerInstalled.includes(name)) {
-      await removeDockerMCPServer(name, configManager, skipConfirmation)
+      await removeDockerMCPServer(name, configManager, skipConfirmation, scope)
       return
     }
   }
@@ -202,13 +212,20 @@ async function removeMCPServer(
     // Also try to remove from .mcp.json if it exists
     const removedFromProject = await removeServerFromMCPJson(name)
     
+    // Try to remove from Claude Code using Claude CLI
+    const removedFromClaude = await removeFromClaudeCode(name, { scope })
+    
     spinner.succeed(`Successfully removed MCP server: ${name}`)
     
     if (removedFromProject) {
       logger.info('Removed from .mcp.json (project scope)')
     }
     
-    logger.info(chalk.gray('Note: You may need to manually remove the server from Claude Code using "claude mcp remove"'))
+    if (removedFromClaude) {
+      logger.info(`Removed from Claude Code${scope ? ` (${scope} scope)` : ''}`)
+    } else if (!removedFromClaude && scope) {
+      logger.info(chalk.gray(`Server was not found in Claude Code ${scope} scope or Claude CLI is not available`))
+    }
   } catch (error) {
     spinner.fail('Failed to remove MCP server')
     throw error
@@ -218,7 +235,8 @@ async function removeMCPServer(
 async function removeDockerMCPServer(
   name: string,
   configManager: ConfigManager,
-  skipConfirmation: boolean
+  skipConfirmation: boolean,
+  scope?: 'local' | 'user' | 'project'
 ): Promise<void> {
   if (!skipConfirmation) {
     const { confirm } = await inquirer.prompt([

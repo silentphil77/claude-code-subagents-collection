@@ -222,16 +222,16 @@ export async function configureInClaudeCode(
     try {
       // Parse the command to extract parts
       const commandParts = claudeMethod.command.split(' ')
-      const claudeIndex = commandParts.indexOf('claude')
       const mcpIndex = commandParts.indexOf('mcp')
       const addIndex = commandParts.indexOf('add')
       
-      if (claudeIndex !== -1 && mcpIndex !== -1 && addIndex !== -1) {
+      if (mcpIndex !== -1 && addIndex !== -1) {
         // Build the command with user's options
         const args = ['mcp', 'add']
         
-        // Add scope
-        args.push('--scope', options.scope)
+        // Add scope - make sure we have a valid scope
+        const scope = options.scope || 'local'
+        args.push('--scope', scope)
         
         // Check for transport type (SSE/HTTP)
         const transportIndex = commandParts.indexOf('--transport')
@@ -244,42 +244,49 @@ export async function configureInClaudeCode(
           args.push('--env', envVar)
         }
         
-        // Get server name and remaining args
-        let serverName = server.name
-        let remainingArgs: string[] = []
+        // Extract the server name and command from the original claude command
+        // The format is typically: claude mcp add [--transport type] <name> [-- command args]
+        let serverNameIndex = addIndex + 1
         
-        // For SSE/HTTP servers, the URL is the last part
-        if (transportIndex !== -1) {
-          let urlIndex = addIndex + 1
-          while (urlIndex < commandParts.length && commandParts[urlIndex].startsWith('--')) {
-            urlIndex += 2 // Skip flag and its value
-          }
-          if (urlIndex < commandParts.length) {
-            serverName = commandParts[urlIndex]
-            if (urlIndex + 1 < commandParts.length) {
-              remainingArgs = commandParts.slice(urlIndex + 1)
-            }
-          }
-        } else {
-          // For stdio servers, everything after 'add' (except flags) goes to the command
-          const dashDashIndex = commandParts.indexOf('--')
-          if (dashDashIndex !== -1) {
-            serverName = commandParts[addIndex + 1]
-            remainingArgs = ['--', ...commandParts.slice(dashDashIndex + 1)]
+        // Skip over any flags between 'add' and the server name
+        while (serverNameIndex < commandParts.length && commandParts[serverNameIndex].startsWith('--')) {
+          // Skip the flag and its value (if it has one)
+          if (commandParts[serverNameIndex] === '--transport' || 
+              commandParts[serverNameIndex] === '--scope' ||
+              commandParts[serverNameIndex] === '--env') {
+            serverNameIndex += 2 // Skip flag and value
+          } else {
+            serverNameIndex += 1 // Skip flag only
           }
         }
         
-        args.push(serverName, ...remainingArgs)
+        // Get the server name
+        const serverName = commandParts[serverNameIndex] || server.name
+        args.push(serverName)
+        
+        // Add any remaining arguments (usually after --)
+        const dashDashIndex = commandParts.indexOf('--', serverNameIndex)
+        if (dashDashIndex !== -1) {
+          args.push('--', ...commandParts.slice(dashDashIndex + 1))
+        } else if (serverNameIndex + 1 < commandParts.length) {
+          // If there's no --, but there are remaining args, add them
+          const remainingArgs = commandParts.slice(serverNameIndex + 1)
+          if (remainingArgs.length > 0 && !remainingArgs[0].startsWith('--')) {
+            args.push(...remainingArgs)
+          }
+        }
         
         logger.info('\nConfiguring MCP server with Claude Code...')
         logger.info(`Running: claude ${args.join(' ')}`)
         
         const result = await execClaudeCLI(args)
-        logger.success(`MCP server "${server.name}" configured successfully (${options.scope} scope)`)
+        logger.success(`MCP server "${server.name}" configured successfully (${scope} scope)`)
         
         if (result.stdout) {
           logger.info(result.stdout)
         }
+      } else {
+        throw new Error('Invalid claude-cli command format')
       }
     } catch (error: any) {
       logger.error(`Failed to configure with Claude CLI: ${error.message}`)
