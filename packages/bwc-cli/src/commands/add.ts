@@ -72,7 +72,7 @@ export function createAddCommand() {
           
           // Check if we should use Docker MCP
           if (options.dockerMcp || await shouldUseDockerMCP()) {
-            await addDockerMCPServer(options.mcp, configManager)
+            await addDockerMCPServer(options.mcp, configManager, scope)
           } else {
             await addMCPServer(options.mcp, configManager, registryClient, {
               scope,

@@ -15,7 +15,7 @@ export function createInstallCommand() {
     .description('Install all subagents, commands, and MCP servers from configuration')
     .action(async () => {
       try {
-        const configManager = new ConfigManager()
+        const configManager = ConfigManager.getInstance()
         const registryClient = new RegistryClient(configManager)
         
         // Check if using project config
