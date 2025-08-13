@@ -2,10 +2,13 @@ import { Command } from 'commander'
 import path from 'path'
 import { ConfigManager } from '../config/manager.js'
 import { RegistryClient } from '../registry/client.js'
+import { MCPServerConfig } from '../registry/types.js'
 import { logger } from '../utils/logger.js'
 import { writeFile } from '../utils/files.js'
 import { installMCPServer, configureInClaudeCode } from '../utils/mcp-installer.js'
 import { checkDockerMCPStatus, enableDockerMCPServer, setupDockerMCPGateway } from '../utils/docker-mcp.js'
+import { execClaudeCLI, isClaudeCLIAvailable } from '../utils/claude-cli.js'
+import { addServerToMCPJson } from '../utils/mcp-json.js'
 
 export function createInstallCommand() {
   const install = new Command('install')
@@ -91,83 +94,132 @@ export function createInstallCommand() {
         if (mcpServers.length > 0) {
           logger.info(`Installing MCP servers...`)
           
-          // Check if Docker MCP is available
-          const dockerStatus = await checkDockerMCPStatus()
-          const useDockerMCP = dockerStatus.dockerInstalled && dockerStatus.mcpToolkitAvailable
+          // Get the full MCP server configurations
+          const serverConfigs = await configManager.getAllMCPServerConfigs()
           
-          if (useDockerMCP) {
-            logger.info('Using Docker MCP Toolkit for server installation')
+          // Check if Claude CLI is available
+          const hasClaudeCLI = await isClaudeCLIAvailable()
+          
+          for (const serverName of mcpServers) {
+            const spinner = logger.spinner(`Installing MCP server: ${serverName}`)
             
-            // Ensure Docker MCP gateway is set up in Claude Code
-            let gatewaySetup = false
             try {
-              await setupDockerMCPGateway('local')
-              gatewaySetup = true
-            } catch (error) {
-              logger.warn('Could not setup Docker MCP gateway automatically')
-              logger.info('You may need to manually add the Docker MCP gateway to Claude Code')
-            }
-            
-            // Enable each server in Docker MCP
-            for (const name of mcpServers) {
-              const spinner = logger.spinner(`Enabling Docker MCP server: ${name}`)
+              // Get the stored configuration for this server
+              const serverConfig = serverConfigs[serverName]
               
-              try {
-                await enableDockerMCPServer(name)
-                spinner.succeed(`Enabled MCP server: ${name}`)
+              if (!serverConfig) {
+                // Fallback: Try to fetch from registry if no stored config
+                spinner.text = `No stored config for ${serverName}, fetching from registry...`
                 
-                // Track in BWC config
-                await configManager.addInstalledMCPServer(name)
-              } catch (error) {
-                spinner.fail(`Failed to enable MCP server: ${name}`)
-                logger.error((error as Error).message)
-              }
-            }
-            
-            if (gatewaySetup) {
-              logger.info('\n✓ MCP servers are now available through Docker MCP gateway')
-              logger.info('Restart Claude Code to activate the changes')
-            }
-          } else {
-            // Fallback to standard installation method
-            for (const name of mcpServers) {
-              const spinner = logger.spinner(`Installing MCP server: ${name}`)
-              
-              try {
-                const server = await registryClient.findMCPServer(name)
-                
+                const server = await registryClient.findMCPServer(serverName)
                 if (!server) {
-                  spinner.fail(`MCP server "${name}" not found in registry`)
+                  spinner.fail(`MCP server "${serverName}" not found`)
                   continue
                 }
                 
-                spinner.text = `Installing ${name}...`
-                
-                // Select installation method - prefer claude-cli method
+                // Use default installation method
                 let method = server.installation_methods.find(m => m.type === 'claude-cli' && m.recommended)
                 if (!method) {
-                  // Fall back to other methods
                   method = server.installation_methods.find(m => m.recommended) || server.installation_methods[0]
                 }
                 
                 if (!method) {
-                  spinner.fail(`No installation methods available for ${name}`)
+                  spinner.fail(`No installation methods available for ${serverName}`)
                   continue
                 }
                 
-                // Install the MCP server
                 await installMCPServer(server, method)
-                
-                // Configure in Claude Code with local scope (since this is from config file)
                 await configureInClaudeCode(server, method, { scope: 'local', envVars: [] })
-                
-                spinner.succeed(`Installed MCP server: ${name}`)
-              } catch (error) {
-                spinner.fail(`Failed to install MCP server: ${name}`)
-                logger.error((error as Error).message)
+                spinner.succeed(`Installed MCP server: ${serverName}`)
+                continue
               }
+              
+              // Use the stored configuration
+              spinner.text = `Installing ${serverName} with stored configuration...`
+              
+              if (serverConfig.provider === 'docker') {
+                // Docker MCP server
+                const dockerStatus = await checkDockerMCPStatus()
+                if (dockerStatus.dockerInstalled && dockerStatus.mcpToolkitAvailable) {
+                  // Ensure gateway is set up
+                  try {
+                    await setupDockerMCPGateway(serverConfig.scope)
+                  } catch (error) {
+                    logger.warn('Could not setup Docker MCP gateway automatically')
+                  }
+                  
+                  // Enable the server
+                  await enableDockerMCPServer(serverName)
+                  spinner.succeed(`Enabled Docker MCP server: ${serverName}`)
+                } else {
+                  spinner.warn(`Docker MCP not available, skipping ${serverName}`)
+                }
+              } else if (serverConfig.provider === 'claude') {
+                // Claude MCP server
+                if (!hasClaudeCLI) {
+                  spinner.warn('Claude CLI not installed, showing manual configuration')
+                  logger.info('\nManual configuration required for ' + serverName)
+                  showStoredConfiguration(serverName, serverConfig)
+                  continue
+                }
+                
+                // Build Claude CLI command from stored config
+                const args = ['mcp', 'add']
+                args.push('--scope', serverConfig.scope)
+                
+                // Handle different transport types
+                if (serverConfig.transport === 'sse' || serverConfig.transport === 'http') {
+                  args.push('--transport', serverConfig.transport)
+                  
+                  // Add headers if present
+                  if (serverConfig.headers) {
+                    for (const [key, value] of Object.entries(serverConfig.headers)) {
+                      args.push('--header', `${key}: ${value}`)
+                    }
+                  }
+                  
+                  // Add the server name and URL
+                  args.push(serverName)
+                  if (serverConfig.url) {
+                    args.push(serverConfig.url)
+                  }
+                } else if (serverConfig.transport === 'stdio') {
+                  // Add environment variables
+                  if (serverConfig.env) {
+                    for (const [key, value] of Object.entries(serverConfig.env)) {
+                      args.push('--env', `${key}=${value}`)
+                    }
+                  }
+                  
+                  // Add the server name and command
+                  args.push(serverName)
+                  if (serverConfig.command) {
+                    args.push('--', serverConfig.command)
+                    if (serverConfig.args) {
+                      args.push(...serverConfig.args)
+                    }
+                  }
+                }
+                
+                // Execute Claude CLI command
+                logger.info(`Running: claude ${args.join(' ')}`)
+                await execClaudeCLI(args)
+                
+                // Update .mcp.json if project scope
+                if (serverConfig.scope === 'project') {
+                  await updateMCPJsonFromConfig(serverName, serverConfig)
+                }
+                
+                spinner.succeed(`Configured MCP server: ${serverName} (${serverConfig.scope} scope)`)
+              }
+            } catch (error) {
+              spinner.fail(`Failed to install MCP server: ${serverName}`)
+              logger.error((error as Error).message)
             }
           }
+          
+          logger.info('\n✓ MCP servers installation complete')
+          logger.info('Restart Claude Code to activate any changes')
         }
         
         logger.success('Installation complete!')
@@ -182,4 +234,65 @@ export function createInstallCommand() {
     })
 
   return install
+}
+
+// Helper function to show stored configuration
+function showStoredConfiguration(serverName: string, config: MCPServerConfig): void {
+  logger.info(`\nStored configuration for ${serverName}:`)
+  logger.info(`  Provider: ${config.provider}`)
+  logger.info(`  Transport: ${config.transport}`)
+  logger.info(`  Scope: ${config.scope}`)
+  
+  if (config.transport === 'stdio') {
+    if (config.command) {
+      logger.info(`  Command: ${config.command}`)
+    }
+    if (config.args) {
+      logger.info(`  Args: ${config.args.join(' ')}`)
+    }
+    if (config.env) {
+      logger.info(`  Environment variables:`)
+      for (const [key, value] of Object.entries(config.env)) {
+        logger.info(`    ${key}=${value}`)
+      }
+    }
+  } else if (config.transport === 'sse' || config.transport === 'http') {
+    if (config.url) {
+      logger.info(`  URL: ${config.url}`)
+    }
+    if (config.headers) {
+      logger.info(`  Headers:`)
+      for (const [key, value] of Object.entries(config.headers)) {
+        logger.info(`    ${key}: ${value}`)
+      }
+    }
+  }
+}
+
+// Helper function to update .mcp.json from stored config
+async function updateMCPJsonFromConfig(serverName: string, config: MCPServerConfig): Promise<void> {
+  const mcpJsonConfig: any = {
+    mcpServers: {
+      [serverName]: {}
+    }
+  }
+  
+  const serverEntry = mcpJsonConfig.mcpServers[serverName]
+  
+  if (config.transport === 'stdio') {
+    if (config.command) serverEntry.command = config.command
+    if (config.args) serverEntry.args = config.args
+    if (config.env) serverEntry.env = config.env
+  } else if (config.transport === 'sse' || config.transport === 'http') {
+    serverEntry.transport = config.transport
+    if (config.url) serverEntry.url = config.url
+    if (config.headers) serverEntry.headers = config.headers
+  }
+  
+  // Use the addServerToMCPJson function to properly update the file
+  await addServerToMCPJson(
+    { name: serverName, verification: { status: config.verificationStatus || 'community' } } as any,
+    JSON.stringify(mcpJsonConfig),
+    []
+  )
 }

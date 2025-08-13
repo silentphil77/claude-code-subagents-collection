@@ -34,6 +34,11 @@
     "dev": "tsup --watch",
     "lint": "eslint src --ext ts",
     "typecheck": "tsc --noEmit",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage",
+    "test:watch": "vitest --watch",
+    "test:e2e": "vitest run --config vitest.e2e.config.ts",
     "prepublishOnly": "npm run build",
     "release": "changeset publish"
   },
@@ -61,8 +66,14 @@
     "@types/update-notifier": "^6.0.8",
     "@typescript-eslint/eslint-plugin": "^6.15.0",
     "@typescript-eslint/parser": "^6.15.0",
+    "@vitest/coverage-v8": "^1.2.0",
+    "@vitest/ui": "^1.2.0",
     "eslint": "^8.56.0",
+    "mock-fs": "^5.2.0",
+    "nock": "^13.5.0",
+    "tempy": "^3.1.0",
     "tsup": "^8.0.1",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.0"
   }
 }

@@ -587,7 +587,7 @@ async function shouldUseDockerMCP(): Promise<boolean> {
   return status.dockerInstalled && status.mcpToolkitAvailable
 }
 
-async function addDockerMCPServer(name: string, configManager: ConfigManager): Promise<void> {
+async function addDockerMCPServer(name: string, configManager: ConfigManager, scope: string = 'local'): Promise<void> {
   const spinner = logger.spinner(`Adding Docker MCP server: ${name}`)
   
   try {
@@ -627,7 +627,15 @@ async function addDockerMCPServer(name: string, configManager: ConfigManager): P
       ])
       
       if (shouldTrack) {
-        await configManager.addInstalledMCPServer(name)
+        // Create the full MCP server configuration to store
+        const serverConfig: MCPServerConfig = {
+          provider: 'docker',
+          transport: 'stdio',
+          scope: scope as 'local' | 'user' | 'project',
+          installedAt: new Date().toISOString(),
+          registryName: name
+        }
+        await configManager.addInstalledMCPServer(name, serverConfig)
         spinner.succeed(`Server "${name}" added to BWC config for tracking`)
       } else {
         logger.info('Server not added to BWC config')
@@ -639,8 +647,17 @@ async function addDockerMCPServer(name: string, configManager: ConfigManager): P
     spinner.start(`Enabling ${name} in Docker MCP Toolkit...`)
     await enableDockerMCPServer(name)
     
-    // Update BWC config to track it
-    await configManager.addInstalledMCPServer(name)
+    // Create the full MCP server configuration to store
+    const serverConfig: MCPServerConfig = {
+      provider: 'docker',
+      transport: 'stdio',
+      scope: scope as 'local' | 'user' | 'project',
+      installedAt: new Date().toISOString(),
+      registryName: name
+    }
+    
+    // Update BWC config to track it with full configuration
+    await configManager.addInstalledMCPServer(name, serverConfig)
     
     spinner.succeed(`Server "${name}" added successfully!`)
     
