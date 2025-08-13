@@ -93,14 +93,22 @@ export default function CLIPage() {
     listInstalled: 'bwc list --installed',
     search: 'bwc search python',
     install: 'bwc install',
+    status: 'bwc status',
+    statusJson: 'bwc status --json',
+    statusVerbose: 'bwc status --verbose --check',
 
-    // MCP commands
+    // MCP commands - Updated with explicit provider selection
     mcpList: 'bwc mcp list',
-    mcpAddUser: 'bwc add --mcp postgres',
-    mcpAddProject: 'bwc add --mcp postgres --project',
+    mcpAddUser: 'bwc add --mcp postgres --docker-mcp',  // Explicit Docker flag
+    mcpAddProject: 'bwc add --mcp postgres --docker-mcp --scope project',  // Docker with project scope
+    mcpAddDocker: 'bwc add --mcp redis --docker-mcp',  // Docker MCP (containerized)
+    mcpSetup: 'bwc add --setup',
+    mcpWithEnv: 'bwc add --mcp postgres --docker-mcp --scope project -e DB_PASSWORD=secret API_KEY=abc123',
     mcpSearch: 'bwc mcp search database',
     mcpInfo: 'bwc mcp info postgres',
     mcpStatus: 'bwc mcp status',
+    mcpRemoteSSE: 'bwc add --mcp linear-server --transport sse --url https://mcp.linear.app/sse --header "Authorization: Bearer token123"',  // Claude CLI (remote)
+    mcpRemoteHTTP: 'bwc add --mcp http-service --transport http --url https://api.service.com/v1 --header "X-API-Key: key123"',  // Claude CLI (remote)
     mcpListScoped: `# List all servers
 bwc mcp list
 
@@ -205,7 +213,7 @@ bwc add
           </div>
 
           {/* Features */}
-          <div className="grid md:grid-cols-3 gap-4 mb-8">
+          <div className="grid md:grid-cols-4 gap-4 mb-8">
             <div className="bg-card p-4 rounded-lg border border-border/50">
               <Terminal className="h-8 w-8 mb-2 text-primary" />
               <h3 className="font-semibold mb-1">Easy Installation</h3>
@@ -213,8 +221,13 @@ bwc add
             </div>
             <div className="bg-card p-4 rounded-lg border border-border/50">
               <Zap className="h-8 w-8 mb-2 text-primary" />
-              <h3 className="font-semibold mb-1">Bulk Operations</h3>
-              <p className="text-sm text-muted-foreground">Add multiple items at once with interactive mode</p>
+              <h3 className="font-semibold mb-1">Status Monitoring</h3>
+              <p className="text-sm text-muted-foreground">Check config, installed items, and health status</p>
+            </div>
+            <div className="bg-card p-4 rounded-lg border border-border/50">
+              <Package className="h-8 w-8 mb-2 text-primary" />
+              <h3 className="font-semibold mb-1">MCP Servers</h3>
+              <p className="text-sm text-muted-foreground">Connect to external tools with Docker MCP integration</p>
             </div>
             <div className="bg-card p-4 rounded-lg border border-border/50">
               <Settings className="h-8 w-8 mb-2 text-primary" />
@@ -362,7 +375,19 @@ ${commands.addInteractive}
 # Force user-level install (when project config exists)
 bwc add --agent python-pro --global
 # Or use the --user flag (same effect)
-bwc add --agent python-pro --user`}</code>
+bwc add --agent python-pro --user
+
+# Add MCP server with explicit scope
+bwc add --mcp postgres --scope project
+
+# Add Docker MCP server (uses Docker MCP Toolkit)
+${commands.mcpAddDocker}
+
+# Setup Docker MCP gateway
+${commands.mcpSetup}
+
+# Add MCP server with environment variables
+${commands.mcpWithEnv}`}</code>
                   </pre>
                   <Button
                     onClick={() => copyToClipboard(`${commands.addAgent}\n${commands.addCommand}\n${commands.addInteractive}`, 5)}
@@ -438,6 +463,41 @@ bwc search docker --commands`}</code>
               </div>
             </div>
 
+            {/* status */}
+            <div className="border border-border/50 rounded-lg p-6">
+              <h3 className="font-semibold mb-2">bwc status</h3>
+              <p className="text-muted-foreground mb-3">Display current BWC configuration status and health</p>
+              <div className="space-y-3">
+                <div className="relative">
+                  <pre className="p-3 rounded-md bg-background/50 overflow-x-auto">
+                    <code className="text-sm">{`# Show comprehensive status report
+${commands.status}
+
+# Output in JSON format for scripting
+${commands.statusJson}
+
+# Verbose output with deep health checks
+${commands.statusVerbose}
+
+# Filter MCP servers by scope
+bwc status --scope project
+bwc status --scope user`}</code>
+                  </pre>
+                  <Button
+                    onClick={() => copyToClipboard(`${commands.status}\n${commands.statusJson}\n${commands.statusVerbose}`, 8)}
+                    className="absolute top-2 right-2"
+                    size="sm"
+                    variant="ghost"
+                  >
+                    {copiedIndex === 8 ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                  </Button>
+                </div>
+                <p className="text-sm text-muted-foreground bg-muted/50 p-3 rounded-md">
+                  💡 <strong>Status Report includes:</strong> Config scope (project/user), installed items, Claude CLI status, Docker MCP status, and health checks
+                </p>
+              </div>
+            </div>
+
             {/* install */}
             <div className="border border-border/50 rounded-lg p-6">
               <h3 className="font-semibold mb-2">bwc install</h3>
@@ -454,12 +514,12 @@ ${commands.install}
 # 3. All team members have same setup!`}</code>
                   </pre>
                   <Button
-                    onClick={() => copyToClipboard(commands.install, 8)}
+                    onClick={() => copyToClipboard(commands.install, 9)}
                     className="absolute top-2 right-2"
                     size="sm"
                     variant="ghost"
                   >
-                    {copiedIndex === 8 ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                    {copiedIndex === 9 ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                   </Button>
                 </div>
               </div>
@@ -484,12 +544,12 @@ ${commands.install}
                   <code className="text-sm">{commands.globalConfig}</code>
                 </pre>
                 <Button
-                  onClick={() => copyToClipboard(commands.globalConfig, 9)}
+                  onClick={() => copyToClipboard(commands.globalConfig, 10)}
                   className="absolute top-2 right-2"
                   size="sm"
                   variant="ghost"
                 >
-                  {copiedIndex === 9 ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                  {copiedIndex === 10 ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                 </Button>
               </div>
             </TabsContent>
@@ -501,12 +561,12 @@ ${commands.install}
                   <code className="text-sm">{commands.projectConfig}</code>
                 </pre>
                 <Button
-                  onClick={() => copyToClipboard(commands.projectConfig, 10)}
+                  onClick={() => copyToClipboard(commands.projectConfig, 11)}
                   className="absolute top-2 right-2"
                   size="sm"
                   variant="ghost"
                 >
-                  {copiedIndex === 10 ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                  {copiedIndex === 11 ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                 </Button>
               </div>
               <p className="text-sm text-muted-foreground bg-muted/50 p-3 rounded-md">
@@ -552,12 +612,12 @@ bwc add --agent golang-pro --user      # Same as --global`}</code>
                   <code className="text-sm">{commands.teamSetup}</code>
                 </pre>
                 <Button
-                  onClick={() => copyToClipboard(commands.teamSetup, 11)}
+                  onClick={() => copyToClipboard(commands.teamSetup, 12)}
                   className="absolute top-2 right-2"
                   size="sm"
                   variant="ghost"
                 >
-                  {copiedIndex === 11 ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                  {copiedIndex === 12 ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                 </Button>
               </div>
             </div>
@@ -571,12 +631,12 @@ bwc add --agent golang-pro --user      # Same as --global`}</code>
                   <code className="text-sm">{commands.bulkInstall}</code>
                 </pre>
                 <Button
-                  onClick={() => copyToClipboard(commands.bulkInstall, 12)}
+                  onClick={() => copyToClipboard(commands.bulkInstall, 13)}
                   className="absolute top-2 right-2"
                   size="sm"
                   variant="ghost"
                 >
-                  {copiedIndex === 12 ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                  {copiedIndex === 13 ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                 </Button>
               </div>
             </div>
@@ -590,12 +650,12 @@ bwc add --agent golang-pro --user      # Same as --global`}</code>
                   <code className="text-sm">{commands.cicdExample}</code>
                 </pre>
                 <Button
-                  onClick={() => copyToClipboard(commands.cicdExample, 13)}
+                  onClick={() => copyToClipboard(commands.cicdExample, 14)}
                   className="absolute top-2 right-2"
                   size="sm"
                   variant="ghost"
                 >
-                  {copiedIndex === 13 ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                  {copiedIndex === 14 ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                 </Button>
               </div>
             </div>
@@ -604,35 +664,183 @@ bwc add --agent golang-pro --user      # Same as --global`}</code>
 
         {/* MCP Servers Section */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-4">🔌 MCP Servers (Docker Gateway)</h2>
+          <h2 className="text-2xl font-bold mb-4">🔌 MCP Servers</h2>
           <p className="text-muted-foreground mb-6">
-            Connect Claude to 100+ external tools through secure Docker containers
+            Connect Claude to external tools and services through MCP (Model Context Protocol)
           </p>
 
-          {/* Prerequisites */}
-          <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 mb-6">
-            <p className="text-sm">
-              <strong>Prerequisites:</strong> Docker Desktop is required for MCP servers.{' '}
-              <a href="https://docker.com/products/docker-desktop"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary hover:underline">
-                Download Docker Desktop →
-              </a>
+          {/* Provider Selection Guide */}
+          <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-primary/20 rounded-lg p-6 mb-6">
+            <h3 className="font-semibold mb-3 flex items-center gap-2">
+              <Settings className="h-5 w-5" />
+              🎯 Provider Selection Guide
+            </h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              BWC supports multiple MCP providers. Choose the right one for your needs:
             </p>
+            
+            <div className="grid md:grid-cols-2 gap-4 mb-4">
+              <div className="bg-background/60 p-4 rounded-lg">
+                <h4 className="font-medium mb-2 flex items-center gap-2">
+                  🐳 Docker MCP Provider
+                </h4>
+                <p className="text-sm text-muted-foreground mb-3">For containerized, locally-running servers</p>
+                <div className="bg-background/50 p-2 rounded text-xs font-mono mb-2">
+                  bwc add --mcp &lt;name&gt; --docker-mcp
+                </div>
+                <ul className="text-xs text-muted-foreground space-y-1">
+                  <li>✅ Secure container isolation</li>
+                  <li>✅ Pre-configured servers from Docker Hub</li>
+                  <li>✅ Automatic lifecycle management</li>
+                  <li>⚠️ Requires Docker Desktop</li>
+                </ul>
+              </div>
+              
+              <div className="bg-background/60 p-4 rounded-lg">
+                <h4 className="font-medium mb-2 flex items-center gap-2">
+                  🌐 Claude CLI Provider
+                </h4>
+                <p className="text-sm text-muted-foreground mb-3">For remote APIs and cloud services</p>
+                <div className="bg-background/50 p-2 rounded text-xs font-mono mb-2">
+                  bwc add --mcp &lt;name&gt; --transport sse --url &lt;url&gt;
+                </div>
+                <ul className="text-xs text-muted-foreground space-y-1">
+                  <li>✅ Connect to any HTTP/SSE endpoint</li>
+                  <li>✅ Custom authentication headers</li>
+                  <li>✅ No Docker requirement</li>
+                  <li>⚠️ Requires network connectivity</li>
+                </ul>
+              </div>
+            </div>
+            
+            <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
+              <p className="text-sm">
+                <strong>⚠️ Important:</strong> The <code className="bg-background/50 px-1 rounded">--docker-mcp</code> flag is <strong>required</strong> to use Docker MCP. 
+                Without it, BWC will attempt to use Claude CLI or registry servers.
+              </p>
+            </div>
+          </div>
+
+          {/* Provider Comparison Table */}
+          <div className="border border-border/50 rounded-lg p-6 mb-6">
+            <h3 className="font-semibold mb-3">📊 Provider Comparison</h3>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left p-2">Feature</th>
+                    <th className="text-left p-2">🐳 Docker MCP</th>
+                    <th className="text-left p-2">🌐 Claude CLI</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  <tr>
+                    <td className="p-2 font-medium">Command Syntax</td>
+                    <td className="p-2"><code className="text-xs bg-muted px-1 rounded">--docker-mcp</code></td>
+                    <td className="p-2"><code className="text-xs bg-muted px-1 rounded">--transport --url</code></td>
+                  </tr>
+                  <tr>
+                    <td className="p-2 font-medium">Server Location</td>
+                    <td className="p-2">Local containers</td>
+                    <td className="p-2">Remote endpoints</td>
+                  </tr>
+                  <tr>
+                    <td className="p-2 font-medium">Requirements</td>
+                    <td className="p-2">Docker Desktop</td>
+                    <td className="p-2">Network connectivity</td>
+                  </tr>
+                  <tr>
+                    <td className="p-2 font-medium">Best For</td>
+                    <td className="p-2">Databases, file systems, dev tools</td>
+                    <td className="p-2">APIs, cloud services, SaaS tools</td>
+                  </tr>
+                  <tr>
+                    <td className="p-2 font-medium">Security</td>
+                    <td className="p-2">Container isolation</td>
+                    <td className="p-2">HTTPS + Auth headers</td>
+                  </tr>
+                  <tr>
+                    <td className="p-2 font-medium">Examples</td>
+                    <td className="p-2">postgres, redis, filesystem</td>
+                    <td className="p-2">Linear, GitHub API, OpenAI</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Docker MCP Integration */}
+          <div className="bg-primary/5 border border-primary/20 rounded-lg p-6 mb-6">
+            <h3 className="font-semibold mb-3 flex items-center gap-2">
+              <Package className="h-5 w-5" />
+              Docker MCP Toolkit Integration
+            </h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              BWC CLI integrates with Docker MCP Toolkit for secure, containerized MCP servers.
+            </p>
+            <div className="space-y-2 text-sm">
+              <p>🎯 <strong>Explicit selection:</strong> Use <code className="bg-background/50 px-1 rounded">--docker-mcp</code> flag to select Docker provider</p>
+              <p>🔒 <strong>Container isolation:</strong> Each server runs in a secure container</p>
+              <p>🚀 <strong>Simple management:</strong> Pre-configured servers from Docker Hub</p>
+              <p>🔑 <strong>Secure secrets:</strong> Docker Desktop manages all API keys</p>
+            </div>
+            <div className="mt-4 p-3 bg-background/50 rounded-md">
+              <code className="text-xs">{`# Setup Docker MCP gateway (one-time)
+${commands.mcpSetup}
+
+# Add Docker MCP server (--docker-mcp flag is REQUIRED)
+${commands.mcpAddDocker}
+
+# Check Docker MCP status
+bwc status --verbose`}</code>
+            </div>
+            <div className="mt-3 p-2 bg-blue-500/10 rounded-md">
+              <p className="text-xs">
+                <strong>💡 Note:</strong> Docker MCP is no longer automatically selected. You must explicitly use the <code className="bg-background/50 px-1 rounded">--docker-mcp</code> flag to install Docker-based servers.
+              </p>
+            </div>
           </div>
 
           <div className="space-y-6">
+            {/* Interactive Mode */}
+            <div className="border border-purple-500/50 rounded-lg p-6 bg-purple-500/5">
+              <h3 className="font-semibold mb-2">🎮 Interactive Mode Provider Selection</h3>
+              <p className="text-muted-foreground mb-3">When Docker MCP is available, interactive mode lets you choose your provider</p>
+              <div className="relative">
+                <pre className="p-3 rounded-md bg-background/50 overflow-x-auto">
+                  <code className="text-sm">{`# Run interactive mode
+bwc add
+
+# If Docker MCP is available, you'll see:
+? What would you like to add?
+> MCP Server
+
+? Select MCP provider:
+> Docker MCP (containerized local servers)    # Choose for local servers
+  Claude CLI (remote servers via SSE/HTTP)    # Choose for remote APIs
+  Registry (browse available servers)         # Browse registry servers
+
+# Based on your selection:
+# - Docker MCP: Lists available Docker servers
+# - Claude CLI: Prompts for server name, URL, transport
+# - Registry: Shows categorized server list`}</code>
+                </pre>
+              </div>
+              <p className="text-sm text-muted-foreground mt-3">
+                💡 <strong>Tip:</strong> If Docker isn't available, BWC automatically uses the registry.
+              </p>
+            </div>
+
             {/* Quick Start */}
             <div className="border border-border/50 rounded-lg p-6">
               <h3 className="font-semibold mb-2">Quick Start</h3>
-              <p className="text-muted-foreground mb-3">Get started with MCP servers in seconds</p>
+              <p className="text-muted-foreground mb-3">Get started with MCP servers using explicit commands</p>
               <div className="relative">
                 <pre className="p-3 rounded-md bg-background/50 overflow-x-auto">
                   <code className="text-sm">{`# Browse available MCP servers
 ${commands.mcpList}
 
-# Install for current user (all projects)
+# Install Docker MCP server (requires --docker-mcp flag)
 ${commands.mcpAddUser}
 
 # Install for project only (team sharing)
@@ -645,49 +853,426 @@ ${commands.mcpSearch}
 ${commands.mcpInfo}`}</code>
                 </pre>
                 <Button
-                  onClick={() => copyToClipboard(`${commands.mcpList}\n${commands.mcpAddUser}\n${commands.mcpAddProject}\n${commands.mcpSearch}\n${commands.mcpInfo}`, 14)}
+                  onClick={() => copyToClipboard(`${commands.mcpList}\n${commands.mcpAddUser}\n${commands.mcpAddProject}\n${commands.mcpSearch}\n${commands.mcpInfo}`, 15)}
                   className="absolute top-2 right-2"
                   size="sm"
                   variant="ghost"
                 >
-                  {copiedIndex === 14 ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                  {copiedIndex === 15 ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                 </Button>
+              </div>
+            </div>
+
+            {/* Docker MCP Servers */}
+            <div className="border border-border/50 rounded-lg p-6">
+              <h3 className="font-semibold mb-2">Docker MCP Servers</h3>
+              <p className="text-muted-foreground mb-3">Use Docker MCP for containerized, locally-running MCP servers</p>
+              
+              <div className="space-y-4">
+                {/* Setup */}
+                <div className="bg-background/50 p-4 rounded-lg">
+                  <h4 className="font-medium mb-2">🚀 Setup Docker MCP Gateway</h4>
+                  <p className="text-sm text-muted-foreground mb-3">One-time setup to configure Docker MCP in Claude Code</p>
+                  <pre className="p-3 rounded-md bg-background/60 overflow-x-auto">
+                    <code className="text-sm">{`# Setup Docker MCP gateway
+${commands.mcpSetup}
+
+# This configures Claude Code to use Docker MCP gateway
+# Restart Claude Code after setup`}</code>
+                  </pre>
+                </div>
+
+                {/* Adding Docker Servers */}
+                <div className="bg-background/50 p-4 rounded-lg">
+                  <h4 className="font-medium mb-2">📦 Add Docker MCP Servers</h4>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Install containerized MCP servers from Docker Hub
+                    <span className="text-amber-500 ml-2">(--docker-mcp flag is required!)</span>
+                  </p>
+                  <pre className="p-3 rounded-md bg-background/60 overflow-x-auto">
+                    <code className="text-sm">{`# ⚠️ IMPORTANT: --docker-mcp flag is REQUIRED for Docker servers
+bwc add --mcp postgres --docker-mcp
+bwc add --mcp redis --docker-mcp --scope project
+bwc add --mcp mongodb --docker-mcp --scope user
+
+# Without --docker-mcp, BWC will try to find the server in registry
+# bwc add --mcp postgres  # ❌ This will NOT use Docker MCP!
+
+# List available Docker MCP servers
+docker mcp list
+
+# Check which servers are running
+docker mcp status`}</code>
+                  </pre>
+                </div>
+
+                {/* Popular Docker Servers */}
+                <div className="bg-background/50 p-4 rounded-lg">
+                  <h4 className="font-medium mb-2">🐳 Popular Docker MCP Servers</h4>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-3">
+                    <code className="text-xs bg-background/60 p-2 rounded">postgres</code>
+                    <code className="text-xs bg-background/60 p-2 rounded">redis</code>
+                    <code className="text-xs bg-background/60 p-2 rounded">mongodb</code>
+                    <code className="text-xs bg-background/60 p-2 rounded">elasticsearch</code>
+                    <code className="text-xs bg-background/60 p-2 rounded">mysql</code>
+                    <code className="text-xs bg-background/60 p-2 rounded">sqlite</code>
+                    <code className="text-xs bg-background/60 p-2 rounded">github</code>
+                    <code className="text-xs bg-background/60 p-2 rounded">gitlab</code>
+                    <code className="text-xs bg-background/60 p-2 rounded">filesystem</code>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-4 p-3 bg-amber-500/10 rounded-md">
+                <p className="text-sm">
+                  <strong>📋 Prerequisites:</strong> Docker Desktop must be installed and running.
+                  <a href="https://docker.com/products/docker-desktop" 
+                     target="_blank" 
+                     rel="noopener noreferrer" 
+                     className="text-primary hover:underline ml-2">
+                    Download Docker Desktop →
+                  </a>
+                </p>
               </div>
             </div>
 
             {/* Installation Scopes */}
             <div className="border border-border/50 rounded-lg p-6">
-              <h3 className="font-semibold mb-2">Installation Scopes</h3>
-              <p className="text-muted-foreground mb-4">Choose where to install MCP servers</p>
+              <h3 className="font-semibold mb-2">MCP Server Installation Scopes</h3>
+              <p className="text-muted-foreground mb-4">Control where and how MCP servers are configured</p>
 
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid md:grid-cols-3 gap-4">
+                <div className="bg-background/50 p-4 rounded-lg">
+                  <h4 className="font-medium mb-2">📍 Local Scope</h4>
+                  <ul className="text-sm text-muted-foreground space-y-1">
+                    <li>• Default scope</li>
+                    <li>• Current project only</li>
+                    <li>• Not shared with team</li>
+                    <li>• Personal configurations</li>
+                  </ul>
+                  <pre className="mt-3 p-2 rounded-md bg-background/50 overflow-x-auto">
+                    <code className="text-xs">bwc add --mcp redis --scope local</code>
+                  </pre>
+                </div>
                 <div className="bg-background/50 p-4 rounded-lg">
                   <h4 className="font-medium mb-2">👤 User Scope</h4>
                   <ul className="text-sm text-muted-foreground space-y-1">
-                    <li>• Location: <code className="bg-muted px-1 rounded">~/.bwc/config.json</code> (under installed.mcpServers)</li>
                     <li>• Available across all projects</li>
-                    <li>• Personal API keys in Docker Desktop</li>
+                    <li>• Personal settings</li>
                     <li>• Not shared with team</li>
-                    <li>• Default when no project config exists</li>
+                    <li>• Stored in ~/.bwc/config.json</li>
                   </ul>
                   <pre className="mt-3 p-2 rounded-md bg-background/50 overflow-x-auto">
-                    <code className="text-xs">bwc add --mcp supabase</code>
+                    <code className="text-xs">bwc add --mcp supabase --scope user</code>
                   </pre>
                 </div>
 
                 <div className="bg-background/50 p-4 rounded-lg">
                   <h4 className="font-medium mb-2">👥 Project Scope</h4>
                   <ul className="text-sm text-muted-foreground space-y-1">
-                    <li>• Location: <code className="bg-muted px-1 rounded">./bwc.config.json</code></li>
-                    <li>• Current project only</li>
                     <li>• Configuration in version control</li>
                     <li>• Team members use same servers</li>
-                    <li>• Requires explicit <code className="bg-muted px-1 rounded">--scope project</code></li>
+                    <li>• Shared configuration</li>
+                    <li>• Stored in ./bwc.config.json</li>
                   </ul>
                   <pre className="mt-3 p-2 rounded-md bg-background/50 overflow-x-auto">
-                    <code className="text-xs">bwc add --mcp postgres --project</code>
+                    <code className="text-xs">bwc add --mcp postgres --scope project</code>
                   </pre>
                 </div>
+              </div>
+            </div>
+
+            {/* Environment Variables */}
+            <div className="border border-border/50 rounded-lg p-6">
+              <h3 className="font-semibold mb-2">Environment Variables</h3>
+              <p className="text-muted-foreground mb-3">Configure MCP servers with environment variables for API keys and secrets</p>
+              <div className="relative">
+                <pre className="p-3 rounded-md bg-background/50 overflow-x-auto">
+                  <code className="text-sm">{`# Add MCP server with environment variables
+${commands.mcpWithEnv}
+
+# Multiple environment variables
+bwc add --mcp openai --scope project \\
+  -e OPENAI_API_KEY=sk-... \\
+  -e OPENAI_ORG_ID=org-...
+
+# Environment variables are stored securely:
+# - Project scope: Stored in .mcp.json (add to .gitignore!)
+# - User/Local scope: Managed by Claude CLI or Docker Desktop`}</code>
+                </pre>
+                <Button
+                  onClick={() => copyToClipboard(commands.mcpWithEnv, 18)}
+                  className="absolute top-2 right-2"
+                  size="sm"
+                  variant="ghost"
+                >
+                  {copiedIndex === 18 ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                </Button>
+              </div>
+              <p className="text-sm text-muted-foreground bg-amber-500/10 p-3 rounded-md mt-3">
+                ⚠️ <strong>Security Note:</strong> Never commit API keys to version control. Use environment variables or secrets management tools.
+              </p>
+            </div>
+
+            {/* Using Multiple MCP Providers */}
+            <div className="border border-border/50 rounded-lg p-6">
+              <h3 className="font-semibold mb-2">🔄 Using Multiple MCP Providers</h3>
+              <p className="text-muted-foreground mb-3">BWC supports multiple MCP providers in the same project - mix and match as needed!</p>
+              
+              <div className="space-y-4">
+                {/* Provider Selection */}
+                <div className="bg-primary/5 p-4 rounded-lg">
+                  <h4 className="font-medium mb-2">🎯 How Provider Selection Works</h4>
+                  <p className="text-sm text-muted-foreground mb-3">BWC selects providers based on your command flags:</p>
+                  <pre className="p-3 rounded-md bg-background/60 overflow-x-auto">
+                    <code className="text-sm">{`# Docker MCP: Use --docker-mcp flag
+bwc add --mcp postgres --docker-mcp              # ✅ Uses Docker
+bwc add --mcp redis --docker-mcp --scope project # ✅ Uses Docker
+
+# Claude CLI: Use --transport and --url flags
+bwc add --mcp api-server --transport sse --url https://api.example.com  # ✅ Uses Claude CLI
+bwc add --mcp rest-api --transport http --url https://api.service.com   # ✅ Uses Claude CLI
+
+# Registry: No provider flags (searches registry)
+bwc add --mcp some-server                        # 🔍 Searches registry
+
+# Example: Mixed providers in same project
+bwc add --mcp postgres --docker-mcp              # Local database via Docker
+bwc add --mcp redis --docker-mcp                 # Cache via Docker
+bwc add --mcp linear-server --transport sse \\    # Project management via Claude CLI
+  --url https://mcp.linear.app/sse \\
+  --header "Authorization: Bearer $LINEAR_API_KEY"`}</code>
+                  </pre>
+                </div>
+
+                {/* When to Use Each Provider */}
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="bg-background/50 p-4 rounded-lg">
+                    <h5 className="font-medium mb-2">🐳 Use Docker MCP For:</h5>
+                    <ul className="text-sm text-muted-foreground space-y-1">
+                      <li>• Local databases (PostgreSQL, Redis, MongoDB)</li>
+                      <li>• File system operations</li>
+                      <li>• Development tools</li>
+                      <li>• Services requiring container isolation</li>
+                      <li>• Pre-configured MCP servers from Docker Hub</li>
+                    </ul>
+                  </div>
+                  <div className="bg-background/50 p-4 rounded-lg">
+                    <h5 className="font-medium mb-2">🌐 Use Claude CLI For:</h5>
+                    <ul className="text-sm text-muted-foreground space-y-1">
+                      <li>• Remote REST APIs</li>
+                      <li>• SSE streaming endpoints</li>
+                      <li>• Cloud services (AWS, Azure, GCP)</li>
+                      <li>• Custom company APIs</li>
+                      <li>• Services with complex authentication</li>
+                    </ul>
+                  </div>
+                </div>
+
+                {/* Mixed Configuration Example */}
+                <div className="bg-background/50 p-4 rounded-lg">
+                  <h4 className="font-medium mb-2">📦 Mixed Provider Configuration</h4>
+                  <p className="text-sm text-muted-foreground mb-3">Example of using both providers in bwc.config.json</p>
+                  <pre className="p-3 rounded-md bg-background/60 overflow-x-auto">
+                    <code className="text-sm">{`{
+  "installed": {
+    "mcpServers": {
+      "postgres": {
+        "provider": "docker",      // Docker MCP provider
+        "transport": "stdio",
+        "scope": "project"
+      },
+      "redis": {
+        "provider": "docker",      // Docker MCP provider
+        "transport": "stdio",
+        "scope": "project"
+      },
+      "company-api": {
+        "provider": "claude",      // Claude CLI provider
+        "transport": "sse",
+        "url": "https://api.company.com/sse",
+        "headers": {
+          "Authorization": "Bearer token"
+        },
+        "scope": "user"
+      },
+      "rest-service": {
+        "provider": "claude",      // Claude CLI provider
+        "transport": "http",
+        "url": "https://api.service.com/v1",
+        "headers": {
+          "X-API-Key": "key123"
+        },
+        "scope": "project"
+      }
+    }
+  }
+}`}</code>
+                  </pre>
+                </div>
+              </div>
+
+              <div className="mt-4 p-3 bg-green-500/10 rounded-md">
+                <p className="text-sm">
+                  <strong>✅ Best Practices for Mixed Providers:</strong>
+                </p>
+                <ul className="text-sm mt-2 space-y-1">
+                  <li>• Use Docker MCP for development infrastructure (databases, caches)</li>
+                  <li>• Use Claude CLI for external APIs and cloud services</li>
+                  <li>• Check provider status with <code className="bg-muted px-1 rounded">bwc status --verbose</code></li>
+                  <li>• Docker servers start automatically with Docker Desktop</li>
+                  <li>• Remote servers require network connectivity</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Remote MCP Servers */}
+            <div className="border border-border/50 rounded-lg p-6">
+              <h3 className="font-semibold mb-2">Remote MCP Servers (Claude CLI)</h3>
+              <p className="text-muted-foreground mb-3">Connect to remote MCP servers via SSE (Server-Sent Events) or HTTP APIs using Claude CLI</p>
+              
+              <div className="space-y-4">
+                {/* SSE Transport */}
+                <div className="bg-background/50 p-4 rounded-lg">
+                  <h4 className="font-medium mb-2">📡 SSE Transport (Real-time Streaming)</h4>
+                  <p className="text-sm text-muted-foreground mb-3">For servers that support Server-Sent Events for real-time communication</p>
+                  <pre className="p-3 rounded-md bg-background/60 overflow-x-auto">
+                    <code className="text-sm">{`# Connect to SSE endpoint
+${commands.mcpRemoteSSE}
+
+# With multiple headers for authentication
+bwc add --mcp streaming-api --scope user \\
+  --transport sse \\
+  --url https://api.example.com/v2/sse \\
+  --header "Authorization: Bearer token" \\
+  --header "X-Client-ID: client123"`}</code>
+                  </pre>
+                </div>
+
+                {/* HTTP Transport */}
+                <div className="bg-background/50 p-4 rounded-lg">
+                  <h4 className="font-medium mb-2">🌐 HTTP Transport (REST APIs)</h4>
+                  <p className="text-sm text-muted-foreground mb-3">For traditional HTTP/REST API endpoints</p>
+                  <pre className="p-3 rounded-md bg-background/60 overflow-x-auto">
+                    <code className="text-sm">{`# Connect to HTTP endpoint
+${commands.mcpRemoteHTTP}
+
+# With custom headers and authentication
+bwc add --mcp rest-service --scope project \\
+  --transport http \\
+  --url https://api.company.com/mcp \\
+  --header "X-API-Key: secret-key" \\
+  --header "Content-Type: application/json"`}</code>
+                  </pre>
+                </div>
+
+                {/* Configuration in bwc.config.json */}
+                <div className="bg-background/50 p-4 rounded-lg">
+                  <h4 className="font-medium mb-2">📝 Configuration Storage</h4>
+                  <p className="text-sm text-muted-foreground mb-3">How remote servers are stored in your configuration</p>
+                  <pre className="p-3 rounded-md bg-background/60 overflow-x-auto">
+                    <code className="text-sm">{`// bwc.config.json
+{
+  "installed": {
+    "mcpServers": {
+      "remote-api": {
+        "provider": "claude",
+        "transport": "sse",
+        "url": "https://api.example.com/sse",
+        "headers": {
+          "Authorization": "Bearer token123"
+        },
+        "scope": "user"
+      },
+      "http-service": {
+        "provider": "claude",
+        "transport": "http",
+        "url": "https://api.service.com/v1",
+        "headers": {
+          "X-API-Key": "key123"
+        },
+        "scope": "project"
+      }
+    }
+  }
+}`}</code>
+                  </pre>
+                </div>
+              </div>
+
+              <div className="mt-4 p-3 bg-blue-500/10 rounded-md">
+                <p className="text-sm">
+                  <strong>💡 Tips for Remote Servers:</strong>
+                </p>
+                <ul className="text-sm mt-2 space-y-1">
+                  <li>• Use HTTPS endpoints for secure communication</li>
+                  <li>• Store sensitive tokens in environment variables</li>
+                  <li>• SSE is ideal for real-time, streaming responses</li>
+                  <li>• HTTP is suitable for request-response patterns</li>
+                  <li>• Test connectivity with <code className="bg-muted px-1 rounded">bwc status --verbose</code></li>
+                </ul>
+              </div>
+
+              <Button
+                onClick={() => copyToClipboard(`${commands.mcpRemoteSSE}\n\n${commands.mcpRemoteHTTP}`, 19)}
+                className="absolute top-2 right-2"
+                size="sm"
+                variant="ghost"
+              >
+                {copiedIndex === 19 ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+              </Button>
+            </div>
+
+            {/* Example Workflow: Mixed Providers */}
+            <div className="border border-border/50 rounded-lg p-6">
+              <h3 className="font-semibold mb-2">💡 Example: Full-Stack Project with Mixed Providers</h3>
+              <p className="text-muted-foreground mb-3">Real-world example using both Docker MCP and Claude CLI providers</p>
+              <div className="relative">
+                <pre className="p-3 rounded-md bg-background/50 overflow-x-auto">
+                  <code className="text-sm">{`# 1. Setup project configuration
+bwc init --project
+
+# 2. Add local development infrastructure (Docker MCP)
+# ⚠️ Note: --docker-mcp flag is REQUIRED for each Docker server
+bwc add --mcp postgres --docker-mcp --scope project     # Database
+bwc add --mcp redis --docker-mcp --scope project        # Cache
+bwc add --mcp filesystem --docker-mcp --scope project   # File operations
+
+# 3. Add external APIs (Claude CLI for remote servers)
+# Use --transport and --url for remote servers
+bwc add --mcp linear-server --transport sse \\
+  --url https://mcp.linear.app/sse \\
+  --header "Authorization: Bearer $LINEAR_API_KEY" \\
+  --scope project
+
+bwc add --mcp github-api --transport http \\
+  --url https://api.github.com \\
+  --header "Authorization: Bearer $GITHUB_TOKEN" \\
+  --scope project
+
+# 4. Check all configured servers
+bwc status --verbose
+
+# Output shows mixed providers:
+# 🔌 MCP Servers (5 installed):
+#   ✓ postgres      [project]  docker/stdio    ✅
+#   ✓ redis         [project]  docker/stdio    ✅
+#   ✓ filesystem    [project]  docker/stdio    ✅
+#   ✓ linear-server [project]  claude/sse      ✅
+#   ✓ github-api    [project]  claude/http     ✅
+
+# 5. Team members can install everything with one command
+git clone <repo>
+bwc install  # Automatically installs both Docker and Claude CLI servers`}</code>
+                </pre>
+                <Button
+                  onClick={() => copyToClipboard(`bwc init --project\nbwc add --mcp postgres --docker-mcp --scope project\nbwc add --mcp redis --docker-mcp --scope project`, 22)}
+                  className="absolute top-2 right-2"
+                  size="sm"
+                  variant="ghost"
+                >
+                  {copiedIndex === 22 ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                </Button>
               </div>
             </div>
 
@@ -699,8 +1284,8 @@ ${commands.mcpInfo}`}</code>
                 <pre className="p-3 rounded-md bg-background/50 overflow-x-auto">
                   <code className="text-sm">{`# Team lead sets up project MCP servers
 bwc init --project
-bwc add --mcp postgres --project
-bwc add --mcp github --project
+bwc add --mcp postgres --scope project
+bwc add --mcp github --scope project
 
 # Commit configuration
 git add bwc.config.json
@@ -711,12 +1296,12 @@ git clone <repo>
 bwc install  # Installs all configured MCP servers`}</code>
                 </pre>
                 <Button
-                  onClick={() => copyToClipboard(`bwc init --project\nbwc add --mcp postgres --project\nbwc add --mcp github --project\ngit add bwc.config.json\ngit commit -m "Add team MCP servers"`, 15)}
+                  onClick={() => copyToClipboard(`bwc init --project\nbwc add --mcp postgres --scope project\nbwc add --mcp github --scope project\ngit add bwc.config.json\ngit commit -m "Add team MCP servers"`, 20)}
                   className="absolute top-2 right-2"
                   size="sm"
                   variant="ghost"
                 >
-                  {copiedIndex === 15 ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                  {copiedIndex === 20 ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                 </Button>
               </div>
             </div>
@@ -730,49 +1315,46 @@ bwc install  # Installs all configured MCP servers`}</code>
                   <code className="text-sm">{commands.mcpListScoped}</code>
                 </pre>
                 <Button
-                  onClick={() => copyToClipboard(commands.mcpListScoped, 16)}
+                  onClick={() => copyToClipboard(commands.mcpListScoped, 21)}
                   className="absolute top-2 right-2"
                   size="sm"
                   variant="ghost"
                 >
-                  {copiedIndex === 16 ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                  {copiedIndex === 21 ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                 </Button>
               </div>
             </div>
 
-            {/* Why Docker Only */}
+            {/* MCP Server Providers */}
             <div className="bg-card p-6 rounded-lg border border-border/50">
-              <h3 className="font-semibold mb-3">Why Docker MCP Gateway Only?</h3>
-              <div className="grid md:grid-cols-2 gap-4">
+              <h3 className="font-semibold mb-3">MCP Server Providers</h3>
+              <p className="text-sm text-muted-foreground mb-4">BWC supports multiple MCP server providers for maximum flexibility</p>
+              <div className="grid md:grid-cols-3 gap-4">
                 <div className="flex gap-3">
-                  <span className="text-2xl">🔒</span>
+                  <span className="text-2xl">🐳</span>
                   <div>
-                    <h4 className="font-medium">Container Isolation</h4>
-                    <p className="text-sm text-muted-foreground">Complete system protection</p>
+                    <h4 className="font-medium">Docker MCP</h4>
+                    <p className="text-sm text-muted-foreground">Containerized servers with secure isolation</p>
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <span className="text-2xl">🔑</span>
+                  <span className="text-2xl">🤖</span>
                   <div>
-                    <h4 className="font-medium">Secure Secrets</h4>
-                    <p className="text-sm text-muted-foreground">Docker manages all API keys</p>
+                    <h4 className="font-medium">Claude CLI</h4>
+                    <p className="text-sm text-muted-foreground">Native integration with Claude Code</p>
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <span className="text-2xl">✅</span>
+                  <span className="text-2xl">📦</span>
                   <div>
-                    <h4 className="font-medium">Verified Images</h4>
-                    <p className="text-sm text-muted-foreground">All servers signed by Docker</p>
-                  </div>
-                </div>
-                <div className="flex gap-3">
-                  <span className="text-2xl">🌐</span>
-                  <div>
-                    <h4 className="font-medium">Single Gateway</h4>
-                    <p className="text-sm text-muted-foreground">One secure endpoint for all</p>
+                    <h4 className="font-medium">NPM Packages</h4>
+                    <p className="text-sm text-muted-foreground">Install servers from npm registry</p>
                   </div>
                 </div>
               </div>
+              <p className="text-sm text-muted-foreground mt-4">
+                BWC automatically detects available providers and uses the best option for each server.
+              </p>
             </div>
 
             {/* Popular Servers */}
@@ -830,6 +1412,57 @@ bwc install  # Installs all configured MCP servers`}</code>
             <div className="border border-border/50 rounded-lg p-4">
               <h3 className="font-semibold mb-2">Configuration not found</h3>
               <p className="text-muted-foreground">Run <code className="text-sm bg-muted px-2 py-1 rounded">bwc init</code> to create configuration</p>
+            </div>
+            <div className="border border-border/50 rounded-lg p-4">
+              <h3 className="font-semibold mb-2">Check configuration status</h3>
+              <p className="text-muted-foreground">Run <code className="text-sm bg-muted px-2 py-1 rounded">bwc status --verbose</code> to see detailed configuration and health information</p>
+            </div>
+            
+            {/* Provider-specific issues */}
+            <div className="border border-amber-500/50 rounded-lg p-4 bg-amber-500/5">
+              <h3 className="font-semibold mb-2 text-amber-600">Can't add remote server when Docker is available</h3>
+              <p className="text-muted-foreground mb-2">This issue has been fixed! BWC no longer automatically selects Docker MCP.</p>
+              <p className="text-sm text-muted-foreground">
+                <strong>Solution:</strong> Use explicit flags to select your provider:
+              </p>
+              <ul className="text-sm mt-2 space-y-1">
+                <li>• For Docker: <code className="bg-muted px-1 rounded">bwc add --mcp postgres --docker-mcp</code></li>
+                <li>• For Remote: <code className="bg-muted px-1 rounded">bwc add --mcp api --transport sse --url https://...</code></li>
+              </ul>
+            </div>
+            
+            <div className="border border-blue-500/50 rounded-lg p-4 bg-blue-500/5">
+              <h3 className="font-semibold mb-2 text-blue-600">Provider selection confusion</h3>
+              <p className="text-muted-foreground mb-2">Not sure which provider BWC is using?</p>
+              <ul className="text-sm space-y-1">
+                <li>• Run <code className="bg-muted px-1 rounded">bwc status --verbose</code> to see provider for each server</li>
+                <li>• Look for <code className="bg-muted px-1 rounded">docker/stdio</code> or <code className="bg-muted px-1 rounded">claude/sse</code> in the output</li>
+                <li>• Check your <code className="bg-muted px-1 rounded">bwc.config.json</code> for the "provider" field</li>
+              </ul>
+            </div>
+            
+            <div className="border border-border/50 rounded-lg p-4">
+              <h3 className="font-semibold mb-2">Docker MCP not working</h3>
+              <p className="text-muted-foreground mb-2">Ensure Docker Desktop is running. Run <code className="text-sm bg-muted px-2 py-1 rounded">bwc add --setup</code> to configure the Docker MCP gateway</p>
+              <p className="text-sm text-muted-foreground">
+                <strong>Remember:</strong> Always use <code className="bg-muted px-1 rounded">--docker-mcp</code> flag when adding Docker servers!
+              </p>
+            </div>
+            
+            <div className="border border-border/50 rounded-lg p-4">
+              <h3 className="font-semibold mb-2">Remote MCP server connection failed</h3>
+              <p className="text-muted-foreground">For remote servers via Claude CLI:</p>
+              <ul className="text-sm mt-2 space-y-1">
+                <li>• Verify the URL is accessible: <code className="bg-muted px-1 rounded">curl -I &lt;url&gt;</code></li>
+                <li>• Check authentication headers are correct</li>
+                <li>• Ensure Claude CLI is installed: <code className="bg-muted px-1 rounded">npm install -g @anthropic/claude-cli</code></li>
+                <li>• Use <code className="bg-muted px-1 rounded">--transport sse</code> or <code className="bg-muted px-1 rounded">--transport http</code> as appropriate</li>
+              </ul>
+            </div>
+            
+            <div className="border border-border/50 rounded-lg p-4">
+              <h3 className="font-semibold mb-2">MCP servers from old version</h3>
+              <p className="text-muted-foreground">BWC automatically migrates legacy MCP server configurations. Old string arrays are converted to the new format with 'docker' as the default provider</p>
             </div>
             <div className="border border-border/50 rounded-lg p-4">
               <h3 className="font-semibold mb-2">Failed to fetch registry</h3>

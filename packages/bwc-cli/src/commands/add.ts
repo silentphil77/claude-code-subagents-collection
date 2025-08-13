@@ -8,6 +8,7 @@ import { writeFile } from '../utils/files.js'
 import { installMCPServer, configureInClaudeCode } from '../utils/mcp-installer.js'
 import { addServerToMCPJson } from '../utils/mcp-json.js'
 import { UserInputHandler } from '../utils/user-input-handler.js'
+import type { MCPServerConfig } from '../registry/types.js'
 import { 
   isDockerMCPAvailable, 
   enableDockerMCPServer, 
@@ -30,6 +31,9 @@ export function createAddCommand() {
     .option('-e, --env <env...>', 'set environment variables for MCP servers (e.g. -e KEY=value)')
     .option('--setup', 'setup Docker MCP gateway in Claude Code')
     .option('--docker-mcp', 'use Docker MCP Toolkit for MCP servers')
+    .option('--transport <type>', 'transport type for MCP servers: stdio, sse, or http')
+    .option('--url <url>', 'URL for remote MCP servers (required for sse/http transport)')
+    .option('--header <header...>', 'headers for remote MCP servers (e.g. --header "Authorization: Bearer token")')
     .action(async (options) => {
       try {
         const configManager = ConfigManager.getInstance()
@@ -70,10 +74,21 @@ export function createAddCommand() {
             throw new Error(`Invalid scope: ${scope}. Must be one of: ${validScopes.join(', ')}`)
           }
           
-          // Check if we should use Docker MCP
-          if (options.dockerMcp || await shouldUseDockerMCP()) {
+          // Determine which provider to use
+          if (options.dockerMcp) {
+            // Explicitly requested Docker MCP
             await addDockerMCPServer(options.mcp, configManager, scope)
+          } else if (options.transport || options.url) {
+            // Remote server via Claude CLI (SSE/HTTP transport)
+            await addRemoteMCPServer(options.mcp, configManager, {
+              scope,
+              transport: options.transport,
+              url: options.url,
+              headers: options.header || [],
+              envVars: options.env || []
+            })
           } else {
+            // Try to find in registry (backwards compatibility)
             await addMCPServer(options.mcp, configManager, registryClient, {
               scope,
               envVars: options.env || []
@@ -438,15 +453,156 @@ async function addMCPServer(
   }
 }
 
+async function addRemoteMCPServer(
+  name: string,
+  configManager: ConfigManager,
+  options: {
+    scope: 'local' | 'user' | 'project'
+    transport?: string
+    url?: string
+    headers?: string[]
+    envVars?: string[]
+  }
+): Promise<void> {
+  const spinner = logger.spinner(`Adding remote MCP server: ${name}`)
+  
+  try {
+    // Validate transport and URL
+    if (options.transport && !['stdio', 'sse', 'http'].includes(options.transport)) {
+      throw new Error(`Invalid transport: ${options.transport}. Must be stdio, sse, or http`)
+    }
+    
+    if ((options.transport === 'sse' || options.transport === 'http') && !options.url) {
+      throw new Error(`URL is required for ${options.transport} transport`)
+    }
+    
+    spinner.stop()
+    
+    // Show server details
+    logger.info(`\nAdding remote MCP server: ${name}`)
+    logger.info(`Transport: ${options.transport || 'stdio'}`)
+    if (options.url) {
+      logger.info(`URL: ${options.url}`)
+    }
+    logger.info(`Scope: ${options.scope}`)
+    
+    // Parse headers
+    const headers: Record<string, string> = {}
+    if (options.headers) {
+      for (const header of options.headers) {
+        const [key, ...valueParts] = header.split(':')
+        if (key && valueParts.length > 0) {
+          headers[key.trim()] = valueParts.join(':').trim()
+        }
+      }
+    }
+    
+    // Parse environment variables
+    const env: Record<string, string> = {}
+    if (options.envVars) {
+      for (const envVar of options.envVars) {
+        const [key, value] = envVar.split('=')
+        if (key && value) {
+          env[key] = value
+        }
+      }
+    }
+    
+    spinner.start()
+    
+    // Create the MCP server configuration
+    const serverConfig: MCPServerConfig = {
+      provider: 'claude',
+      transport: options.transport || 'stdio',
+      scope: options.scope,
+      installedAt: new Date().toISOString(),
+      ...(options.url && { url: options.url }),
+      ...(Object.keys(headers).length > 0 && { headers }),
+      ...(Object.keys(env).length > 0 && { env })
+    }
+    
+    // Add to configuration
+    await configManager.addInstalledMCPServer(name, serverConfig)
+    
+    // Configure in Claude Code using Claude CLI
+    const { isClaudeCLIAvailable, execClaudeCLI } = await import('../utils/claude-cli.js')
+    
+    if (await isClaudeCLIAvailable()) {
+      spinner.text = `Configuring ${name} in Claude Code...`
+      
+      const args = ['mcp', 'add', '--scope', options.scope]
+      
+      if (options.transport) {
+        args.push('--transport', options.transport)
+      }
+      
+      // Add headers
+      for (const [key, value] of Object.entries(headers)) {
+        args.push('--header', `${key}: ${value}`)
+      }
+      
+      // Add environment variables
+      for (const [key, value] of Object.entries(env)) {
+        args.push('--env', `${key}=${value}`)
+      }
+      
+      args.push(name)
+      
+      if (options.url) {
+        args.push(options.url)
+      }
+      
+      try {
+        await execClaudeCLI(args)
+        spinner.succeed(`Successfully configured ${name} in Claude Code`)
+      } catch (error) {
+        spinner.warn(`Could not configure in Claude Code automatically`)
+        logger.info('Please restart Claude Code to apply changes')
+      }
+    } else {
+      spinner.succeed(`Server configuration saved`)
+      logger.info('\nClaude CLI not found. Please install it to configure servers automatically:')
+      logger.info('npm install -g @anthropic/claude-cli')
+    }
+    
+    logger.info(`\nRemote MCP server configured with ${options.scope} scope`)
+  } catch (error) {
+    spinner.fail(`Failed to add remote MCP server`)
+    throw error
+  }
+}
+
 async function interactiveAddMCP(
   configManager: ConfigManager, 
   registryClient: RegistryClient
 ): Promise<void> {
-  // Check if we should use Docker MCP
-  if (await shouldUseDockerMCP()) {
-    // Use Docker MCP interactive mode
-    await interactiveAddDockerMCP(configManager)
-    return
+  // Check if Docker MCP is available
+  const dockerStatus = await checkDockerMCPStatus()
+  const dockerAvailable = dockerStatus.dockerInstalled && dockerStatus.mcpToolkitAvailable
+  
+  if (dockerAvailable) {
+    // Ask user which provider to use
+    const { provider } = await inquirer.prompt([
+      {
+        type: 'list',
+        name: 'provider',
+        message: 'Select MCP provider:',
+        choices: [
+          { name: 'Docker MCP (containerized local servers)', value: 'docker' },
+          { name: 'Claude CLI (remote servers via SSE/HTTP)', value: 'claude' },
+          { name: 'Registry (browse available servers)', value: 'registry' }
+        ]
+      }
+    ])
+    
+    if (provider === 'docker') {
+      await interactiveAddDockerMCP(configManager)
+      return
+    } else if (provider === 'claude') {
+      await interactiveAddRemoteMCP(configManager)
+      return
+    }
+    // Fall through to registry mode
   }
   
   // Original interactive MCP add logic (fallback for non-Docker)
@@ -565,6 +721,131 @@ async function interactiveAddMCP(
 }
 
 // Helper functions for Docker MCP integration
+async function interactiveAddRemoteMCP(configManager: ConfigManager): Promise<void> {
+  logger.heading('Add Remote MCP Server')
+  
+  // Collect server details
+  const { name, transport } = await inquirer.prompt([
+    {
+      type: 'input',
+      name: 'name',
+      message: 'Server name:',
+      validate: (input) => input.trim() ? true : 'Server name is required'
+    },
+    {
+      type: 'list',
+      name: 'transport',
+      message: 'Transport type:',
+      choices: [
+        { name: 'SSE (Server-Sent Events)', value: 'sse' },
+        { name: 'HTTP (REST API)', value: 'http' },
+        { name: 'STDIO (Standard I/O)', value: 'stdio' }
+      ]
+    }
+  ])
+  
+  let url: string | undefined
+  let headers: string[] = []
+  
+  // Get URL for SSE/HTTP transports
+  if (transport === 'sse' || transport === 'http') {
+    const { serverUrl, hasHeaders } = await inquirer.prompt([
+      {
+        type: 'input',
+        name: 'serverUrl',
+        message: 'Server URL:',
+        validate: (input) => {
+          if (!input.trim()) return 'URL is required for ' + transport
+          try {
+            new URL(input)
+            return true
+          } catch {
+            return 'Please enter a valid URL'
+          }
+        }
+      },
+      {
+        type: 'confirm',
+        name: 'hasHeaders',
+        message: 'Do you need to add authentication headers?',
+        default: false
+      }
+    ])
+    
+    url = serverUrl
+    
+    // Collect headers
+    if (hasHeaders) {
+      let addMore = true
+      while (addMore) {
+        const { header, more } = await inquirer.prompt([
+          {
+            type: 'input',
+            name: 'header',
+            message: 'Enter header (e.g., "Authorization: Bearer token"):',
+            validate: (input) => input.includes(':') ? true : 'Header must be in format "Key: Value"'
+          },
+          {
+            type: 'confirm',
+            name: 'more',
+            message: 'Add another header?',
+            default: false
+          }
+        ])
+        headers.push(header)
+        addMore = more
+      }
+    }
+  }
+  
+  // Get scope
+  const { scope } = await inquirer.prompt([
+    {
+      type: 'list',
+      name: 'scope',
+      message: 'Configuration scope:',
+      choices: [
+        { name: 'Local (this project only)', value: 'local' },
+        { name: 'User (across all projects)', value: 'user' },
+        { name: 'Project (shared with team)', value: 'project' }
+      ],
+      default: 'local'
+    }
+  ])
+  
+  // Environment variables
+  const { hasEnvVars } = await inquirer.prompt([
+    {
+      type: 'confirm',
+      name: 'hasEnvVars',
+      message: 'Do you need to set environment variables?',
+      default: false
+    }
+  ])
+  
+  let envVars: string[] = []
+  if (hasEnvVars) {
+    const { envInput } = await inquirer.prompt([
+      {
+        type: 'input',
+        name: 'envInput',
+        message: 'Enter environment variables (e.g., API_KEY=value SECRET=value):',
+        validate: (input) => input.trim() ? true : 'Please enter at least one environment variable'
+      }
+    ])
+    envVars = envInput.split(' ').filter((e: string) => e.includes('='))
+  }
+  
+  // Add the remote server
+  await addRemoteMCPServer(name, configManager, {
+    scope,
+    transport,
+    url,
+    headers,
+    envVars
+  })
+}
+
 async function setupDockerMCPGatewayCommand(scope: string): Promise<void> {
   logger.heading('Setting up Docker MCP Gateway')
   
