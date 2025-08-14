@@ -9,6 +9,7 @@ import { installMCPServer, configureInClaudeCode } from '../utils/mcp-installer.
 import { addServerToMCPJson } from '../utils/mcp-json.js'
 import { UserInputHandler } from '../utils/user-input-handler.js'
 import type { MCPServerConfig } from '../registry/types.js'
+import { convertToMCPJsonFormat, shouldAddToMCPJson } from '../utils/mcp-config-converter.js'
 import { 
   isDockerMCPAvailable, 
   enableDockerMCPServer, 
@@ -566,6 +567,17 @@ async function addRemoteMCPServer(
     }
     
     logger.info(`\nRemote MCP server configured with ${options.scope} scope`)
+    
+    // Add to .mcp.json if appropriate for team sharing
+    if (shouldAddToMCPJson(serverConfig)) {
+      const mcpJsonConfig = convertToMCPJsonFormat(name, serverConfig)
+      
+      await addServerToMCPJson(
+        { name, verification: { status: 'community' } } as any,
+        JSON.stringify(mcpJsonConfig),
+        []
+      )
+    }
   } catch (error) {
     spinner.fail(`Failed to add remote MCP server`)
     throw error
@@ -589,8 +601,7 @@ async function interactiveAddMCP(
         message: 'Select MCP provider:',
         choices: [
           { name: 'Docker MCP (containerized local servers)', value: 'docker' },
-          { name: 'Claude CLI (remote servers via SSE/HTTP)', value: 'claude' },
-          { name: 'Registry (browse available servers)', value: 'registry' }
+          { name: 'Claude CLI (remote servers via SSE/HTTP)', value: 'claude' }
         ]
       }
     ])
@@ -602,7 +613,6 @@ async function interactiveAddMCP(
       await interactiveAddRemoteMCP(configManager)
       return
     }
-    // Fall through to registry mode
   }
   
   // Original interactive MCP add logic (fallback for non-Docker)

@@ -183,6 +183,52 @@ Options:
 - Otherwise → removes from user level
 - Use `--global` or `--user` to force user-level removal
 
+### `bwc status`
+
+Check the health of your BWC configuration and verify MCP server installations.
+
+```bash
+# Check basic configuration status
+bwc status
+
+# Verify MCP server installations (deep verification)
+bwc status --verify-mcp
+
+# Get machine-readable JSON output
+bwc status --json
+```
+
+Options:
+- `--verify-mcp` - Perform deep verification of MCP server installations
+- `--json` - Output results in JSON format for scripting
+
+**Features**:
+- Shows configuration location and scope
+- Lists installed subagents, commands, and MCP servers
+- Verifies MCP server installations against actual Claude Code configuration
+- Provides fix commands for missing or misconfigured servers
+- Reminds about Docker gateway setup when needed
+
+**Example Output**:
+```
+✓ BWC Configuration Status
+
+Configuration: /path/to/bwc.config.json (project)
+
+📦 Installed Items:
+  Subagents: 3
+  Commands: 2
+  MCP Servers: 4
+
+🔌 MCP Servers:
+  ✓ postgres (Docker)
+  ✓ github (Docker)
+  ✓ linear-server (SSE)
+  ⚠ supabase (Not installed)
+    Fix: bwc add --mcp supabase --docker-mcp
+    Note: Run 'bwc add --setup' to configure Docker gateway if needed
+```
+
 ## Configuration
 
 ### User Configuration
@@ -298,139 +344,205 @@ Automate Claude Code setup in your pipelines:
   run: bwc install
 ```
 
-## MCP Servers (Docker Gateway Only)
+## MCP Servers
 
 ### 🔌 Connect Claude to External Tools
 
-BWC CLI supports 100+ Model Context Protocol (MCP) servers through **secure Docker containers**. We exclusively use Docker MCP Gateway for maximum security.
+BWC CLI supports MCP (Model Context Protocol) servers through two providers:
+- **Docker MCP Gateway**: Secure containerized servers (100+ available)
+- **Claude CLI**: Remote servers via SSE/HTTP for cloud services
 
 ### Prerequisites
 
-**Docker Desktop Required**: Download from [docker.com/products/docker-desktop](https://docker.com/products/docker-desktop)
+- **For Docker MCP**: Docker Desktop - Download from [docker.com/products/docker-desktop](https://docker.com/products/docker-desktop)
+- **For Remote MCP**: Claude CLI installed (`npm install -g @anthropic/claude-cli`)
 
 ### Quick Start
 
+#### Docker MCP Servers (Local/Containerized)
 ```bash
-# Browse available MCP servers
-bwc mcp list
+# Setup Docker gateway (one-time)
+bwc add --setup
 
-# Install for current user (all projects)
-bwc add --mcp postgres
+# Add a Docker MCP server
+bwc add --mcp postgres --docker-mcp
 
-# Install for project only (team sharing)
-bwc add --mcp postgres --project
+# Add with specific scope
+bwc add --mcp postgres --docker-mcp --scope project
+```
 
-# Search for specific functionality
-bwc mcp search database
+#### Remote MCP Servers (SSE/HTTP)
+```bash
+# Add an SSE server
+bwc add --mcp linear-server --transport sse --url https://mcp.linear.app/sse --scope project
 
-# View server details
-bwc mcp info postgres
+# Add an HTTP server with authentication
+bwc add --mcp api-server --transport http --url https://api.example.com/mcp \
+  --header "Authorization: Bearer token" --scope project
+
+# Add with environment variables
+bwc add --mcp custom-server --transport stdio --env API_KEY=secret --scope user
+```
+
+#### Interactive Mode
+```bash
+# Browse and select servers interactively
+bwc add
+# Choose "MCP Server"
+# Select provider (Docker or Remote)
+# Configure as prompted
 ```
 
 ### Installation Scopes
 
+#### Local Scope (Default)
+- **Location**: Claude Code local configuration
+- **Availability**: Current machine only
+- **Use Case**: Personal experimentation
+- **Sharing**: Not shared with team
+
 #### User Scope
-- **Location**: `~/.bwc/config.json` (under `installed.mcpServers`)
-- **Availability**: All your projects
-- **API Keys**: Personal, stored in Docker Desktop
-- **Use Case**: Personal tools and services
-- **Default when**: No project config exists
+- **Location**: `~/.bwc/config.json` and Claude Code user config
+- **Availability**: All your projects on this machine
+- **Use Case**: Personal tools across projects
+- **Sharing**: Not shared with team
 
-```bash
-# Install for user (explicit)
-bwc add --mcp supabase --scope user
-
-# List user-installed servers
-bwc mcp list --user
-```
-
-#### Project Scope
-- **Location**: `./bwc.config.json` (under `installed.mcpServers`)
-- **Availability**: Current project only
-- **API Keys**: Via environment variables
+#### Project Scope (Team Sharing)
+- **Location**: `./bwc.config.json` and `./.mcp.json`
+- **Availability**: Current project for all team members
 - **Use Case**: Team collaboration
-- **Default when**: Project config exists (requires explicit `--scope project` for MCP)
+- **Sharing**: Committed to version control
 
 ```bash
-# Install for project (must be explicit for MCP)
-bwc add --mcp postgres --scope project
+# Local scope (default)
+bwc add --mcp postgres --docker-mcp
 
-# List project servers
-bwc mcp list --project
+# User scope (all your projects)
+bwc add --mcp postgres --docker-mcp --scope user
 
-# Commit configuration for team
-git add bwc.config.json
-git commit -m "Add MCP servers for team"
+# Project scope (team sharing)
+bwc add --mcp postgres --docker-mcp --scope project
+
+# Remote servers also support all scopes
+bwc add --mcp api-server --transport http --url https://api.example.com --scope project
 ```
+
+**Important for Team Sharing**:
+- Project scope servers are saved to `.mcp.json` for Claude Code
+- Docker servers use the gateway and are NOT in `.mcp.json`
+- SSE/HTTP servers ARE saved in `.mcp.json` with `"type"` field
+- Commit both `bwc.config.json` and `.mcp.json` to share with team
 
 ### Team Collaboration Example
 
 ```bash
 # Team lead sets up project MCP servers
 bwc init --project
-bwc add --mcp postgres --project
-bwc add --mcp github --project
+
+# Add Docker MCP servers
+bwc add --mcp postgres --docker-mcp --scope project
+bwc add --mcp github --docker-mcp --scope project
+
+# Add remote MCP server
+bwc add --mcp linear-server --transport sse \
+  --url https://mcp.linear.app/sse --scope project
 
 # Commit configuration
-git add bwc.config.json
+git add bwc.config.json .mcp.json
 git commit -m "Add team MCP servers"
 
 # Team members clone and install
 git clone <repo>
 bwc install  # Installs all configured MCP servers
+
+# Verify installations
+bwc status --verify-mcp
 ```
 
-### Why Docker-Only?
+### Provider Comparison
 
+#### Docker MCP Gateway
 - 🔒 **Container Isolation**: Complete system protection
 - 🔑 **Secure Secrets**: Docker manages all API keys
 - ✅ **Verified Images**: All servers signed by Docker
 - 🌐 **Single Gateway**: One secure endpoint for all servers
+- 📦 **100+ Servers**: Large catalog of containerized servers
 
-### Available MCP Commands
+#### Remote MCP (Claude CLI)
+- ☁️ **Cloud Services**: Direct connection to cloud APIs
+- 🔐 **Custom Auth**: Support for API keys and headers
+- 🌍 **SSE/HTTP**: Real-time and REST API connections
+- 🤝 **Team Sharing**: Easy sharing via `.mcp.json`
+- ⚡ **No Docker Required**: Works without Docker Desktop
+
+### MCP Commands
 
 ```bash
-# List all available servers
-bwc mcp list
+# Add MCP servers
+bwc add --mcp <name> [options]
 
-# Search for servers
-bwc mcp search <query>
+# Remove MCP servers
+bwc remove --mcp <name>
 
-# View server information
-bwc mcp info <server>
+# Check status and verify installations
+bwc status               # Basic status
+bwc status --verify-mcp  # Deep verification with fix suggestions
 
-# Check Docker MCP Gateway status
-bwc mcp status
+# List installed servers
+bwc list --mcps
 
-# List by installation scope
-bwc mcp list --user     # User-installed only
-bwc mcp list --project  # Project-installed only
+# Setup Docker gateway
+bwc add --setup
 ```
 
-### Example: Adding Supabase
+### Examples
 
+#### Adding a Docker MCP Server
 ```bash
-$ bwc add --mcp supabase
-? Installation scope?
-  ❯ User (all projects)
-    Project (this project only)
-? Enter your Supabase access token: ****
-✓ Enabled supabase in Docker MCP Gateway
-✓ Server available at docker://mcp-supabase
+$ bwc add --mcp postgres --docker-mcp --scope project
+✓ Enabled postgres in Docker MCP Gateway
+✓ Server available through Docker gateway
+✓ Configuration saved to project
+```
+
+#### Adding a Remote SSE Server
+```bash
+$ bwc add --mcp linear-server --transport sse \
+    --url https://mcp.linear.app/sse --scope project
+✓ Configured linear-server in Claude Code
+✓ Added to .mcp.json for team sharing
+```
+
+#### Verifying Installations
+```bash
+$ bwc status --verify-mcp
+✓ BWC Configuration Status
+
+🔌 MCP Server Verification:
+  ✓ postgres (Docker) - Installed
+  ✓ linear-server (SSE) - Installed in .mcp.json
+  ⚠ github (Docker) - Not installed
+    Fix: bwc add --mcp github --docker-mcp
+    Note: Run 'bwc add --setup' if Docker gateway not configured
 ```
 
 ### Popular MCP Servers
 
+#### Docker MCP Servers
 - **postgres**: PostgreSQL database operations
-- **github**: GitHub API integration
-- **supabase**: Supabase backend services
-- **stripe**: Payment processing
-- **slack**: Team communication
-- **notion**: Knowledge management
-- **linear**: Issue tracking
+- **github**: GitHub API integration  
 - **elasticsearch**: Search and analytics
+- **redis**: Caching and data store
+- **mongodb**: NoSQL database
 
-View all 100+ servers at [buildwithclaude.com/mcp-servers](https://buildwithclaude.com/mcp-servers)
+#### Remote MCP Servers (SSE/HTTP)
+- **linear-server**: Linear issue tracking (SSE)
+- **supabase**: Supabase backend services (HTTP)
+- **stripe**: Payment processing (HTTP)
+- **slack**: Team communication (HTTP)
+- **notion**: Knowledge management (HTTP)
+
+View all servers at [buildwithclaude.com/mcp-servers](https://buildwithclaude.com/mcp-servers)
 
 
 ## Categories
@@ -469,7 +581,7 @@ Use **SPACE** to select items (not Enter). Selected items show a ● marker. Pre
 
 ## Contributing
 
-Visit [buildwithclaude.com/contribute](https://buildwithclaude.com/contribute) to add your own subagents and commands to the collection.
+Contributions are welcome! Please visit our [GitHub repository](https://github.com/davepoon/claude-code-subagents-collection) to submit pull requests for new subagents, commands, or MCP servers.
 
 ## Development
 

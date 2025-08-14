@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
-import { Copy, Check, Terminal, Package, Zap, Settings, ArrowLeft } from 'lucide-react'
+import { Copy, Check, Terminal, Package, Zap, Settings, ArrowLeft, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 
 interface PackageManagerSwitcherProps {
@@ -18,6 +18,7 @@ function PackageManagerSwitcher({ selected, onSelect }: PackageManagerSwitcherPr
       {managers.map((pm) => (
         <button
           key={pm}
+          type="button"
           onClick={() => onSelect(pm)}
           className={`
             px-3 py-1.5 text-xs font-medium rounded-[0.25rem] transition-all
@@ -34,14 +35,81 @@ function PackageManagerSwitcher({ selected, onSelect }: PackageManagerSwitcherPr
   )
 }
 
+interface TocItem {
+  id: string
+  title: string
+  children?: TocItem[]
+}
+
+const tocItems: TocItem[] = [
+  { id: 'installation', title: 'Installation' },
+  { id: 'core-commands', title: 'Core Commands' },
+  { id: 'configuration', title: 'Configuration' },
+  { id: 'configuration-scope', title: 'Configuration Scope Behavior' },
+  { id: 'use-cases', title: 'Use Cases' },
+  { 
+    id: 'mcp-servers', 
+    title: 'MCP Servers',
+    children: [
+      { id: 'mcp-provider-guide', title: 'Provider Selection Guide' },
+      { id: 'mcp-docker', title: 'Docker MCP Servers' },
+      { id: 'mcp-remote', title: 'Remote MCP Servers' },
+      { id: 'mcp-multiple-providers', title: 'Using Multiple Providers' },
+    ]
+  },
+  { id: 'mcp-verification', title: 'MCP Server Verification' },
+  { id: 'troubleshooting', title: 'Troubleshooting' },
+  { id: 'next-steps', title: 'Next Steps' }
+]
+
 export default function CLIPage() {
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
   const [packageManager, setPackageManager] = useState<'npm' | 'yarn' | 'pnpm' | 'bun'>('npm')
+  const [activeSection, setActiveSection] = useState<string>('')
+  
   const copyToClipboard = async (text: string, index: number) => {
     await navigator.clipboard.writeText(text)
     setCopiedIndex(index)
     setTimeout(() => setCopiedIndex(null), 2000)
   }
+
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id)
+    if (element) {
+      const offset = 90 // Account for fixed header
+      const elementPosition = element.getBoundingClientRect().top
+      const offsetPosition = elementPosition + window.scrollY - offset
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      })
+    }
+  }
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = tocItems.flatMap(item => 
+        item.children ? [item.id, ...item.children.map(child => child.id)] : [item.id]
+      )
+      
+      for (const section of sections) {
+        const element = document.getElementById(section)
+        if (element) {
+          const rect = element.getBoundingClientRect()
+          if (rect.top <= 100 && rect.bottom >= 100) {
+            setActiveSection(section)
+            break
+          }
+        }
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    handleScroll() // Initial check
+    
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   // Package manager specific commands
   const getInstallCommand = (type: 'global' | 'dev' | 'dlx', pm: typeof packageManager) => {
@@ -178,11 +246,56 @@ bwc add
 
   return (
     <div className="min-h-screen pt-20 pb-12">
-      <div className="container mx-auto px-4 max-w-4xl">
-        <Link href="/docs" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-6">
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Documentation
-        </Link>
+      <div className="container mx-auto px-4 max-w-7xl relative">
+        {/* Table of Contents - Sticky Sidebar */}
+        <nav className="hidden xl:block fixed right-[max(0px,calc(50%-45rem))] top-32 w-64 h-[calc(100vh-10rem)] overflow-y-auto">
+          <div className="pl-4 pr-4 py-4 border-l border-border/50">
+            <h3 className="font-semibold text-sm mb-4 text-foreground/60 uppercase tracking-wider">On this page</h3>
+            <ul className="space-y-2 text-sm">
+              {tocItems.map((item) => (
+                <li key={item.id}>
+                  <button
+                    type="button"
+                    onClick={() => scrollToSection(item.id)}
+                    className={`
+                      block w-full text-left py-1 px-3 rounded-md transition-colors
+                      hover:bg-muted/50
+                      ${activeSection === item.id ? 'bg-muted text-foreground font-medium' : 'text-muted-foreground'}
+                    `}
+                  >
+                    {item.title}
+                  </button>
+                  {item.children && (
+                    <ul className="ml-3 mt-1 space-y-1 border-l border-border pl-3">
+                      {item.children.map((child) => (
+                        <li key={child.id}>
+                          <button
+                            type="button"
+                            onClick={() => scrollToSection(child.id)}
+                            className={`
+                              block w-full text-left py-0.5 px-2 rounded-md transition-colors text-xs
+                              hover:bg-muted/50
+                              ${activeSection === child.id ? 'bg-muted text-foreground font-medium' : 'text-muted-foreground'}
+                            `}
+                          >
+                            {child.title}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </nav>
+
+        {/* Main Content */}
+        <div className="max-w-4xl">
+          <Link href="/docs" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-6">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Documentation
+          </Link>
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-4">CLI Tool for Claude Code</h1>
           <p className="text-lg text-muted-foreground mb-6">
@@ -238,7 +351,7 @@ bwc add
         </div>
 
         {/* Installation Methods */}
-        <section className="mb-12">
+        <section className="mb-12" id="installation">
           <h2 className="text-2xl font-bold mb-4">Installation</h2>
           <Tabs defaultValue="npx" className="w-full">
             <TabsList className="grid w-full grid-cols-3">
@@ -326,7 +439,7 @@ bwc init`}</code>
         </section>
 
         {/* Core Commands */}
-        <section className="mb-12">
+        <section className="mb-12" id="core-commands">
           <h2 className="text-2xl font-bold mb-4">Core Commands</h2>
           <div className="space-y-6">
             {/* init */}
@@ -473,6 +586,9 @@ bwc search docker --commands`}</code>
                     <code className="text-sm">{`# Show comprehensive status report
 ${commands.status}
 
+# Verify actual MCP server installations
+bwc status --verify-mcp
+
 # Output in JSON format for scripting
 ${commands.statusJson}
 
@@ -493,7 +609,7 @@ bwc status --scope user`}</code>
                   </Button>
                 </div>
                 <p className="text-sm text-muted-foreground bg-muted/50 p-3 rounded-md">
-                  💡 <strong>Status Report includes:</strong> Config scope (project/user), installed items, Claude CLI status, Docker MCP status, and health checks
+                  💡 <strong>Status Report includes:</strong> Config scope (project/user), installed items, Claude CLI status, Docker MCP status, health checks, and MCP server verification (with --verify-mcp)
                 </p>
               </div>
             </div>
@@ -528,7 +644,7 @@ ${commands.install}
         </section>
 
         {/* Configuration */}
-        <section className="mb-12">
+        <section className="mb-12" id="configuration">
           <h2 className="text-2xl font-bold mb-4">Configuration</h2>
 
           <Tabs defaultValue="global" className="w-full">
@@ -577,7 +693,7 @@ ${commands.install}
         </section>
 
         {/* Configuration Scope Behavior */}
-        <section className="mb-12">
+        <section className="mb-12" id="configuration-scope">
           <h2 className="text-2xl font-bold mb-4">Configuration Scope Behavior</h2>
 
           <div className="bg-card p-6 rounded-lg border border-border/50 mb-6">
@@ -599,7 +715,7 @@ bwc add --agent golang-pro --user      # Same as --global`}</code>
         </section>
 
         {/* Use Cases */}
-        <section className="mb-12">
+        <section className="mb-12" id="use-cases">
           <h2 className="text-2xl font-bold mb-4">Use Cases</h2>
 
           <div className="space-y-6">
@@ -663,14 +779,14 @@ bwc add --agent golang-pro --user      # Same as --global`}</code>
         </section>
 
         {/* MCP Servers Section */}
-        <section className="mb-12">
+        <section className="mb-12" id="mcp-servers">
           <h2 className="text-2xl font-bold mb-4">🔌 MCP Servers</h2>
           <p className="text-muted-foreground mb-6">
             Connect Claude to external tools and services through MCP (Model Context Protocol)
           </p>
 
           {/* Provider Selection Guide */}
-          <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-primary/20 rounded-lg p-6 mb-6">
+          <div id="mcp-provider-guide" className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-primary/20 rounded-lg p-6 mb-6">
             <h3 className="font-semibold mb-3 flex items-center gap-2">
               <Settings className="h-5 w-5" />
               🎯 Provider Selection Guide
@@ -818,12 +934,10 @@ bwc add
 ? Select MCP provider:
 > Docker MCP (containerized local servers)    # Choose for local servers
   Claude CLI (remote servers via SSE/HTTP)    # Choose for remote APIs
-  Registry (browse available servers)         # Browse registry servers
 
 # Based on your selection:
 # - Docker MCP: Lists available Docker servers
-# - Claude CLI: Prompts for server name, URL, transport
-# - Registry: Shows categorized server list`}</code>
+# - Claude CLI: Prompts for server name, URL, transport`}</code>
                 </pre>
               </div>
               <p className="text-sm text-muted-foreground mt-3">
@@ -864,7 +978,7 @@ ${commands.mcpInfo}`}</code>
             </div>
 
             {/* Docker MCP Servers */}
-            <div className="border border-border/50 rounded-lg p-6">
+            <div id="mcp-docker" className="border border-border/50 rounded-lg p-6">
               <h3 className="font-semibold mb-2">Docker MCP Servers</h3>
               <p className="text-muted-foreground mb-3">Use Docker MCP for containerized, locally-running MCP servers</p>
               
@@ -1015,7 +1129,7 @@ bwc add --mcp openai --scope project \\
             </div>
 
             {/* Using Multiple MCP Providers */}
-            <div className="border border-border/50 rounded-lg p-6">
+            <div id="mcp-multiple-providers" className="border border-border/50 rounded-lg p-6">
               <h3 className="font-semibold mb-2">🔄 Using Multiple MCP Providers</h3>
               <p className="text-muted-foreground mb-3">BWC supports multiple MCP providers in the same project - mix and match as needed!</p>
               
@@ -1127,7 +1241,7 @@ bwc add --mcp linear-server --transport sse \\    # Project management via Claud
             </div>
 
             {/* Remote MCP Servers */}
-            <div className="border border-border/50 rounded-lg p-6">
+            <div id="mcp-remote" className="border border-border/50 rounded-lg p-6">
               <h3 className="font-semibold mb-2">Remote MCP Servers (Claude CLI)</h3>
               <p className="text-muted-foreground mb-3">Connect to remote MCP servers via SSE (Server-Sent Events) or HTTP APIs using Claude CLI</p>
               
@@ -1213,14 +1327,7 @@ bwc add --mcp rest-service --scope project \\
                 </ul>
               </div>
 
-              <Button
-                onClick={() => copyToClipboard(`${commands.mcpRemoteSSE}\n\n${commands.mcpRemoteHTTP}`, 19)}
-                className="absolute top-2 right-2"
-                size="sm"
-                variant="ghost"
-              >
-                {copiedIndex === 19 ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-              </Button>
+             
             </div>
 
             {/* Example Workflow: Mixed Providers */}
@@ -1404,8 +1511,216 @@ bwc install  # Installs all configured MCP servers`}</code>
           </div>
         </section>
 
+        {/* MCP Server Verification */}
+        <section className="mb-12" id="mcp-verification">
+          <h2 className="text-2xl font-bold mb-4">🔍 MCP Server Verification</h2>
+          <p className="text-muted-foreground mb-6">
+            The <code className="text-sm bg-muted px-2 py-1 rounded">--verify-mcp</code> flag performs deep verification of MCP server installations
+          </p>
+
+          <div className="space-y-6">
+            {/* Basic vs Verified Status */}
+            <div className="border border-border/50 rounded-lg p-6">
+              <h3 className="font-semibold mb-3">Basic vs Verified Status</h3>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="bg-background/50 p-4 rounded-lg">
+                  <h4 className="font-medium mb-2">Basic Status (Fast)</h4>
+                  <pre className="p-3 rounded-md bg-background/60 overflow-x-auto">
+                    <code className="text-sm">{`bwc status
+
+# Shows configuration-based status
+# ✓ Quick check
+# ✓ No external calls
+# ✓ Shows what's in config files`}</code>
+                  </pre>
+                </div>
+                <div className="bg-background/50 p-4 rounded-lg">
+                  <h4 className="font-medium mb-2">Verified Status (Thorough)</h4>
+                  <pre className="p-3 rounded-md bg-background/60 overflow-x-auto">
+                    <code className="text-sm">{`bwc status --verify-mcp
+
+# Verifies actual installations
+# ✓ Checks Claude CLI servers
+# ✓ Checks Docker MCP servers
+# ✓ Tests connectivity
+# ✓ Shows fix commands`}</code>
+                  </pre>
+                </div>
+              </div>
+            </div>
+
+            {/* Verification Output Example */}
+            <div className="border border-border/50 rounded-lg p-6">
+              <h3 className="font-semibold mb-2">Example Verification Output</h3>
+              <p className="text-muted-foreground mb-3">When servers are configured but not actually installed</p>
+              <div className="relative">
+                <pre className="p-3 rounded-md bg-background/50 overflow-x-auto">
+                  <code className="text-sm">{`$ bwc status --verify-mcp
+
+🔌 MCP Servers (3 configured, verification enabled):
+  ⚠️ postgres       [project] docker/stdio   GATEWAY NOT CONFIGURED
+  ⚠️ redis          [user]    docker/stdio   NOT INSTALLED  
+  ✅ linear-server  [project] claude/sse     Connected
+
+📋 MCP Verification Issues Found:
+  
+  postgres:
+    Issue: Docker MCP gateway not configured in Claude CLI
+    Fix:   1. Run: bwc add --setup
+           2. Restart Claude Code
+           3. Then: docker mcp server add postgres
+  
+  redis:
+    Issue: Server not installed in Docker MCP
+    Fix:   docker mcp server add redis`}</code>
+                </pre>
+              </div>
+            </div>
+
+            {/* Status Icons Explained */}
+            <div className="border border-border/50 rounded-lg p-6">
+              <h3 className="font-semibold mb-3">Verification Status Icons</h3>
+              <div className="space-y-2">
+                <p>✅ <strong>Connected/Installed:</strong> Server is properly installed and working</p>
+                <p>⚠️ <strong>NOT INSTALLED:</strong> Configured in BWC but not in Claude CLI or Docker MCP</p>
+                <p>⚠️ <strong>GATEWAY NOT CONFIGURED:</strong> Docker gateway needs setup via <code className="bg-muted px-1 rounded">bwc add --setup</code></p>
+                <p>❌ <strong>Error:</strong> Connection or configuration error</p>
+              </div>
+            </div>
+
+            {/* Common Issues and Fixes */}
+            <div className="border border-border/50 rounded-lg p-6">
+              <h3 className="font-semibold mb-3">Common Issues and Fixes</h3>
+              <div className="space-y-4">
+                <div className="bg-amber-500/10 p-4 rounded-lg">
+                  <h4 className="font-medium mb-2">Docker Gateway Not Configured</h4>
+                  <p className="text-sm text-muted-foreground mb-2">The verification shows Docker servers need the gateway</p>
+                  <pre className="p-2 rounded-md bg-background/50 overflow-x-auto">
+                    <code className="text-xs">{`# Fix in order:
+1. bwc add --setup           # Setup Docker MCP gateway
+2. Restart Claude Code       # Activate the gateway
+3. docker mcp server add <name>  # Install the server`}</code>
+                  </pre>
+                </div>
+                
+                <div className="bg-blue-500/10 p-4 rounded-lg">
+                  <h4 className="font-medium mb-2">Claude CLI Server Not Found</h4>
+                  <p className="text-sm text-muted-foreground mb-2">Remote servers configured but not in Claude CLI</p>
+                  <pre className="p-2 rounded-md bg-background/50 overflow-x-auto">
+                    <code className="text-xs">{`# For SSE servers:
+claude mcp add <name> --transport sse --url <url>
+
+# For HTTP servers:
+claude mcp add <name> --transport http --url <url>`}</code>
+                  </pre>
+                </div>
+              </div>
+            </div>
+
+            {/* When to Use Verification */}
+            <div className="bg-gradient-to-r from-green-500/10 to-blue-500/10 border border-primary/20 rounded-lg p-6">
+              <h3 className="font-semibold mb-3">When to Use MCP Verification</h3>
+              <ul className="space-y-2 text-sm">
+                <li>✓ MCP servers appear configured but don't work in Claude Code</li>
+                <li>✓ After team member clones project with <code className="bg-muted px-1 rounded">bwc.config.json</code></li>
+                <li>✓ Debugging "server not found" errors</li>
+                <li>✓ Verifying Docker gateway setup</li>
+                <li>✓ Checking remote server connectivity</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        {/* MCP Server Verification */}
+        <section className="mb-12" id="mcp-verification">
+          <h2 className="text-2xl font-bold mb-4">🔍 MCP Server Verification</h2>
+          <p className="text-muted-foreground mb-6">
+            Verify that your MCP servers are properly installed and configured with the <code className="bg-muted px-1 rounded">--verify-mcp</code> flag.
+          </p>
+
+          <div className="space-y-4">
+            {/* How it works */}
+            <div className="bg-primary/5 border border-primary/20 rounded-lg p-6">
+              <h3 className="font-semibold mb-3">How Verification Works</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                The <code className="bg-muted px-1 rounded">bwc status --verify-mcp</code> command performs deep verification of your MCP server installations:
+              </p>
+              <ul className="space-y-2 text-sm">
+                <li>• ✅ Checks if servers are configured in BWC</li>
+                <li>• ✅ Verifies actual installation in Claude Code</li>
+                <li>• ✅ Detects missing or misconfigured servers</li>
+                <li>• ✅ Provides fix commands for issues</li>
+                <li>• ✅ Reminds about Docker gateway setup when needed</li>
+              </ul>
+            </div>
+
+            {/* Usage example */}
+            <div className="border border-border/50 rounded-lg p-6">
+              <h3 className="font-semibold mb-2">Using MCP Verification</h3>
+              <div className="relative">
+                <pre className="p-3 rounded-md bg-background/50 overflow-x-auto">
+                  <code className="text-sm">{`# Basic status check
+bwc status
+
+# Deep MCP server verification
+bwc status --verify-mcp
+
+# JSON output for scripting
+bwc status --verify-mcp --json`}</code>
+                </pre>
+              </div>
+            </div>
+
+            {/* Example output */}
+            <div className="border border-border/50 rounded-lg p-6">
+              <h3 className="font-semibold mb-2">Example Verification Output</h3>
+              <div className="relative">
+                <pre className="p-3 rounded-md bg-background/50 overflow-x-auto">
+                  <code className="text-sm">{`✓ BWC Configuration Status
+
+Configuration: /path/to/project/bwc.config.json (project)
+
+📦 Installed Items:
+  Subagents: 3
+  Commands: 2
+  MCP Servers: 5
+
+🔌 MCP Server Verification:
+  ✓ postgres (Docker) - Installed and configured
+  ✓ redis (Docker) - Installed and configured
+  ✓ linear-server (SSE) - Configured in .mcp.json
+  ⚠ github (Docker) - Not installed
+    Fix: bwc add --mcp github --docker-mcp
+    Note: Run 'bwc add --setup' to configure Docker gateway if needed
+  ⚠ api-server (HTTP) - Missing from .mcp.json
+    Fix: bwc add --mcp api-server --transport http --url https://api.example.com --scope project`}</code>
+                </pre>
+              </div>
+            </div>
+
+            {/* Common issues */}
+            <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-6">
+              <h3 className="font-semibold mb-3">Common Verification Issues</h3>
+              <div className="space-y-3 text-sm">
+                <div>
+                  <strong>Docker gateway not configured:</strong>
+                  <p className="text-muted-foreground">Run <code className="bg-muted px-1 rounded">bwc add --setup</code> to configure the Docker MCP gateway</p>
+                </div>
+                <div>
+                  <strong>Server missing from .mcp.json:</strong>
+                  <p className="text-muted-foreground">Remote servers need to be in .mcp.json for team sharing. Re-add with <code className="bg-muted px-1 rounded">--scope project</code></p>
+                </div>
+                <div>
+                  <strong>Docker server not enabled:</strong>
+                  <p className="text-muted-foreground">Use the provided fix command to enable the server in Docker MCP</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Troubleshooting */}
-        <section className="mb-12">
+        <section className="mb-12" id="troubleshooting">
           <h2 className="text-2xl font-bold mb-4">Troubleshooting</h2>
 
           <div className="space-y-4">
@@ -1480,7 +1795,7 @@ bwc install  # Installs all configured MCP servers`}</code>
         </section>
 
         {/* Next Steps */}
-        <section>
+        <section id="next-steps">
           <h2 className="text-2xl font-bold mb-4">Next Steps</h2>
           <div className="bg-card p-6 rounded-lg border border-border/50">
             <div className="space-y-3">
@@ -1505,6 +1820,7 @@ bwc install  # Installs all configured MCP servers`}</code>
             </div>
           </div>
         </section>
+        </div>
       </div>
     </div>
   )

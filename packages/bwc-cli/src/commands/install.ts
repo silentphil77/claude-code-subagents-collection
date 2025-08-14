@@ -9,6 +9,7 @@ import { installMCPServer, configureInClaudeCode } from '../utils/mcp-installer.
 import { checkDockerMCPStatus, enableDockerMCPServer, setupDockerMCPGateway } from '../utils/docker-mcp.js'
 import { execClaudeCLI, isClaudeCLIAvailable } from '../utils/claude-cli.js'
 import { addServerToMCPJson } from '../utils/mcp-json.js'
+import { convertToMCPJsonFormat, shouldAddToMCPJson } from '../utils/mcp-config-converter.js'
 
 export function createInstallCommand() {
   const install = new Command('install')
@@ -148,9 +149,11 @@ export function createInstallCommand() {
                     logger.warn('Could not setup Docker MCP gateway automatically')
                   }
                   
-                  // Enable the server
-                  await enableDockerMCPServer(serverName)
+                  // Enable the server (use registryName if available)
+                  const dockerServerName = serverConfig.registryName || serverName
+                  await enableDockerMCPServer(dockerServerName)
                   spinner.succeed(`Enabled Docker MCP server: ${serverName}`)
+                  // Note: Docker servers are NOT added to .mcp.json - they use Docker gateway
                 } else {
                   spinner.warn(`Docker MCP not available, skipping ${serverName}`)
                 }
@@ -205,8 +208,8 @@ export function createInstallCommand() {
                 logger.info(`Running: claude ${args.join(' ')}`)
                 await execClaudeCLI(args)
                 
-                // Update .mcp.json if project scope
-                if (serverConfig.scope === 'project') {
+                // Update .mcp.json if appropriate (project scope, non-Docker)
+                if (shouldAddToMCPJson(serverConfig)) {
                   await updateMCPJsonFromConfig(serverName, serverConfig)
                 }
                 
@@ -271,23 +274,8 @@ function showStoredConfiguration(serverName: string, config: MCPServerConfig): v
 
 // Helper function to update .mcp.json from stored config
 async function updateMCPJsonFromConfig(serverName: string, config: MCPServerConfig): Promise<void> {
-  const mcpJsonConfig: any = {
-    mcpServers: {
-      [serverName]: {}
-    }
-  }
-  
-  const serverEntry = mcpJsonConfig.mcpServers[serverName]
-  
-  if (config.transport === 'stdio') {
-    if (config.command) serverEntry.command = config.command
-    if (config.args) serverEntry.args = config.args
-    if (config.env) serverEntry.env = config.env
-  } else if (config.transport === 'sse' || config.transport === 'http') {
-    serverEntry.transport = config.transport
-    if (config.url) serverEntry.url = config.url
-    if (config.headers) serverEntry.headers = config.headers
-  }
+  // Use the converter utility to create proper .mcp.json format
+  const mcpJsonConfig = convertToMCPJsonFormat(serverName, config)
   
   // Use the addServerToMCPJson function to properly update the file
   await addServerToMCPJson(

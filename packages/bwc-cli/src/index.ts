@@ -12,7 +12,6 @@ import { createSearchCommand } from './commands/search.js'
 import { createRemoveCommand } from './commands/remove.js'
 import { createInfoCommand } from './commands/info.js'
 import { createInstallCommand } from './commands/install.js'
-import { createContributeCommand } from './commands/contribute.js'
 import { createStatusCommand } from './commands/status.js'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -35,7 +34,6 @@ program.addCommand(createSearchCommand())
 program.addCommand(createRemoveCommand())
 program.addCommand(createInfoCommand())
 program.addCommand(createInstallCommand())
-program.addCommand(createContributeCommand())
 program.addCommand(createStatusCommand())
 
 // Parse command line arguments

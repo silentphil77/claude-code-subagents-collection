@@ -21,7 +21,6 @@ Add comprehensive MCP server support and enhance CLI functionality
 - **Enhanced Commands**:
   - Added `bwc remove` command for uninstalling subagents, commands, and MCP servers
   - Added `bwc info` command for detailed information about items
-  - Added `bwc contribute` command to help users contribute to the collection
   - Added `--scope user|project|local` flags to MCP operations for configuration scope control
 
 ### Bug Fixes

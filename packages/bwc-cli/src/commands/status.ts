@@ -8,6 +8,7 @@ import { fileExists, expandTilde } from '../utils/files.js'
 import { checkDockerMCPStatus, listInstalledDockerMCPServers } from '../utils/docker-mcp.js'
 import { execClaudeCLI } from '../utils/claude-cli.js'
 import { execa } from 'execa'
+import { verifyMCPServers, formatVerificationIssues, type MCPVerificationResult } from '../utils/mcp-verification.js'
 
 interface StatusReport {
   configScope: {
@@ -43,6 +44,7 @@ interface StatusReport {
     pathsAccessible: boolean
     issues: string[]
   }
+  mcpVerification?: MCPVerificationResult[]
 }
 
 export function createStatusCommand() {
@@ -51,6 +53,7 @@ export function createStatusCommand() {
     .option('-j, --json', 'output in JSON format')
     .option('-v, --verbose', 'show detailed information')
     .option('--check', 'perform deep health checks')
+    .option('--verify-mcp', 'verify actual MCP server installations')
     .option('--scope <scope>', 'filter MCP servers by scope (local/user/project)')
     .option('--config <type>', 'force loading user or project config')
     .action(async (options) => {
@@ -165,6 +168,12 @@ async function collectStatusReport(configManager: ConfigManager, options: any): 
   // Perform health checks
   const health = await performHealthChecks(configManager, paths, options.check)
   
+  // Perform MCP verification if requested
+  let mcpVerification: MCPVerificationResult[] | undefined
+  if (options.verifyMcp && Object.keys(installed.mcpServers).length > 0) {
+    mcpVerification = await verifyMCPServers(installed.mcpServers)
+  }
+  
   return {
     configScope,
     configuration: {
@@ -174,7 +183,8 @@ async function collectStatusReport(configManager: ConfigManager, options: any): 
     installed,
     claudeCLI,
     dockerMCP,
-    health
+    health,
+    mcpVerification
   }
 }
 
@@ -395,23 +405,54 @@ async function displayStatusReport(report: StatusReport, options: any) {
   
   // MCP Servers
   const mcpServers = Object.entries(report.installed.mcpServers)
-  console.log(`  🔌 ${chalk.bold('MCP Servers')} (${chalk.green(mcpServers.length)} installed):`)
+  const verificationText = report.mcpVerification ? ', verification enabled' : ''
+  console.log(`  🔌 ${chalk.bold('MCP Servers')} (${chalk.green(mcpServers.length)} configured${verificationText}):`)
+  
   if (mcpServers.length > 0) {
-    for (const [name, config] of mcpServers) {
-      const scope = config.scope ? `[${chalk.yellow(config.scope)}]` : '[unknown]'
-      const transport = `${config.provider || 'unknown'}/${config.transport || 'unknown'}`
-      const status = config.verificationStatus === 'verified' ? chalk.green('✅') : 
-                     config.verificationStatus === 'community' ? chalk.yellow('👥') : 
-                     chalk.gray('🧪')
-      
-      console.log(`    ${chalk.green('✓')} ${name.padEnd(20)} ${scope.padEnd(12)} ${transport.padEnd(15)} ${status}`)
-      
-      if (options.verbose && config.installedAt) {
-        console.log(chalk.gray(`       Installed: ${new Date(config.installedAt).toLocaleString()}`))
+    if (report.mcpVerification) {
+      // Show verification results
+      for (const result of report.mcpVerification) {
+        const scope = `[${chalk.yellow(result.scope)}]`
+        const transport = `${result.provider}/${result.transport}`
+        
+        let statusIcon: string
+        let statusText: string
+        
+        if (result.actuallyInstalled) {
+          statusIcon = chalk.green('✅')
+          statusText = result.connectionStatus === 'connected' ? 'Connected' : 'Installed'
+        } else if (result.gatewayConfigured === false) {
+          statusIcon = chalk.yellow('⚠️')
+          statusText = 'GATEWAY NOT CONFIGURED'
+        } else {
+          statusIcon = chalk.yellow('⚠️')
+          statusText = 'NOT INSTALLED'
+        }
+        
+        console.log(`    ${statusIcon} ${result.name.padEnd(20)} ${scope.padEnd(12)} ${transport.padEnd(15)} ${statusText}`)
+        
+        if (options.verbose && report.installed.mcpServers[result.name]?.installedAt) {
+          console.log(chalk.gray(`       Configured: ${new Date(report.installed.mcpServers[result.name].installedAt).toLocaleString()}`))
+        }
+      }
+    } else {
+      // Show basic config-based status
+      for (const [name, config] of mcpServers) {
+        const scope = config.scope ? `[${chalk.yellow(config.scope)}]` : '[unknown]'
+        const transport = `${config.provider || 'unknown'}/${config.transport || 'unknown'}`
+        const status = config.verificationStatus === 'verified' ? chalk.green('✅') : 
+                       config.verificationStatus === 'community' ? chalk.yellow('👥') : 
+                       chalk.gray('🧪')
+        
+        console.log(`    ${chalk.green('✓')} ${name.padEnd(20)} ${scope.padEnd(12)} ${transport.padEnd(15)} ${status}`)
+        
+        if (options.verbose && config.installedAt) {
+          console.log(chalk.gray(`       Installed: ${new Date(config.installedAt).toLocaleString()}`))
+        }
       }
     }
   } else {
-    console.log(chalk.gray('    None installed'))
+    console.log(chalk.gray('    None configured'))
   }
   console.log()
   
@@ -462,10 +503,25 @@ async function displayStatusReport(report: StatusReport, options: any) {
     console.log()
   }
   
+  // MCP Verification Issues
+  if (report.mcpVerification) {
+    const failedServers = report.mcpVerification.filter(r => !r.actuallyInstalled)
+    if (failedServers.length > 0) {
+      console.log(chalk.bold('📋 MCP Verification Issues Found:'))
+      const issues = formatVerificationIssues(report.mcpVerification)
+      for (const issue of issues) {
+        console.log(chalk.yellow(issue))
+      }
+      console.log()
+    }
+  }
+  
   // Footer with helpful commands
   if (report.configScope.active === 'none') {
     console.log(chalk.dim('Run "bwc init" to create a configuration'))
   } else if (report.installed.subagents.length === 0 && report.installed.commands.length === 0) {
     console.log(chalk.dim('Run "bwc add" to install subagents, commands, or MCP servers'))
+  } else if (!options.verifyMcp && Object.keys(report.installed.mcpServers).length > 0) {
+    console.log(chalk.dim('Run "bwc status --verify-mcp" to verify MCP server installations'))
   }
 }

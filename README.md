@@ -39,9 +39,14 @@ bwc add --command dockerize
 # Browse and install interactively
 bwc add
 
+# Check configuration status
+bwc status
+bwc status --verify-mcp  # Deep MCP server verification
+
 # List available items
 bwc list --agents
 bwc list --commands
+bwc list --mcps
 
 # Search for specific tools
 bwc search python
@@ -49,42 +54,58 @@ bwc search python
 
 Learn more about the CLI tool at [buildwithclaude.com/docs/cli](https://www.buildwithclaude.com/docs/cli)
 
-### 🔌 MCP Server Support (New!) - Docker Secure
+### 🔌 MCP Server Support (New!) - Docker & Remote
 
-Connect Claude to 100+ external tools through **secure Docker containers**:
+Connect Claude to external tools through two providers:
+- **Docker MCP**: 100+ containerized servers for local tools
+- **Remote MCP**: SSE/HTTP endpoints for cloud services
 
 ![MCP Servers](buildwithclaude-mcps.png)
 
 ```bash
-# Prerequisites: Docker Desktop required
-# https://docker.com/products/docker-desktop
+# Docker MCP Servers (requires Docker Desktop)
+bwc add --mcp postgres --docker-mcp --scope project
+bwc add --mcp redis --docker-mcp --scope user
 
-# Browse MCP servers
-bwc mcp list
+# Remote MCP Servers (SSE/HTTP)
+bwc add --mcp linear-server --transport sse \
+  --url https://mcp.linear.app/sse --scope project
 
-# Install for current user (all projects)
-bwc add --mcp postgres --scope user
+bwc add --mcp api-server --transport http \
+  --url https://api.example.com --header "Authorization: Bearer token" \
+  --scope project
 
-# Install for project only (team sharing)
-bwc add --mcp postgres --scope project
+# Verify installations
+bwc status --verify-mcp
 
 # List servers by scope
-bwc mcp list              # All servers
-bwc mcp list --user       # User-installed
-bwc mcp list --project    # Project-installed
+bwc list --mcps              # All servers
+bwc list --mcps --user       # User-installed
+bwc list --mcps --project    # Project-installed
 ```
 
 #### Installation Scopes
+- **Local Scope**: Current machine only (default)
 - **User Scope**: Personal servers across all projects (stored in `~/.bwc/config.json`)
-- **Project Scope**: Team-shared servers in version control (stored in `./bwc.config.json`)
+- **Project Scope**: Team-shared servers (stored in `./bwc.config.json` and `./.mcp.json`)
+  - Docker servers: Configured via gateway (NOT in .mcp.json)
+  - Remote servers: Saved to .mcp.json for team sharing
 
 **Note**: When `bwc init --project` is used, all subagents and commands default to project installation
 
-#### Why Docker-Only for MCP?
-- 🔒 **Maximum Security** - Complete container isolation
+#### MCP Provider Comparison
+
+**Docker MCP**:
+- 🔒 **Container Isolation** - Maximum security
 - 🔑 **Protected Secrets** - Docker manages API keys
-- ✅ **Verified Servers** - All images signed by Docker
-- 🌐 **Single Gateway** - One secure endpoint
+- ✅ **Verified Images** - Signed by Docker
+- 📦 **100+ Servers** - Pre-configured catalog
+
+**Remote MCP (Claude CLI)**:
+- ☁️ **Cloud Services** - Direct API connections
+- 🔐 **Custom Auth** - Headers and tokens
+- 🌍 **SSE/HTTP** - Real-time and REST
+- 🤝 **Team Sharing** - Via .mcp.json
 
 Learn more: [buildwithclaude.com/mcp-servers](https://www.buildwithclaude.com/mcp-servers)
 
