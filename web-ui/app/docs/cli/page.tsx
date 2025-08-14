@@ -486,9 +486,10 @@ ${commands.addCommand}
 ${commands.addInteractive}
 
 # Force user-level install (when project config exists)
-bwc add --agent python-pro --global
-# Or use the --user flag (same effect)
 bwc add --agent python-pro --user
+
+# Force project-level install (requires project config)
+bwc add --agent python-pro --project
 
 # Add MCP server with explicit scope
 bwc add --mcp postgres --scope project
@@ -708,8 +709,8 @@ ${commands.install}
 bwc add --agent python-pro      # → ./claude/agents/
 bwc add --command dockerize     # → ./claude/commands/
 bwc add --mcp postgres --scope project  # Explicit scope needed
-bwc add --agent rust-pro --global      # Override to user level
-bwc add --agent golang-pro --user      # Same as --global`}</code>
+bwc add --agent rust-pro --user        # Override to user level
+bwc add --agent golang-pro --project   # Force project level`}</code>
             </div>
           </div>
         </section>
