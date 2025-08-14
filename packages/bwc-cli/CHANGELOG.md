@@ -21,11 +21,12 @@
   - Added `bwc remove` command for uninstalling subagents, commands, and MCP servers
   - Added `bwc info` command for detailed information about items
   - Added `bwc contribute` command to help users contribute to the collection
-  - Added `--user`/`--global` flags to `add` and `remove` commands for explicit user-level operations
+  - Added `--user` flag to `add` and `remove` commands for explicit user-level operations
+  - Added `--project` flag to `add` and `remove` commands for explicit project-level operations
 
   ### Bug Fixes
   - Fixed configuration scope behavior - project config now properly takes precedence when it exists
-  - Fixed `--global` flag implementation that was defined but not working
+  - Fixed scope flag implementation to properly handle user/project overrides
   - Fixed documentation references to non-existent `.bwc/mcp-servers.json` file (MCP servers are actually stored in main config files)
 
   ### Documentation

@@ -187,6 +187,9 @@ export function createInstallCommand() {
                     args.push(serverConfig.url)
                   }
                 } else if (serverConfig.transport === 'stdio') {
+                  // Add the server name first
+                  args.push(serverName)
+                  
                   // Add environment variables
                   if (serverConfig.env) {
                     for (const [key, value] of Object.entries(serverConfig.env)) {
@@ -194,8 +197,7 @@ export function createInstallCommand() {
                     }
                   }
                   
-                  // Add the server name and command
-                  args.push(serverName)
+                  // Add the command
                   if (serverConfig.command) {
                     args.push('--', serverConfig.command)
                     if (serverConfig.args) {

@@ -181,7 +181,7 @@ describe('add command', () => {
       expect(mockSpinner.fail).toHaveBeenCalledWith('Subagent "non-existent" not found')
     })
     
-    it('should force user-level installation with --global flag', async () => {
+    it('should force user-level installation with --user flag', async () => {
       // Create project config
       await fs.writeJson(path.join(testDir, 'bwc.config.json'), {
         version: '1.0',
@@ -205,12 +205,29 @@ describe('add command', () => {
       })
       
       const command = createAddCommand()
-      await command.parseAsync(['node', 'test', '--agent', 'test-agent', '--global'])
+      await command.parseAsync(['node', 'test', '--agent', 'test-agent', '--user'])
       
       expect(logger.info).toHaveBeenCalledWith('Installing to user configuration')
     })
     
-    it('should force user-level installation with --user flag', async () => {
+    it('should force project-level installation with --project flag', async () => {
+      // Create project config
+      await fs.writeJson(path.join(testDir, 'bwc.config.json'), {
+        version: '1.0',
+        registry: 'https://test.com/registry.json',
+        paths: {
+          subagents: '.claude/agents/',
+          commands: '.claude/commands/'
+        },
+        installed: {
+          subagents: [],
+          commands: []
+        }
+      })
+      
+      // Reset config manager to pick up project config
+      ConfigManager.resetInstance()
+      
       mockRegistryClient.findSubagent.mockResolvedValue({
         name: 'test-agent',
         description: 'Test Agent',
@@ -219,9 +236,9 @@ describe('add command', () => {
       })
       
       const command = createAddCommand()
-      await command.parseAsync(['node', 'test', '--agent', 'test-agent', '--user'])
+      await command.parseAsync(['node', 'test', '--agent', 'test-agent', '--project'])
       
-      expect(logger.info).toHaveBeenCalledWith('Installing to user configuration')
+      expect(logger.info).toHaveBeenCalledWith('Installing to project configuration')
     })
   })
   

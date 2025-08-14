@@ -30,6 +30,10 @@ Major enhancements to MCP server support and CLI functionality
 - Added converter utility for consistent BWC config to .mcp.json format conversion
 - Enhanced verification logic to detect and fix common configuration issues
 
+### Bug Fixes
+- Fixed environment variables not being included in .mcp.json for SSE/HTTP servers
+- Fixed incorrect argument order for STDIO servers with environment variables
+
 ### Breaking Changes
 - None
 

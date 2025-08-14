@@ -15,35 +15,45 @@ export function createRemoveCommand() {
     .option('-a, --agent <name>', 'remove a specific subagent')
     .option('-c, --command <name>', 'remove a specific command')
     .option('-m, --mcp <name>', 'remove a specific MCP server')
-    .option('-g, --global', 'force user-level removal (for subagents/commands)')
-    .option('-u, --user', 'force user-level removal (alias for --global)')
+    .option('-u, --user', 'force user-level removal (for subagents/commands)')
+    .option('-p, --project', 'force project-level removal (for subagents/commands)')
     .option('-s, --scope <scope>', 'configuration scope for MCP servers: local, user, or project')
     .option('-y, --yes', 'skip confirmation prompt')
     .action(async (options) => {
       try {
         const configManager = ConfigManager.getInstance()
         
-        // Handle --user as alias for --global
-        const forceUserLevel = options.global || options.user
+        // Handle explicit scope overrides
+        const forceUserLevel = options.user
+        const forceProjectLevel = options.project
         
-        // If force user level is requested, load user config
-        if (forceUserLevel) {
-          await configManager.loadUserConfig()
-        }
-        
-        // Check if using project config
-        const isProject = await configManager.isUsingProjectConfig()
-        
-        if (isProject && !forceUserLevel) {
+        // Determine removal scope
+        let isProject: boolean
+        if (forceProjectLevel) {
+          // Check if project config exists when forcing project level
+          const projectConfig = configManager.getProjectConfig()
+          if (!projectConfig) {
+            logger.error('No project configuration found. Run "bwc init --project" first.')
+            process.exit(1)
+          }
+          isProject = true
           logger.info('Removing from project configuration')
         } else if (forceUserLevel) {
+          await configManager.loadUserConfig()
+          isProject = false
           logger.info('Removing from user configuration')
+        } else {
+          // Default: use project if it exists
+          isProject = await configManager.isUsingProjectConfig()
+          if (isProject) {
+            logger.info('Removing from project configuration')
+          }
         }
 
         if (options.agent) {
-          await removeSubagent(options.agent, configManager, options.yes, forceUserLevel)
+          await removeSubagent(options.agent, configManager, options.yes, forceUserLevel, forceProjectLevel)
         } else if (options.command) {
-          await removeCommand(options.command, configManager, options.yes, forceUserLevel)
+          await removeCommand(options.command, configManager, options.yes, forceUserLevel, forceProjectLevel)
         } else if (options.mcp) {
           // Validate scope if provided
           if (options.scope) {
@@ -54,7 +64,7 @@ export function createRemoveCommand() {
           }
           await removeMCPServer(options.mcp, configManager, options.yes, options.scope)
         } else {
-          await interactiveRemove(configManager, forceUserLevel)
+          await interactiveRemove(configManager, forceUserLevel, forceProjectLevel)
         }
       } catch (error) {
         logger.error(error instanceof Error ? error.message : 'Unknown error')
@@ -69,7 +79,8 @@ async function removeSubagent(
   name: string,
   configManager: ConfigManager,
   skipConfirmation: boolean,
-  forceUserLevel: boolean = false
+  forceUserLevel: boolean = false,
+  forceProjectLevel: boolean = false
 ): Promise<void> {
   const installed = await configManager.getInstalledSubagents()
   
@@ -117,7 +128,8 @@ async function removeCommand(
   name: string,
   configManager: ConfigManager,
   skipConfirmation: boolean,
-  forceUserLevel: boolean = false
+  forceUserLevel: boolean = false,
+  forceProjectLevel: boolean = false
 ): Promise<void> {
   const installed = await configManager.getInstalledCommands()
   
@@ -271,7 +283,7 @@ async function removeDockerMCPServer(
   }
 }
 
-async function interactiveRemove(configManager: ConfigManager, forceUserLevel: boolean = false): Promise<void> {
+async function interactiveRemove(configManager: ConfigManager, forceUserLevel: boolean = false, forceProjectLevel: boolean = false): Promise<void> {
   const { type } = await inquirer.prompt([
     {
       type: 'list',
@@ -286,15 +298,15 @@ async function interactiveRemove(configManager: ConfigManager, forceUserLevel: b
   ])
 
   if (type === 'subagent') {
-    await interactiveRemoveSubagent(configManager, forceUserLevel)
+    await interactiveRemoveSubagent(configManager, forceUserLevel, forceProjectLevel)
   } else if (type === 'command') {
-    await interactiveRemoveCommand(configManager, forceUserLevel)
+    await interactiveRemoveCommand(configManager, forceUserLevel, forceProjectLevel)
   } else {
     await interactiveRemoveMCP(configManager)
   }
 }
 
-async function interactiveRemoveSubagent(configManager: ConfigManager, forceUserLevel: boolean = false): Promise<void> {
+async function interactiveRemoveSubagent(configManager: ConfigManager, forceUserLevel: boolean = false, forceProjectLevel: boolean = false): Promise<void> {
   const installed = await configManager.getInstalledSubagents()
   
   if (installed.length === 0) {
@@ -332,11 +344,11 @@ async function interactiveRemoveSubagent(configManager: ConfigManager, forceUser
   }
   
   for (const name of selected) {
-    await removeSubagent(name, configManager, true, forceUserLevel)
+    await removeSubagent(name, configManager, true, forceUserLevel, forceProjectLevel)
   }
 }
 
-async function interactiveRemoveCommand(configManager: ConfigManager, forceUserLevel: boolean = false): Promise<void> {
+async function interactiveRemoveCommand(configManager: ConfigManager, forceUserLevel: boolean = false, forceProjectLevel: boolean = false): Promise<void> {
   const installed = await configManager.getInstalledCommands()
   
   if (installed.length === 0) {
@@ -374,7 +386,7 @@ async function interactiveRemoveCommand(configManager: ConfigManager, forceUserL
   }
   
   for (const name of selected) {
-    await removeCommand(name, configManager, true, forceUserLevel)
+    await removeCommand(name, configManager, true, forceUserLevel, forceProjectLevel)
   }
 }
 

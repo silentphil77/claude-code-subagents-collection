@@ -26,8 +26,8 @@ export function createAddCommand() {
     .option('-a, --agent <name>', 'add a specific subagent')
     .option('-c, --command <name>', 'add a specific command')
     .option('-m, --mcp <name>', 'add a specific MCP server')
-    .option('-g, --global', 'force user-level installation (for subagents/commands)')
-    .option('-u, --user', 'force user-level installation (alias for --global)')
+    .option('-u, --user', 'force user-level installation (for subagents/commands)')
+    .option('-p, --project', 'force project-level installation (for subagents/commands)')
     .option('-s, --scope <scope>', 'configuration scope for MCP servers: local, user, or project (default: "local")')
     .option('-e, --env <env...>', 'set environment variables for MCP servers (e.g. -e KEY=value)')
     .option('--setup', 'setup Docker MCP gateway in Claude Code')
@@ -40,21 +40,31 @@ export function createAddCommand() {
         const configManager = ConfigManager.getInstance()
         const registryClient = new RegistryClient(configManager)
 
-        // Handle --user as alias for --global
-        const forceUserLevel = options.global || options.user
+        // Handle explicit scope overrides
+        const forceUserLevel = options.user
+        const forceProjectLevel = options.project
         
-        // If force user level is requested, load user config
-        if (forceUserLevel) {
-          await configManager.loadUserConfig()
-        }
-
-        // Check if using project config
-        const isProject = await configManager.isUsingProjectConfig()
-        
-        if (isProject && !forceUserLevel) {
+        // Determine installation scope
+        let isProject: boolean
+        if (forceProjectLevel) {
+          // Check if project config exists when forcing project level
+          const projectConfig = configManager.getProjectConfig()
+          if (!projectConfig) {
+            logger.error('No project configuration found. Run "bwc init --project" first.')
+            process.exit(1)
+          }
+          isProject = true
           logger.info('Installing to project configuration')
         } else if (forceUserLevel) {
+          await configManager.loadUserConfig()
+          isProject = false
           logger.info('Installing to user configuration')
+        } else {
+          // Default: use project if it exists
+          isProject = await configManager.isUsingProjectConfig()
+          if (isProject) {
+            logger.info('Installing to project configuration')
+          }
         }
 
         // Handle Docker MCP setup
@@ -64,9 +74,9 @@ export function createAddCommand() {
         }
 
         if (options.agent) {
-          await addSubagent(options.agent, configManager, registryClient, forceUserLevel)
+          await addSubagent(options.agent, configManager, registryClient, forceUserLevel, forceProjectLevel)
         } else if (options.command) {
-          await addCommand(options.command, configManager, registryClient, forceUserLevel)
+          await addCommand(options.command, configManager, registryClient, forceUserLevel, forceProjectLevel)
         } else if (options.mcp) {
           // Validate scope
           const validScopes = ['local', 'user', 'project']
@@ -96,7 +106,7 @@ export function createAddCommand() {
             })
           }
         } else {
-          await interactiveAdd(configManager, registryClient, forceUserLevel)
+          await interactiveAdd(configManager, registryClient, forceUserLevel, forceProjectLevel)
         }
       } catch (error) {
         logger.error(error instanceof Error ? error.message : 'Unknown error')
@@ -111,7 +121,8 @@ async function addSubagent(
   name: string, 
   configManager: ConfigManager, 
   registryClient: RegistryClient,
-  forceUserLevel: boolean = false
+  forceUserLevel: boolean = false,
+  forceProjectLevel: boolean = false
 ): Promise<void> {
   const spinner = logger.spinner(`Fetching subagent: ${name}`)
   
@@ -145,7 +156,8 @@ async function addCommand(
   name: string, 
   configManager: ConfigManager, 
   registryClient: RegistryClient,
-  forceUserLevel: boolean = false
+  forceUserLevel: boolean = false,
+  forceProjectLevel: boolean = false
 ): Promise<void> {
   const spinner = logger.spinner(`Fetching command: ${name}`)
   
@@ -177,7 +189,8 @@ async function addCommand(
 async function interactiveAdd(
   configManager: ConfigManager, 
   registryClient: RegistryClient,
-  forceUserLevel: boolean = false
+  forceUserLevel: boolean = false,
+  forceProjectLevel: boolean = false
 ): Promise<void> {
   try {
     const { type } = await inquirer.prompt([
@@ -194,9 +207,9 @@ async function interactiveAdd(
     ])
 
     if (type === 'subagent') {
-      await interactiveAddSubagent(configManager, registryClient, forceUserLevel)
+      await interactiveAddSubagent(configManager, registryClient, forceUserLevel, forceProjectLevel)
     } else if (type === 'command') {
-      await interactiveAddCommand(configManager, registryClient, forceUserLevel)
+      await interactiveAddCommand(configManager, registryClient, forceUserLevel, forceProjectLevel)
     } else {
       await interactiveAddMCP(configManager, registryClient)
     }
@@ -213,7 +226,8 @@ async function interactiveAdd(
 async function interactiveAddSubagent(
   configManager: ConfigManager, 
   registryClient: RegistryClient,
-  forceUserLevel: boolean = false
+  forceUserLevel: boolean = false,
+  forceProjectLevel: boolean = false
 ): Promise<void> {
   const subagents = await registryClient.getSubagents()
   
@@ -261,14 +275,15 @@ async function interactiveAddSubagent(
   logger.info(`Installing ${selected.length} subagent(s)...`)
   
   for (const name of selected) {
-    await addSubagent(name, configManager, registryClient, forceUserLevel)
+    await addSubagent(name, configManager, registryClient, forceUserLevel, forceProjectLevel)
   }
 }
 
 async function interactiveAddCommand(
   configManager: ConfigManager, 
   registryClient: RegistryClient,
-  forceUserLevel: boolean = false
+  forceUserLevel: boolean = false,
+  forceProjectLevel: boolean = false
 ): Promise<void> {
   const commands = await registryClient.getCommands()
   
@@ -316,7 +331,7 @@ async function interactiveAddCommand(
   logger.info(`Installing ${selected.length} command(s)...`)
   
   for (const name of selected) {
-    await addCommand(name, configManager, registryClient, forceUserLevel)
+    await addCommand(name, configManager, registryClient, forceUserLevel, forceProjectLevel)
   }
 }
 

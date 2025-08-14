@@ -13,6 +13,7 @@ import {
 import path from 'path'
 import process from 'process'
 import os from 'os'
+import { existsSync, readFileSync } from 'fs'
 
 const DEFAULT_CONFIG: BwcConfig = {
   version: '1.0',
@@ -381,6 +382,23 @@ export class ConfigManager {
       await this.load()
     }
     return this.config!
+  }
+
+  getProjectConfig(): BwcConfig | null {
+    // Check if project config exists and is loaded
+    if (this.isProjectLevel && this.config) {
+      return this.config
+    }
+    // Check if project config file exists in current directory
+    const projectConfigPath = path.join(process.cwd(), 'bwc.config.json')
+    if (existsSync(projectConfigPath)) {
+      try {
+        return JSON.parse(readFileSync(projectConfigPath, 'utf8'))
+      } catch {
+        return null
+      }
+    }
+    return null
   }
 
   async saveConfig(config: BwcConfig): Promise<void> {

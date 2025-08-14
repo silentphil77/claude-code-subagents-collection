@@ -253,7 +253,7 @@ describe('remove command', () => {
       expect(logger.info).toHaveBeenCalledWith('Removing from project configuration')
     })
     
-    it('should force user-level removal with --global flag', async () => {
+    it('should force user-level removal with --user flag', async () => {
       // Create both project and user configs
       const projectConfigPath = path.join(testDir, 'bwc.config.json')
       await fs.writeJson(projectConfigPath, {
@@ -280,25 +280,36 @@ describe('remove command', () => {
       // Reset ConfigManager
       ConfigManager.resetInstance()
       
-      // Remove with --global flag
-      await command.parseAsync(['node', 'test', '--agent', 'user-agent', '--global', '--yes'])
+      // Remove with --user flag
+      await command.parseAsync(['node', 'test', '--agent', 'user-agent', '--user', '--yes'])
       
       // Check that user config was used
       expect(logger.info).toHaveBeenCalledWith('Removing from user configuration')
     })
     
-    it('should accept --user as alias for --global', async () => {
+    it('should force project-level removal with --project flag', async () => {
+      // Create project config
+      const projectConfigPath = path.join(testDir, 'bwc.config.json')
+      await fs.writeJson(projectConfigPath, {
+        version: '1.0',
+        registry: 'https://test.com/registry.json',
+        paths: {
+          subagents: '.claude/agents/',
+          commands: '.claude/commands/'
+        },
+        installed: {
+          subagents: ['project-agent-test'],
+          commands: []
+        }
+      })
+      
+      // Reset config manager
+      ConfigManager.resetInstance()
+      
       const command = createRemoveCommand()
-      const configManager = ConfigManager.getInstance()
+      await command.parseAsync(['node', 'test', '--agent', 'project-agent-test', '--project', '--yes'])
       
-      // Add agent to user config with unique name
-      await configManager.addInstalledSubagent('user-agent-alias')
-      
-      // Remove with --user flag
-      await command.parseAsync(['node', 'test', '--agent', 'user-agent-alias', '--user', '--yes'])
-      
-      // Check that user config was used
-      expect(logger.info).toHaveBeenCalledWith('Removing from user configuration')
+      expect(logger.info).toHaveBeenCalledWith('Removing from project configuration')
     })
   })
   

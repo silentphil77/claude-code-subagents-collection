@@ -66,16 +66,17 @@ bwc add --command dockerize
 bwc add
 
 # Force user-level installation even with project config
-bwc add --agent python-pro --global
-# Or use the --user flag (same effect)
 bwc add --agent python-pro --user
+
+# Force project-level installation (requires project config)
+bwc add --agent python-pro --project
 ```
 
 Options:
 - `-a, --agent <name>` - Add a specific subagent
 - `-c, --command <name>` - Add a specific command
-- `-g, --global` - Force user-level installation (when project config exists)
-- `-u, --user` - Force user-level installation (alias for --global)
+- `-u, --user` - Force user-level installation (when project config exists)
+- `-p, --project` - Force project-level installation (requires project config)
 
 **Default Behavior**:
 - If `./bwc.config.json` exists → installs to project (`.claude/agents/`, `.claude/commands/`)
@@ -160,8 +161,10 @@ bwc remove --command dockerize
 bwc remove --mcp postgres
 
 # Force user-level removal (when project config exists)
-bwc remove --agent python-pro --global
-bwc remove --agent python-pro --user    # Same as --global
+bwc remove --agent python-pro --user
+
+# Force project-level removal (requires project config)
+bwc remove --agent python-pro --project
 
 # Skip confirmation prompt
 bwc remove --agent python-pro --yes
@@ -174,14 +177,15 @@ Options:
 - `-a, --agent <name>` - Remove a specific subagent
 - `-c, --command <name>` - Remove a specific command
 - `-m, --mcp <name>` - Remove a specific MCP server
-- `-g, --global` - Force user-level removal (when project config exists)
-- `-u, --user` - Force user-level removal (alias for --global)
+- `-u, --user` - Force user-level removal (when project config exists)
+- `-p, --project` - Force project-level removal (requires project config)
 - `-y, --yes` - Skip confirmation prompt
 
 **Default Behavior**:
 - If `./bwc.config.json` exists → removes from project
 - Otherwise → removes from user level
-- Use `--global` or `--user` to force user-level removal
+- Use `--user` to force user-level removal
+- Use `--project` to force project-level removal
 
 ### `bwc status`
 
@@ -287,8 +291,10 @@ bwc add --command dockerize     # → ./claude/commands/dockerize.md
 bwc add --mcp postgres --scope project  # → ./bwc.config.json
 
 # Override to install at user level
-bwc add --agent golang-pro --global     # → ~/.claude/agents/golang-pro.md
-bwc add --agent rust-pro --user         # → ~/.claude/agents/rust-pro.md (same as --global)
+bwc add --agent golang-pro --user       # → ~/.claude/agents/golang-pro.md
+
+# Force project level (when user config exists but you want project)
+bwc add --agent rust-pro --project      # → .claude/agents/rust-pro.md
 ```
 
 ## Use Cases

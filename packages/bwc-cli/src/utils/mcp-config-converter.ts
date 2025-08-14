@@ -31,6 +31,7 @@ export function convertToMCPJsonFormat(
     serverEntry.type = config.transport  // Convert 'transport' to 'type'
     if (config.url) serverEntry.url = config.url
     if (config.headers) serverEntry.headers = config.headers
+    if (config.env) serverEntry.env = config.env
   }
   
   return mcpJsonConfig
@@ -66,6 +67,7 @@ export function convertFromMCPJsonFormat(
     config.transport = mcpJsonEntry.type
     if (mcpJsonEntry.url) config.url = mcpJsonEntry.url
     if (mcpJsonEntry.headers) config.headers = mcpJsonEntry.headers
+    if (mcpJsonEntry.env) config.env = mcpJsonEntry.env
   } else if (mcpJsonEntry.command) {
     // STDIO server
     config.transport = 'stdio'
