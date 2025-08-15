@@ -1,5 +1,30 @@
 # bwc-cli
 
+## 1.2.1
+
+### Patch Changes
+
+- Bug fixes and improvements for better user experience
+
+  ### Bug Fixes
+
+  - Added file existence checking with user confirmation prompts when installing agents/commands
+  - Fixed duplicate shebang issue in built output that caused "Invalid or unexpected token" error
+  - Fixed npm package warnings (corrected repository URL format and bin path)
+  - Updated GitHub Actions workflow to support Personal Access Tokens for PR creation
+
+  ### Improvements
+
+  - Enhanced conflict resolution with clear overwrite/skip/abort options
+  - Added informative descriptions to help users understand the consequences of each choice
+  - Improved error handling and user guidance throughout the CLI
+
+  ### Technical Changes
+
+  - Removed duplicate banner configuration from tsup.config.ts
+  - Fixed package.json bin path from "./dist/index.js" to "dist/index.js"
+  - Updated repository URL to proper format "git+https://..."
+
 ## 1.2.0
 
 ### Minor Changes
