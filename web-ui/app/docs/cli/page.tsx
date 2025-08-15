@@ -799,7 +799,7 @@ bwc add --agent golang-pro --project   # Force project level`}</code>
             <div className="grid md:grid-cols-2 gap-4 mb-4">
               <div className="bg-background/60 p-4 rounded-lg">
                 <h4 className="font-medium mb-2 flex items-center gap-2">
-                  🐳 Docker MCP Provider
+                  🐳 Docker MCP Provider (Docker MCP Toolkit)
                 </h4>
                 <p className="text-sm text-muted-foreground mb-3">For containerized, locally-running servers</p>
                 <div className="bg-background/50 p-2 rounded text-xs font-mono mb-2">
@@ -1437,7 +1437,7 @@ bwc install  # Installs all configured MCP servers`}</code>
             <div className="bg-card p-6 rounded-lg border border-border/50">
               <h3 className="font-semibold mb-3">MCP Server Providers</h3>
               <p className="text-sm text-muted-foreground mb-4">BWC supports multiple MCP server providers for maximum flexibility</p>
-              <div className="grid md:grid-cols-3 gap-4">
+              <div className="grid md:grid-cols-2 gap-4">
                 <div className="flex gap-3">
                   <span className="text-2xl">🐳</span>
                   <div>
@@ -1452,16 +1452,9 @@ bwc install  # Installs all configured MCP servers`}</code>
                     <p className="text-sm text-muted-foreground">Native integration with Claude Code</p>
                   </div>
                 </div>
-                <div className="flex gap-3">
-                  <span className="text-2xl">📦</span>
-                  <div>
-                    <h4 className="font-medium">NPM Packages</h4>
-                    <p className="text-sm text-muted-foreground">Install servers from npm registry</p>
-                  </div>
-                </div>
               </div>
               <p className="text-sm text-muted-foreground mt-4">
-                BWC automatically detects available providers and uses the best option for each server.
+                BWC uses Claude CLI by default. You have to specify --docker-mcp flag to use Docker MCP.
               </p>
             </div>
 
