@@ -4,11 +4,99 @@
 
 ### Minor Changes
 
+- [#27](https://github.com/davepoon/claude-code-subagents-collection/pull/27) [`0d6deca`](https://github.com/davepoon/claude-code-subagents-collection/commit/0d6decae3f83626b0f246bbc7840a66b5b0dd4a5) Thanks [@davepoon](https://github.com/davepoon)! - Add comprehensive MCP server support and enhance CLI functionality
+
+  ### New Features
+
+  - **MCP Server Support**: Added full support for 100+ Model Context Protocol servers via Docker MCP Gateway
+
+    - `bwc add --mcp <server>` - Install MCP servers (default: local scope)
+    - `bwc add --mcp <server> --scope user` - Install globally for user
+    - `bwc add --mcp <server> --scope project` - Install for current project
+    - `bwc add --mcp <server> --scope local` - Install for local use only
+    - `bwc remove --mcp <server>` - Remove installed MCP servers
+    - `bwc remove --mcp <server> --scope user` - Remove from user scope
+    - `bwc remove --mcp <server> --scope project` - Remove from project scope
+    - `bwc remove --mcp <server> --scope local` - Remove from local scope
+    - `bwc list --mcp` - List installed MCP servers
+    - `bwc add --setup` - Setup Docker MCP Gateway independently
+    - Interactive mode: `bwc add` now includes MCP server option with scope selection
+
+  - **Enhanced Commands**:
+    - Added `bwc remove` command for uninstalling subagents, commands, and MCP servers
+    - Added `bwc info` command for detailed information about items
+    - Added `--scope user|project|local` flags to MCP operations for configuration scope control
+
+  ### Bug Fixes
+
+  - Fixed configuration scope behavior - project config now properly takes precedence when it exists
+
+  ### Documentation
+
+  - Added comprehensive MCP server documentation
+  - Updated CLI documentation with configuration scope behavior
+  - Fixed terminology: "global" → "user" configuration throughout docs
+  - Added examples for team collaboration with MCP servers
+
+- [#27](https://github.com/davepoon/claude-code-subagents-collection/pull/27) [`e412e46`](https://github.com/davepoon/claude-code-subagents-collection/commit/e412e46e7c2ad15f2a4835f37d70a4e915dcb18b) Thanks [@davepoon](https://github.com/davepoon)! - Major enhancements to MCP server support and CLI functionality
+
+  ### New Features
+
+  - **`bwc status` command**: Added comprehensive configuration health checks
+
+    - Basic status shows configuration scope and installed item counts
+    - `--verify-mcp` flag performs deep verification of MCP server installations
+    - `--json` flag provides machine-readable output for scripting
+    - Provides intelligent fix commands with gateway setup reminders
+
+  - **Remote MCP Server Support**: Added support for SSE/HTTP servers via Claude CLI
+
+    - Connect to remote APIs and cloud services
+    - Support for custom authentication headers
+    - Proper .mcp.json integration for team sharing
+    - `--transport sse/http --url <url>` for remote endpoints
+
+  - **Enhanced .mcp.json Integration**: Improved team collaboration
+    - SSE/HTTP servers properly saved with "type" field (not "transport")
+    - Docker servers correctly excluded from .mcp.json (use gateway instead)
+    - Project-scoped servers automatically shared via .mcp.json
+
+  ### Improvements
+
+  - Removed confusing Registry option from interactive mode
+  - Added intelligent fix suggestions with gateway setup reminders
+  - Improved MCP configuration consistency across all commands
+  - Better error handling and user guidance for MCP server issues
+  - Added converter utility for consistent BWC config to .mcp.json format conversion
+  - Enhanced verification logic to detect and fix common configuration issues
+
+  ### Bug Fixes
+
+  - Fixed environment variables not being included in .mcp.json for SSE/HTTP servers
+  - Fixed incorrect argument order for STDIO servers with environment variables
+
+  ### Breaking Changes
+
+  - None
+
+  ### Documentation
+
+  - Updated all documentation to reflect dual MCP provider support (Docker + Remote)
+  - Added comprehensive troubleshooting guides
+  - Clarified configuration scope behavior
+  - Added MCP server verification documentation
+  - Updated examples to show differences between server types
+
+## 1.2.0
+
+### Minor Changes
+
 - **Add comprehensive MCP server support and enhance CLI functionality**
 
   ### New Features
-  
+
   #### MCP Server Support
+
   - Added full support for 100+ Model Context Protocol servers via Docker MCP Gateway
   - `bwc mcp list` - List available MCP servers
   - `bwc mcp search` - Search for MCP servers by functionality
@@ -18,6 +106,7 @@
   - `bwc remove --mcp <server>` - Remove installed MCP servers
 
   #### Enhanced Commands
+
   - Added `bwc remove` command for uninstalling subagents, commands, and MCP servers
   - Added `bwc info` command for detailed information about items
   - Added `bwc contribute` command to help users contribute to the collection
@@ -25,11 +114,13 @@
   - Added `--project` flag to `add` and `remove` commands for explicit project-level operations
 
   ### Bug Fixes
+
   - Fixed configuration scope behavior - project config now properly takes precedence when it exists
   - Fixed scope flag implementation to properly handle user/project overrides
   - Fixed documentation references to non-existent `.bwc/mcp-servers.json` file (MCP servers are actually stored in main config files)
 
   ### Documentation
+
   - Added comprehensive MCP server documentation
   - Updated CLI documentation with configuration scope behavior
   - Fixed terminology: "global" → "user" configuration throughout docs
