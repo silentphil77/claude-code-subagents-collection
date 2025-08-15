@@ -37,7 +37,7 @@ export function MCPInstallationModal({
   const [copiedDocker, setCopiedDocker] = useState(false)
   const [copiedClaude, setCopiedClaude] = useState(false)
   
-  const bwcCommand = `bwc add --mcp ${serverName}`
+  const bwcCommand = `bwc add --mcp ${serverName} --docker-mcp`
   const dockerCommand = `docker mcp server enable ${serverName}`
   
   const handleCopyBWC = async () => {
