@@ -9,8 +9,5 @@ export default defineConfig({
   clean: true,
   target: 'node16',
   platform: 'node',
-  minify: true,
-  banner: {
-    js: '#!/usr/bin/env node'
-  }
+  minify: true
 })
