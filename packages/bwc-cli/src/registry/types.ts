@@ -1,4 +1,6 @@
 import { z } from 'zod'
+import { MCPServerSchema } from './mcp-types'
+export * from './mcp-types'
 
 export const SubagentSchema = z.object({
   name: z.string(),
@@ -31,7 +33,8 @@ export const RegistrySchema = z.object({
   version: z.string(),
   lastUpdated: z.string(),
   subagents: z.array(SubagentSchema),
-  commands: z.array(CommandSchema)
+  commands: z.array(CommandSchema),
+  mcpServers: z.array(MCPServerSchema).optional()
 })
 
 export type Subagent = z.infer<typeof SubagentSchema>
@@ -39,15 +42,57 @@ export type Command = z.infer<typeof CommandSchema>
 export type Registry = z.infer<typeof RegistrySchema>
 export type RegistryData = Registry
 
+// Enhanced MCP Server Configuration
+export interface MCPServerConfig {
+  // Provider information
+  provider: 'docker' | 'claude'
+  transport: 'stdio' | 'sse' | 'http'
+  scope: 'local' | 'user' | 'project'
+  
+  // For stdio transport
+  command?: string
+  args?: string[]
+  env?: Record<string, string>
+  
+  // For SSE/HTTP transport
+  url?: string
+  headers?: Record<string, string>
+  
+  // Metadata
+  verificationStatus?: 'verified' | 'community' | 'experimental'
+  installedAt?: string
+  userInputs?: Record<string, any> // Store user-provided configuration values
+  registryName?: string // Original name from registry if different
+}
+
+// Legacy format for backward compatibility
+export interface LegacyBwcConfig {
+  version: string
+  registry: string
+  paths: {
+    subagents: string
+    commands: string
+    mcpServers?: string
+  }
+  installed: {
+    subagents: string[]
+    commands: string[]
+    mcpServers?: string[]
+  }
+}
+
+// Enhanced BwcConfig with full MCP server configurations
 export interface BwcConfig {
   version: string
   registry: string
   paths: {
     subagents: string
     commands: string
+    mcpServers?: string
   }
   installed: {
     subagents: string[]
     commands: string[]
+    mcpServers?: string[] | Record<string, MCPServerConfig> // Support both formats
   }
 }

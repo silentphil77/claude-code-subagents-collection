@@ -23,22 +23,30 @@ Browse, search, and install both subagents and commands instantly at [buildwithc
 Install and manage subagents and commands directly from your terminal with our new CLI tool:
 
 ```bash
-# Install the CLI globally
+# Install the CLI for current user
 npm install -g bwc-cli
 
-# Initialize configuration
+# Initialize user configuration (default)
 bwc init
 
-# Add subagents or commands
+# Or initialize project configuration (team sharing)
+bwc init --project
+
+# Add subagents or commands (goes to project if project config exists)
 bwc add --agent python-pro
 bwc add --command dockerize
 
 # Browse and install interactively
 bwc add
 
+# Check configuration status
+bwc status
+bwc status --verify-mcp  # Deep MCP server verification
+
 # List available items
 bwc list --agents
 bwc list --commands
+bwc list --mcps
 
 # Search for specific tools
 bwc search python
@@ -46,11 +54,67 @@ bwc search python
 
 Learn more about the CLI tool at [buildwithclaude.com/docs/cli](https://www.buildwithclaude.com/docs/cli)
 
+### 🔌 MCP Server Support (New!) - Docker & Remote
+
+Connect Claude to external tools through two providers:
+- **Docker MCP**: 100+ containerized servers for local tools
+- **Remote MCP**: SSE/HTTP endpoints for cloud services
+
+![MCP Servers](buildwithclaude-mcps.png)
+
+```bash
+# Docker MCP Servers (requires Docker Desktop)
+bwc add --mcp postgres --docker-mcp --scope project
+bwc add --mcp redis --docker-mcp --scope user
+
+# Remote MCP Servers (SSE/HTTP)
+bwc add --mcp linear-server --transport sse \
+  --url https://mcp.linear.app/sse --scope project
+
+bwc add --mcp api-server --transport http \
+  --url https://api.example.com --header "Authorization: Bearer token" \
+  --scope project
+
+# Verify installations
+bwc status --verify-mcp
+
+# List servers by scope
+bwc list --mcps              # All servers
+bwc list --mcps --user       # User-installed
+bwc list --mcps --project    # Project-installed
+```
+
+#### Installation Scopes
+- **Local Scope**: Current machine only (default)
+- **User Scope**: Personal servers across all projects (stored in `~/.bwc/config.json`)
+- **Project Scope**: Team-shared servers (stored in `./bwc.config.json` and `./.mcp.json`)
+  - Docker servers: Configured via gateway (NOT in .mcp.json)
+  - Remote servers: Saved to .mcp.json for team sharing
+
+**Note**: When `bwc init --project` is used, all subagents and commands default to project installation
+
+#### MCP Provider Comparison
+
+**Docker MCP**:
+- 🔒 **Container Isolation** - Maximum security
+- 🔑 **Protected Secrets** - Docker manages API keys
+- ✅ **Verified Images** - Signed by Docker
+- 📦 **100+ Servers** - Pre-configured catalog
+
+**Remote MCP (Claude CLI)**:
+- ☁️ **Cloud Services** - Direct API connections
+- 🔐 **Custom Auth** - Headers and tokens
+- 🌍 **SSE/HTTP** - Real-time and REST
+- 🤝 **Team Sharing** - Via .mcp.json
+
+Learn more: [buildwithclaude.com/mcp-servers](https://www.buildwithclaude.com/mcp-servers)
+
 ## Overview
 
 This repository contains:
 - **43+ Specialized Subagents**: AI experts in specific domains, automatically invoked based on context or explicitly called when needed
 - **39+ Slash Commands**: Community-contributed commands for automating tasks, managing projects, and enhancing workflows
+- **100+ MCP Servers**: Secure connections to databases, APIs, and external tools via Docker containers
 
 ## Quick Start
 
@@ -542,14 +606,6 @@ Claude Code can use multiple subagents in sequence:
 - **Issues**: Report bugs or request features
 - **Discussions**: Share use cases and tips
 - **Contributors**: See [CONTRIBUTORS.md](CONTRIBUTORS.md)
-
-## Recent Updates
-
-### Enhanced Subagents
-- **frontend-developer** - Now specialized in Next.js 14+, shadcn/ui components, and modern React patterns including Server Components and App Router
-
-### New Crypto Trading Subagents
-- Added 5 specialized crypto trading subagents for trading systems, DeFi strategies, market analysis, arbitrage, and risk management
 
 ## Learn More
 

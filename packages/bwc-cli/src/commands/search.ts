@@ -3,13 +3,15 @@ import chalk from 'chalk'
 import { ConfigManager } from '../config/manager.js'
 import { RegistryClient } from '../registry/client.js'
 import { logger } from '../utils/logger.js'
+import { checkDockerMCPStatus, searchDockerMCPServers, listInstalledDockerMCPServers } from '../utils/docker-mcp.js'
 
 export function createSearchCommand() {
   const search = new Command('search')
-    .description('Search for subagents and commands')
+    .description('Search for subagents, commands, and MCP servers')
     .argument('<query>', 'search query')
     .option('-a, --agents', 'search subagents only')
     .option('-c, --commands', 'search commands only')
+    .option('-m, --mcps', 'search MCP servers only')
     .action(async (query, options) => {
       try {
         const configManager = new ConfigManager()
@@ -19,10 +21,14 @@ export function createSearchCommand() {
           await searchSubagents(query, configManager, registryClient)
         } else if (options.commands) {
           await searchCommands(query, configManager, registryClient)
+        } else if (options.mcps) {
+          await searchMCPServers(query, configManager, registryClient)
         } else {
           await searchSubagents(query, configManager, registryClient)
           console.log()
           await searchCommands(query, configManager, registryClient)
+          console.log()
+          await searchMCPServers(query, configManager, registryClient)
         }
       } catch (error) {
         logger.error(error instanceof Error ? error.message : 'Unknown error')
@@ -96,6 +102,73 @@ async function searchCommands(
       console.log(`  ${chalk.gray(`Category: ${command.category}`)}`)
       if (command.tags.length > 0) {
         console.log(`  ${chalk.gray(`Tags: ${command.tags.join(', ')}`)}`)
+      }
+    }
+  } catch (error) {
+    spinner.fail('Search failed')
+    throw error
+  }
+}
+
+async function searchMCPServers(
+  query: string,
+  configManager: ConfigManager,
+  registryClient: RegistryClient
+): Promise<void> {
+  const spinner = logger.spinner(`Searching MCP servers for "${query}"...`)
+  
+  try {
+    // Check if Docker MCP is available
+    const dockerStatus = await checkDockerMCPStatus()
+    
+    if (dockerStatus.dockerInstalled && dockerStatus.mcpToolkitAvailable) {
+      // Use Docker MCP search
+      const results = await searchDockerMCPServers(query)
+      const installed = await listInstalledDockerMCPServers()
+      
+      spinner.stop()
+      
+      if (results.length === 0) {
+        logger.info(`No MCP servers found matching "${query}"`)
+        return
+      }
+      
+      logger.heading(`Docker MCP servers matching "${query}" (${results.length} results)`)
+      
+      for (const server of results) {
+        const installedMark = installed.includes(server.name) ? chalk.green(' ✓') : ''
+        console.log(`\n${chalk.bold(server.name)}${installedMark}`)
+        console.log(`  ${server.description}`)
+        if (installed.includes(server.name)) {
+          console.log(`  ${chalk.green('Status: Installed and enabled in Docker MCP')}`)
+        }
+      }
+    } else {
+      // Fallback to registry search (for backwards compatibility)
+      const servers = await registryClient.searchMCPServers(query)
+      const installed = await configManager.getInstalledMCPServers()
+      
+      spinner.stop()
+      
+      if (servers.length === 0) {
+        logger.info(`No MCP servers found matching "${query}"`)
+        logger.info('Docker MCP is not available. Install Docker and enable MCP Toolkit for more servers.')
+        return
+      }
+      
+      logger.heading(`MCP servers matching "${query}" (${servers.length} results)`)
+      
+      for (const server of servers) {
+        const installedMark = installed.includes(server.name) ? chalk.green(' ✓') : ''
+        const verificationIcon = server.verification.status === 'verified' ? '✅' : 
+                               server.verification.status === 'community' ? '👥' : '🧪'
+        console.log(`\n${verificationIcon} ${chalk.bold(server.name)}${installedMark}`)
+        console.log(`  ${server.description}`)
+        console.log(`  ${chalk.gray(`Category: ${server.category}`)}`)
+        console.log(`  ${chalk.gray(`Type: ${server.server_type}`)}`)
+        if (server.tags && server.tags.length > 0) {
+          console.log(`  ${chalk.gray(`Tags: ${server.tags.join(', ')}`)}`)
+        }
       }
     }
   } catch (error) {

@@ -1,4 +1,4 @@
-name: Validate Subagents and Commands
+name: Validate Subagents, Commands, and MCP Servers
 
 on:
   push:
@@ -29,7 +29,7 @@ jobs:
     - name: Install dependencies
       run: |
         npm init -y
-        npm install gray-matter ajv glob chalk
+        npm install gray-matter ajv ajv-formats glob chalk
         
     - name: Validate subagents
       run: node scripts/validate-subagents.js

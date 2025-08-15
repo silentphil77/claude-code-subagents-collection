@@ -1,4 +1,4 @@
-import { BwcConfig } from '../registry/types.js'
+import { BwcConfig, MCPServerConfig, LegacyBwcConfig } from '../registry/types.js'
 import { 
   CONFIG_PATH, 
   BWC_DIR, 
@@ -12,6 +12,8 @@ import {
 } from '../utils/files.js'
 import path from 'path'
 import process from 'process'
+import os from 'os'
+import { existsSync, readFileSync } from 'fs'
 
 const DEFAULT_CONFIG: BwcConfig = {
   version: '1.0',
@@ -22,7 +24,8 @@ const DEFAULT_CONFIG: BwcConfig = {
   },
   installed: {
     subagents: [],
-    commands: []
+    commands: [],
+    mcpServers: []
   }
 }
 
@@ -35,14 +38,24 @@ const DEFAULT_PROJECT_CONFIG: BwcConfig = {
   },
   installed: {
     subagents: [],
-    commands: []
+    commands: [],
+    mcpServers: []
   }
 }
 
 export class ConfigManager {
+  private static instance: ConfigManager | null = null
   private config: BwcConfig | null = null
   private configPath: string | null = null
   private isProjectLevel: boolean = false
+  private forceUser: boolean = false
+
+  static getInstance(): ConfigManager {
+    if (!ConfigManager.instance) {
+      ConfigManager.instance = new ConfigManager()
+    }
+    return ConfigManager.instance
+  }
 
   private async findProjectConfig(): Promise<string | null> {
     const projectConfigNames = ['bwc.config.json', '.bwc/config.json']
@@ -76,15 +89,19 @@ export class ConfigManager {
       this.isProjectLevel = true
     } else {
       // Initialize global config
-      await ensureDir(BWC_DIR)
+      // Re-evaluate paths in case they were changed for testing
+      const configPath = process.env.BWC_CONFIG_PATH || path.join(process.env.BWC_TEST_HOME || os.homedir(), '.bwc', 'config.json')
+      const bwcDir = path.dirname(configPath)
       
-      if (await fileExists(CONFIG_PATH) && !options?.force) {
+      await ensureDir(bwcDir)
+      
+      if (await fileExists(configPath) && !options?.force) {
         throw new Error('Configuration already exists. Use --force to overwrite.')
       }
       
-      await writeJSON(CONFIG_PATH, DEFAULT_CONFIG)
+      await writeJSON(configPath, DEFAULT_CONFIG)
       this.config = DEFAULT_CONFIG
-      this.configPath = CONFIG_PATH
+      this.configPath = configPath
       this.isProjectLevel = false
     }
   }
@@ -94,24 +111,56 @@ export class ConfigManager {
       return this.config
     }
 
-    // First, check for project-level config
-    const projectConfigPath = await this.findProjectConfig()
-    if (projectConfigPath) {
-      this.config = await readJSON<BwcConfig>(projectConfigPath)
-      this.configPath = projectConfigPath
-      this.isProjectLevel = true
-      return this.config
+    // If forceUser is true, skip project config check
+    if (!this.forceUser) {
+      // First, check for project-level config
+      const projectConfigPath = await this.findProjectConfig()
+      if (projectConfigPath) {
+        const rawConfig = await readJSON<any>(projectConfigPath)
+        this.config = await this.migrateConfig(rawConfig)
+        this.configPath = projectConfigPath
+        this.isProjectLevel = true
+        return this.config
+      }
     }
 
-    // Fall back to global config
-    if (!await fileExists(CONFIG_PATH)) {
+    // Fall back to user config (or load it directly if forceUser)
+    const configPath = process.env.BWC_CONFIG_PATH || path.join(process.env.BWC_TEST_HOME || os.homedir(), '.bwc', 'config.json')
+    
+    if (!await fileExists(configPath)) {
       throw new Error('Configuration not found. Run "bwc init" first.')
     }
 
-    this.config = await readJSON<BwcConfig>(CONFIG_PATH)
-    this.configPath = CONFIG_PATH
+    const rawConfig = await readJSON<any>(configPath)
+    this.config = await this.migrateConfig(rawConfig)
+    this.configPath = configPath
     this.isProjectLevel = false
     return this.config
+  }
+
+  // Migrate old config format to new format
+  private async migrateConfig(config: any): Promise<BwcConfig> {
+    // Check if mcpServers is in old format (string array)
+    if (config.installed?.mcpServers && Array.isArray(config.installed.mcpServers)) {
+      // If all elements are strings, it's the old format
+      const isOldFormat = config.installed.mcpServers.every((item: any) => typeof item === 'string')
+      
+      if (isOldFormat) {
+        // Convert string array to Record format with minimal config
+        const mcpServersRecord: Record<string, MCPServerConfig> = {}
+        for (const serverName of config.installed.mcpServers) {
+          mcpServersRecord[serverName] = {
+            provider: 'docker', // Default to docker for legacy entries
+            transport: 'stdio',
+            scope: 'local',
+            installedAt: new Date().toISOString()
+          }
+        }
+        config.installed.mcpServers = mcpServersRecord
+      }
+    }
+    
+    return config as BwcConfig
   }
 
   async save(): Promise<void> {
@@ -126,12 +175,13 @@ export class ConfigManager {
     const config = await this.load()
     let subagentsPath = config.paths.subagents
     
+    // First expand tilde if present
+    subagentsPath = expandTilde(subagentsPath)
+    
     // If project-level config with relative path, resolve relative to config directory
     if (this.isProjectLevel && !path.isAbsolute(subagentsPath)) {
       const configDir = path.dirname(this.configPath!)
       subagentsPath = path.join(configDir, subagentsPath)
-    } else {
-      subagentsPath = expandTilde(subagentsPath)
     }
     
     await ensureDir(subagentsPath)
@@ -142,12 +192,13 @@ export class ConfigManager {
     const config = await this.load()
     let commandsPath = config.paths.commands
     
+    // First expand tilde if present
+    commandsPath = expandTilde(commandsPath)
+    
     // If project-level config with relative path, resolve relative to config directory
     if (this.isProjectLevel && !path.isAbsolute(commandsPath)) {
       const configDir = path.dirname(this.configPath!)
       commandsPath = path.join(configDir, commandsPath)
-    } else {
-      commandsPath = expandTilde(commandsPath)
     }
     
     await ensureDir(commandsPath)
@@ -192,6 +243,115 @@ export class ConfigManager {
     return config.installed.commands
   }
 
+  async addInstalledMCPServer(name: string, serverConfig?: MCPServerConfig): Promise<void> {
+    const config = await this.load()
+    
+    // Initialize if not exists
+    if (!config.installed.mcpServers) {
+      config.installed.mcpServers = {}
+    }
+    
+    // Handle both old and new format
+    if (Array.isArray(config.installed.mcpServers)) {
+      // Convert to new format on the fly
+      const oldServers = config.installed.mcpServers as string[]
+      const newServers: Record<string, MCPServerConfig> = {}
+      for (const serverName of oldServers) {
+        newServers[serverName] = {
+          provider: 'docker',
+          transport: 'stdio',
+          scope: 'local',
+          installedAt: new Date().toISOString()
+        }
+      }
+      config.installed.mcpServers = newServers
+    }
+    
+    // Add the new server with full config
+    const servers = config.installed.mcpServers as Record<string, MCPServerConfig>
+    servers[name] = serverConfig || {
+      provider: 'docker',
+      transport: 'stdio',
+      scope: 'local',
+      installedAt: new Date().toISOString()
+    }
+    
+    await this.save()
+  }
+
+  async removeInstalledMCPServer(name: string): Promise<void> {
+    const config = await this.load()
+    if (config.installed.mcpServers) {
+      if (Array.isArray(config.installed.mcpServers)) {
+        config.installed.mcpServers = config.installed.mcpServers.filter(s => s !== name)
+      } else {
+        delete (config.installed.mcpServers as Record<string, MCPServerConfig>)[name]
+      }
+      await this.save()
+    }
+  }
+
+  async getInstalledMCPServers(): Promise<string[]> {
+    const config = await this.load()
+    if (!config.installed.mcpServers) {
+      return []
+    }
+    
+    // Handle both old and new format
+    if (Array.isArray(config.installed.mcpServers)) {
+      return config.installed.mcpServers
+    } else {
+      return Object.keys(config.installed.mcpServers)
+    }
+  }
+
+  async getMCPServerConfig(name: string): Promise<MCPServerConfig | null> {
+    const config = await this.load()
+    if (!config.installed.mcpServers) {
+      return null
+    }
+    
+    // Handle both old and new format
+    if (Array.isArray(config.installed.mcpServers)) {
+      // Old format - return minimal config
+      if (config.installed.mcpServers.includes(name)) {
+        return {
+          provider: 'docker',
+          transport: 'stdio',
+          scope: 'local',
+          installedAt: new Date().toISOString()
+        }
+      }
+      return null
+    } else {
+      return (config.installed.mcpServers as Record<string, MCPServerConfig>)[name] || null
+    }
+  }
+
+  async getAllMCPServerConfigs(): Promise<Record<string, MCPServerConfig>> {
+    const config = await this.load()
+    if (!config.installed.mcpServers) {
+      return {}
+    }
+    
+    // Handle both old and new format
+    if (Array.isArray(config.installed.mcpServers)) {
+      // Convert old format to new format
+      const result: Record<string, MCPServerConfig> = {}
+      for (const serverName of config.installed.mcpServers) {
+        result[serverName] = {
+          provider: 'docker',
+          transport: 'stdio',
+          scope: 'local',
+          installedAt: new Date().toISOString()
+        }
+      }
+      return result
+    } else {
+      return config.installed.mcpServers as Record<string, MCPServerConfig>
+    }
+  }
+
   async getRegistryUrl(): Promise<string> {
     const config = await this.load()
     return config.registry
@@ -207,11 +367,74 @@ export class ConfigManager {
     return this.configPath || CONFIG_PATH
   }
 
-  async getAllDependencies(): Promise<{ subagents: string[], commands: string[] }> {
+  async getAllDependencies(): Promise<{ subagents: string[], commands: string[], mcpServers: string[] }> {
     const config = await this.load()
+    const mcpServers = await this.getInstalledMCPServers() // Use the helper method to handle both formats
     return {
       subagents: config.installed.subagents || [],
-      commands: config.installed.commands || []
+      commands: config.installed.commands || [],
+      mcpServers: mcpServers
     }
+  }
+
+  async getConfig(): Promise<BwcConfig> {
+    if (!this.config) {
+      await this.load()
+    }
+    return this.config!
+  }
+
+  getProjectConfig(): BwcConfig | null {
+    // Check if project config exists and is loaded
+    if (this.isProjectLevel && this.config) {
+      return this.config
+    }
+    // Check if project config file exists in current directory
+    const projectConfigPath = path.join(process.cwd(), 'bwc.config.json')
+    if (existsSync(projectConfigPath)) {
+      try {
+        return JSON.parse(readFileSync(projectConfigPath, 'utf8'))
+      } catch {
+        return null
+      }
+    }
+    return null
+  }
+
+  async saveConfig(config: BwcConfig): Promise<void> {
+    this.config = config
+    return this.save()
+  }
+
+  /**
+   * Force loading user configuration even if project config exists
+   */
+  async loadUserConfig(): Promise<BwcConfig> {
+    // Reset the config to force reload
+    this.config = null
+    this.forceUser = true
+    
+    try {
+      const config = await this.load()
+      return config
+    } finally {
+      // Reset forceUser flag after loading
+      this.forceUser = false
+    }
+  }
+
+  /**
+   * Reset to default behavior (prefer project config)
+   */
+  resetToDefault(): void {
+    this.config = null
+    this.forceUser = false
+  }
+
+  /**
+   * Reset the singleton instance (mainly for testing)
+   */
+  static resetInstance(): void {
+    ConfigManager.instance = null
   }
 }

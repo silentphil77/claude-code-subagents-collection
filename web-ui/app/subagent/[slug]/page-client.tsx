@@ -9,9 +9,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { ArrowLeft, Copy, Download, Check, Github } from 'lucide-react'
+import { ArrowLeft, Copy, Download, Check, Github, Terminal } from 'lucide-react'
 import { type Subagent } from '@/lib/subagents-types'
 import { generateSubagentMarkdown } from '@/lib/utils'
+import { generateBWCCommands } from '@/lib/bwc-utils'
 
 interface SubagentPageClientProps {
   subagent: Subagent
@@ -19,6 +20,8 @@ interface SubagentPageClientProps {
 
 export function SubagentPageClient({ subagent }: SubagentPageClientProps) {
   const [copied, setCopied] = useState(false)
+  const [copiedCommand, setCopiedCommand] = useState<string | null>(null)
+  const bwcCommands = generateBWCCommands('subagent', subagent.name)
   
   
   const handleCopy = async () => {
@@ -175,7 +178,34 @@ export function SubagentPageClient({ subagent }: SubagentPageClientProps) {
             <h2 className="text-lg font-semibold mb-4">Installation</h2>
             <div className="space-y-4">
               <div>
-                <h3 className="text-sm font-semibold mb-2">Option A: Install as User Subagent (available in all projects)</h3>
+                <h3 className="text-sm font-semibold mb-2 flex items-center gap-2">
+                  <Terminal className="h-4 w-4 text-primary" />
+                  Option A: Install using BWC CLI (Recommended)
+                </h3>
+                <div className="space-y-2">
+                  <p className="text-sm text-muted-foreground">Install and manage this subagent with a single command:</p>
+                  <div className="bg-background rounded p-3 font-mono text-sm flex items-center justify-between">
+                    <span>{bwcCommands.install}</span>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={async () => {
+                        await navigator.clipboard.writeText(bwcCommands.install)
+                        setCopiedCommand('install')
+                        setTimeout(() => setCopiedCommand(null), 2000)
+                      }}
+                    >
+                      {copiedCommand === 'install' ? (
+                        <Check className="h-4 w-4 text-green-600" />
+                      ) : (
+                        <Copy className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold mb-2">Option B: Install as User Subagent (manual)</h3>
                 <div className="space-y-2">
                   <p className="text-sm text-muted-foreground">macOS/Linux:</p>
                   <div className="bg-background rounded p-3 font-mono text-sm">
@@ -188,7 +218,7 @@ export function SubagentPageClient({ subagent }: SubagentPageClientProps) {
                 </div>
               </div>
               <div>
-                <h3 className="text-sm font-semibold mb-2">Option B: Install as Project Subagent (current project only)</h3>
+                <h3 className="text-sm font-semibold mb-2">Option C: Install as Project Subagent (manual)</h3>
                 <div className="space-y-2">
                   <p className="text-sm text-muted-foreground">macOS/Linux:</p>
                   <div className="bg-background rounded p-3 font-mono text-sm">

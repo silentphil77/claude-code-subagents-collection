@@ -2,9 +2,10 @@ import fs from 'fs-extra'
 import path from 'path'
 import os from 'os'
 
-export const HOME_DIR = os.homedir()
+// Allow overriding paths for testing
+export const HOME_DIR = process.env.BWC_TEST_HOME || os.homedir()
 export const BWC_DIR = path.join(HOME_DIR, '.bwc')
-export const CONFIG_PATH = path.join(BWC_DIR, 'config.json')
+export const CONFIG_PATH = process.env.BWC_CONFIG_PATH || path.join(BWC_DIR, 'config.json')
 export const CLAUDE_DIR = path.join(HOME_DIR, '.claude')
 export const AGENTS_DIR = path.join(CLAUDE_DIR, 'agents')
 export const COMMANDS_DIR = path.join(CLAUDE_DIR, 'commands')
@@ -42,7 +43,13 @@ export async function writeJSON(filePath: string, data: unknown): Promise<void> 
 
 export function expandTilde(filePath: string): string {
   if (filePath.startsWith('~/')) {
-    return path.join(HOME_DIR, filePath.slice(2))
+    // Re-evaluate HOME_DIR in case it changed (for testing)
+    const homeDir = process.env.BWC_TEST_HOME || os.homedir()
+    return path.join(homeDir, filePath.slice(2))
   }
   return filePath
+}
+
+export async function deleteFile(filePath: string): Promise<void> {
+  await fs.remove(filePath)
 }

@@ -13,6 +13,7 @@ import {
 import { ArrowLeft, Copy, Download, Check, Github, Terminal } from 'lucide-react'
 import { generateCommandMarkdown } from '@/lib/utils'
 import { generateCategoryDisplayName, getCategoryIcon, type Command } from '@/lib/commands-types'
+import { generateBWCCommands } from '@/lib/bwc-utils'
 
 interface CommandPageClientProps {
   command: Command
@@ -20,10 +21,12 @@ interface CommandPageClientProps {
 
 export function CommandPageClient({ command }: CommandPageClientProps) {
   const [copied, setCopied] = useState(false)
+  const [copiedCommand, setCopiedCommand] = useState<string | null>(null)
   
   const categoryName = generateCategoryDisplayName(command.category)
   const categoryIcon = getCategoryIcon(command.category)
   const commandName = `/${command.slug.replace(/-/g, '_')}`
+  const bwcCommands = generateBWCCommands('command', command.slug)
   
   const handleCopy = async () => {
     const markdown = generateCommandMarkdown(command)
@@ -213,7 +216,34 @@ export function CommandPageClient({ command }: CommandPageClientProps) {
             <h2 className="text-lg font-semibold mb-4">Installation</h2>
             <div className="space-y-4">
               <div>
-                <h3 className="text-sm font-semibold mb-2">Option A: Install as User Command (available in all projects)</h3>
+                <h3 className="text-sm font-semibold mb-2 flex items-center gap-2">
+                  <Terminal className="h-4 w-4 text-primary" />
+                  Option A: Install using BWC CLI (Recommended)
+                </h3>
+                <div className="space-y-2">
+                  <p className="text-sm text-muted-foreground">Install and manage this command with a single command:</p>
+                  <div className="bg-background rounded p-3 font-mono text-sm flex items-center justify-between">
+                    <span>{bwcCommands.install}</span>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={async () => {
+                        await navigator.clipboard.writeText(bwcCommands.install)
+                        setCopiedCommand('install')
+                        setTimeout(() => setCopiedCommand(null), 2000)
+                      }}
+                    >
+                      {copiedCommand === 'install' ? (
+                        <Check className="h-4 w-4 text-green-600" />
+                      ) : (
+                        <Copy className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold mb-2">Option B: Install as User Command (manual)</h3>
                 <div className="space-y-2">
                   <p className="text-sm text-muted-foreground">macOS/Linux:</p>
                   <div className="bg-background rounded p-3 font-mono text-sm">
@@ -226,7 +256,7 @@ export function CommandPageClient({ command }: CommandPageClientProps) {
                 </div>
               </div>
               <div>
-                <h3 className="text-sm font-semibold mb-2">Option B: Install as Project Command (current project only)</h3>
+                <h3 className="text-sm font-semibold mb-2">Option C: Install as Project Command (manual)</h3>
                 <div className="space-y-2">
                   <p className="text-sm text-muted-foreground">macOS/Linux:</p>
                   <div className="bg-background rounded p-3 font-mono text-sm">
