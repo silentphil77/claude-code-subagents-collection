@@ -15,14 +15,14 @@
   "homepage": "https://buildwithclaude.com",
   "repository": {
     "type": "git",
-    "url": "https://github.com/davepoon/claude-code-subagents-collection.git",
+    "url": "git+https://github.com/davepoon/claude-code-subagents-collection.git",
     "directory": "packages/bwc-cli"
   },
   "license": "MIT",
   "author": "Dave Poon",
   "type": "module",
   "bin": {
-    "bwc": "./dist/index.js"
+    "bwc": "dist/index.js"
   },
   "files": [
     "dist",
