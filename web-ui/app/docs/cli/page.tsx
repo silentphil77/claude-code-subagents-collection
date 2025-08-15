@@ -723,7 +723,7 @@ bwc add --agent golang-pro --project   # Force project level`}</code>
             {/* Team Setup */}
             <div className="border border-border/50 rounded-lg p-6">
               <h3 className="font-semibold mb-2">Team Onboarding</h3>
-              <p className="text-muted-foreground mb-3">Share your Claude Code setup with your team</p>
+              <p className="text-muted-foreground mb-3">Scaffold your Claude Code setup with your team</p>
               <div className="relative">
                 <pre className="p-4 rounded-md bg-background/50 overflow-x-auto">
                   <code className="text-sm">{commands.teamSetup}</code>
@@ -783,7 +783,7 @@ bwc add --agent golang-pro --project   # Force project level`}</code>
         <section className="mb-12" id="mcp-servers">
           <h2 className="text-2xl font-bold mb-4">🔌 MCP Servers</h2>
           <p className="text-muted-foreground mb-6">
-            Connect Claude to external tools and services through MCP (Model Context Protocol)
+            Connect Claude Code to external tools and services through MCP (Model Context Protocol)
           </p>
 
           {/* Provider Selection Guide */}
@@ -833,7 +833,7 @@ bwc add --agent golang-pro --project   # Force project level`}</code>
             <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
               <p className="text-sm">
                 <strong>⚠️ Important:</strong> The <code className="bg-background/50 px-1 rounded">--docker-mcp</code> flag is <strong>required</strong> to use Docker MCP. 
-                Without it, BWC will attempt to use Claude CLI or registry servers.
+                Without it, BWC will attempt to use Claude CLI.
               </p>
             </div>
           </div>

@@ -140,6 +140,35 @@ async function addSubagent(
     const subagentsPath = await configManager.getSubagentsPath()
     const filePath = path.join(subagentsPath, `${subagent.name}.md`)
     
+    // Check if file already exists
+    const { fileExists } = await import('../utils/files.js')
+    if (await fileExists(filePath)) {
+      spinner.stop()
+      
+      const { action } = await inquirer.prompt([
+        {
+          type: 'list',
+          name: 'action',
+          message: `Subagent "${subagent.name}" already exists. What would you like to do?`,
+          choices: [
+            { name: 'Overwrite - Replace the existing file with the new one', value: 'overwrite' },
+            { name: 'Skip - Skip this item and continue with other installations', value: 'skip' },
+            { name: 'Abort - Stop the entire installation process', value: 'abort' }
+          ]
+        }
+      ])
+      
+      if (action === 'skip') {
+        logger.info(`Skipped subagent: ${subagent.name}`)
+        return
+      } else if (action === 'abort') {
+        logger.info('Installation aborted')
+        process.exit(0)
+      }
+      
+      spinner.start(`Installing ${subagent.name}...`)
+    }
+    
     await writeFile(filePath, content)
     await configManager.addInstalledSubagent(subagent.name)
     
@@ -174,6 +203,35 @@ async function addCommand(
     const content = await registryClient.fetchFileContent(command.file)
     const commandsPath = await configManager.getCommandsPath()
     const filePath = path.join(commandsPath, `${command.name}.md`)
+    
+    // Check if file already exists
+    const { fileExists } = await import('../utils/files.js')
+    if (await fileExists(filePath)) {
+      spinner.stop()
+      
+      const { action } = await inquirer.prompt([
+        {
+          type: 'list',
+          name: 'action',
+          message: `Command "${command.name}" already exists. What would you like to do?`,
+          choices: [
+            { name: 'Overwrite - Replace the existing file with the new one', value: 'overwrite' },
+            { name: 'Skip - Skip this item and continue with other installations', value: 'skip' },
+            { name: 'Abort - Stop the entire installation process', value: 'abort' }
+          ]
+        }
+      ])
+      
+      if (action === 'skip') {
+        logger.info(`Skipped command: ${command.name}`)
+        return
+      } else if (action === 'abort') {
+        logger.info('Installation aborted')
+        process.exit(0)
+      }
+      
+      spinner.start(`Installing ${command.name}...`)
+    }
     
     await writeFile(filePath, content)
     await configManager.addInstalledCommand(command.name)
