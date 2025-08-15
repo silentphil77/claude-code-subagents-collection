@@ -285,28 +285,35 @@ export default function MCPServerPageClient({ server }: MCPServerPageClientProps
                 ))}
               </TabsList>
 
-              {server.installation_methods.map((method) => (
-                <TabsContent key={method.type} value={method.type} className="space-y-4">
-                  {method.command && (
-                    <div>
-                      <h4 className="font-semibold mb-2">Installation Command:</h4>
-                      <div className="bg-muted p-4 rounded-lg overflow-x-auto flex items-center justify-between">
-                        <code>{method.command}</code>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => handleCopyCommand(method.type, method.command!)}
-                          className="ml-2 flex-shrink-0"
-                        >
-                          {copiedCommand === method.type ? (
-                            <Check className="h-4 w-4 text-green-600" />
-                          ) : (
-                            <Copy className="h-4 w-4" />
-                          )}
-                        </Button>
+              {server.installation_methods.map((method) => {
+                // Add --docker-mcp flag for Docker-sourced servers with BWC installation
+                const displayCommand = method.type === 'bwc' && server.source_registry?.type === 'docker' 
+                  ? `${method.command} --docker-mcp`
+                  : method.command;
+                
+                return (
+                  <TabsContent key={method.type} value={method.type} className="space-y-4">
+                    {method.command && (
+                      <div>
+                        <h4 className="font-semibold mb-2">Installation Command:</h4>
+                        <div className="bg-muted p-4 rounded-lg overflow-x-auto flex items-center justify-between">
+                          <code>{displayCommand}</code>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleCopyCommand(method.type, displayCommand!)}
+                            className="ml-2 flex-shrink-0"
+                          >
+                            {copiedCommand === method.type ? (
+                              <Check className="h-4 w-4 text-green-600" />
+                            ) : (
+                              <Copy className="h-4 w-4" />
+                            )}
+                          </Button>
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
+                  
 
                   {method.type === 'bwc' && (
                     <div className="space-y-2">
@@ -366,7 +373,8 @@ export default function MCPServerPageClient({ server }: MCPServerPageClientProps
                     </div>
                   )}
                 </TabsContent>
-              ))}
+                )
+              })}
             </Tabs>
           </CardContent>
         </Card>
