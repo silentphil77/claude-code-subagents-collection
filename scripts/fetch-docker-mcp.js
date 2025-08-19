@@ -87,6 +87,11 @@ async function fetchServerIcon(serverName) {
 function categorizeDockerMCPServer(name, description) {
   const text = `${name} ${description}`.toLowerCase();
   
+  // Specific tool checks first to avoid false matches
+  if (name.toLowerCase() === 'obsidian') {
+    return 'productivity';
+  }
+  
   // AI & ML
   if (text.match(/\b(ai|artificial intelligence|llm|gpt|claude|model|machine learning|ml|neural|deep learning|nlp|natural language|vision|opencv|tensorflow|pytorch|hugging|transformer|bert|embedding|vector|semantic|chatbot|assistant|arxiv|research|paper|academic|journal|publication|scholar|pubmed)\b/)) {
     return 'ai-task-management';

@@ -12,13 +12,28 @@
     "category": {
       "type": "string",
       "enum": [
+        "api-development",
+        "automation-workflow",
         "ci-deployment",
         "code-analysis-testing",
         "context-loading-priming",
+        "database-operations",
         "documentation-changelogs",
+        "framework-svelte",
+        "game-development",
+        "integration-sync",
+        "miscellaneous",
+        "monitoring-observability",
+        "performance-optimization",
+        "project-setup",
         "project-task-management",
+        "security-audit",
+        "simulation-modeling",
+        "team-collaboration",
+        "typescript-migration",
+        "utilities-debugging",
         "version-control-git",
-        "miscellaneous"
+        "workflow-orchestration"
       ],
       "description": "Category for organizing the command"
     },
