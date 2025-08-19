@@ -1,7 +1,7 @@
 ---
 description: Simulate system performance under various loads with capacity planning, bottleneck identification, and optimization strategies.
 category: performance-optimization
-argument-hint: ### 1. Prerequisites Assessment
+argument-hint: "Specify system behavior parameters"
 allowed-tools: Read, Write
 ---
 

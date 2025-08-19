@@ -1,7 +1,7 @@
 ---
 description: Create a new epic following the Product as Code specification with guided workflow
 category: project-task-management
-argument-hint: [arguments]
+argument-hint: "Specify epic details"
 allowed-tools: Write
 ---
 

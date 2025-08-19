@@ -1,7 +1,7 @@
 ---
 description: Generate comprehensive test cases automatically
 category: code-analysis-testing
-argument-hint: [arguments]
+argument-hint: "Specify test case requirements"
 ---
 
 # Generate Test Cases

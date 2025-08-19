@@ -1,7 +1,7 @@
 ---
 description: Configure monorepo project structure
 category: project-setup
-argument-hint: [arguments]
+argument-hint: "Specify monorepo configuration options"
 ---
 
 # Setup Monorepo

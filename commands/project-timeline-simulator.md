@@ -1,7 +1,7 @@
 ---
 description: Simulate project outcomes with variable modeling, risk assessment, and resource optimization scenarios.
 category: project-task-management
-argument-hint: ### 1. Prerequisites Assessment
+argument-hint: "Specify project timeline parameters"
 allowed-tools: Bash(gh *), Read
 ---
 

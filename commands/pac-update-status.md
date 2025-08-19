@@ -1,7 +1,7 @@
 ---
 description: Update ticket status and track progress in Product as Code workflow
 category: project-task-management
-argument-hint: [arguments]
+argument-hint: "Specify status update details"
 allowed-tools: Read, Write
 ---
 

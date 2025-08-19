@@ -1,7 +1,7 @@
 ---
 description: Model customer and market responses with segment analysis, behavioral prediction, and response optimization.
 category: simulation-modeling
-argument-hint: ### 1. Prerequisites Assessment
+argument-hint: "Specify market response parameters"
 ---
 
 # Market Response Modeler

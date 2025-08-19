@@ -1,7 +1,7 @@
 ---
 description: Create a new ticket within an epic following the Product as Code specification
 category: project-task-management
-argument-hint: [arguments]
+argument-hint: "Specify ticket details"
 allowed-tools: Write
 ---
 

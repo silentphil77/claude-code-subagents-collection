@@ -1,7 +1,7 @@
 ---
 description: Test multiple code variations through simulation before implementation with quality gates and performance prediction.
 category: utilities-debugging
-argument-hint: ### 1. Prerequisites Assessment
+argument-hint: "Specify permutation test options"
 ---
 
 # Code Permutation Tester

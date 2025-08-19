@@ -1,7 +1,7 @@
 ---
 description: Model world constraints with assumption validation, dependency mapping, and scenario boundary definition.
 category: simulation-modeling
-argument-hint: ### 1. Prerequisites Assessment
+argument-hint: "Specify constraint parameters"
 ---
 
 # Constraint Modeler

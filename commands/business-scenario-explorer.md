@@ -1,7 +1,7 @@
 ---
 description: Explore multiple business timeline scenarios with constraint validation and decision optimization.
 category: simulation-modeling
-argument-hint: ### 1. Prerequisites Assessment
+argument-hint: "Specify business scenario parameters"
 ---
 
 # Business Scenario Explorer

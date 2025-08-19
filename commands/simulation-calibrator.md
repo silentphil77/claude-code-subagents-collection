@@ -1,7 +1,7 @@
 ---
 description: Test and refine simulation accuracy with validation loops, bias detection, and continuous improvement frameworks.
 category: simulation-modeling
-argument-hint: ### 1. Prerequisites Assessment
+argument-hint: "Specify calibration parameters"
 ---
 
 # Simulation Calibrator

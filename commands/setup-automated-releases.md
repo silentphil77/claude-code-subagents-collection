@@ -1,7 +1,7 @@
 ---
 description: Setup automated release workflows
 category: ci-deployment
-argument-hint: [arguments]
+argument-hint: "Specify release automation settings"
 ---
 
 # Setup Automated Releases

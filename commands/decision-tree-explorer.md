@@ -1,7 +1,7 @@
 ---
 description: Explore decision branches with probability weighting, expected value analysis, and scenario-based optimization.
 category: simulation-modeling
-argument-hint: ### 1. Prerequisites Assessment
+argument-hint: "Specify decision tree parameters"
 ---
 
 # Decision Tree Explorer

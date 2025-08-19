@@ -1,7 +1,7 @@
 ---
 description: Analyze decision quality with scenario testing, bias detection, and team decision-making process optimization.
 category: team-collaboration
-argument-hint: ### 1. Decision Context Assessment
+argument-hint: "Specify analysis criteria"
 allowed-tools: Bash(gh *)
 ---
 

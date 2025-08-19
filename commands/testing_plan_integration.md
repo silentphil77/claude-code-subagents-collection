@@ -1,7 +1,7 @@
 ---
 description: I need you to create an integration testing plan for $ARGUMENTS
 category: code-analysis-testing
-argument-hint: [arguments]
+argument-hint: "Specify test plan or integration type"
 ---
 
 I need you to create an integration testing plan for $ARGUMENTS

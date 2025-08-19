@@ -1,7 +1,7 @@
 ---
 description: Configure and initialize a project following the Product as Code specification for structured, version-controlled product management
 category: project-task-management
-argument-hint: [arguments]
+argument-hint: "Specify configuration settings"
 ---
 
 # Configure PAC (Product as Code) Project

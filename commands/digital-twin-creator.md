@@ -1,7 +1,7 @@
 ---
 description: Create systematic digital twins with data quality validation and real-world calibration loops.
 category: simulation-modeling
-argument-hint: ### 1. Prerequisites Assessment
+argument-hint: "Specify digital twin parameters"
 ---
 
 # Digital Twin Creator

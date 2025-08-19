@@ -1,7 +1,7 @@
 ---
 description: Explore architectural decisions through systematic scenario analysis with trade-off evaluation and future-proofing assessment.
 category: utilities-debugging
-argument-hint: ### 1. Prerequisites Assessment
+argument-hint: "Specify architecture scenario options"
 allowed-tools: Glob
 ---
 

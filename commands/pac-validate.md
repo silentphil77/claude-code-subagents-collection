@@ -1,7 +1,7 @@
 ---
 description: Validate Product as Code project structure and files for specification compliance
 category: project-task-management
-argument-hint: [arguments]
+argument-hint: "Specify validation rules or targets"
 ---
 
 # Validate PAC Structure

@@ -1,7 +1,7 @@
 ---
 description: Analyze directory structure and purpose
 category: utilities-debugging
-argument-hint: [arguments]
+argument-hint: "Specify directory path"
 ---
 
 # Directory Deep Dive

@@ -1,7 +1,7 @@
 ---
 description: Show detailed git repository status
 category: utilities-debugging
-argument-hint: [arguments]
+argument-hint: "Optional: specify path or options"
 allowed-tools: Bash(git *), Read
 ---
 

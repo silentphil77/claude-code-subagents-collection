@@ -1,7 +1,7 @@
 ---
 description: Perform comprehensive analysis of $ARGUMENTS to identify code quality issues, security vulnerabilities, and optimization opportunities.
 category: utilities-debugging
-argument-hint: [arguments]
+argument-hint: "Specify file path to check"
 allowed-tools: Read
 ---
 

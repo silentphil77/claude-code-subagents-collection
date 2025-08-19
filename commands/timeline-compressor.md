@@ -1,7 +1,7 @@
 ---
 description: Accelerate scenario testing with rapid iteration cycles, confidence intervals, and compressed decision timelines.
 category: simulation-modeling
-argument-hint: ### 1. Prerequisites Assessment
+argument-hint: "Specify timeline and compression ratio"
 ---
 
 # Timeline Compressor

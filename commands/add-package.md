@@ -1,7 +1,7 @@
 ---
 description: Add and configure new project dependencies
 category: project-task-management
-argument-hint: [arguments]
+argument-hint: "[package-name] [type]"
 ---
 
 # Add Package to Workspace

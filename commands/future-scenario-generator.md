@@ -1,7 +1,7 @@
 ---
 description: Generate and analyze future scenarios with plausibility scoring, trend integration, and uncertainty quantification.
 category: simulation-modeling
-argument-hint: ### 1. Prerequisites Assessment
+argument-hint: "Specify scenario parameters"
 allowed-tools: Glob
 ---
 

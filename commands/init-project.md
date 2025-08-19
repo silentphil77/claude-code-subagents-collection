@@ -1,7 +1,7 @@
 ---
 description: Initialize new project with essential structure
 category: project-task-management
-argument-hint: [arguments]
+argument-hint: "Specify project name and type"
 allowed-tools: Edit
 ---
 
