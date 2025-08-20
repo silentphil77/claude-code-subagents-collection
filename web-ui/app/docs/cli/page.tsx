@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
-import { Copy, Check, Terminal, Package, Zap, Settings, ArrowLeft, ChevronRight } from 'lucide-react'
+import { Copy, Check, Terminal, Package, Zap, Settings, ArrowLeft, ChevronRight, Shield } from 'lucide-react'
 import Link from 'next/link'
 
 interface PackageManagerSwitcherProps {
@@ -58,6 +58,7 @@ const tocItems: TocItem[] = [
     ]
   },
   { id: 'mcp-verification', title: 'MCP Server Verification' },
+  { id: 'proxy-support', title: 'Proxy Support' },
   { id: 'troubleshooting', title: 'Troubleshooting' },
   { id: 'next-steps', title: 'Next Steps' }
 ]
@@ -84,6 +85,13 @@ export default function CLIPage() {
         top: offsetPosition,
         behavior: 'smooth'
       })
+      
+      // Update URL with hash without triggering navigation
+      if (window.history.pushState) {
+        window.history.pushState(null, '', `#${id}`)
+      } else {
+        window.location.hash = id
+      }
     }
   }
 
@@ -109,6 +117,29 @@ export default function CLIPage() {
     handleScroll() // Initial check
     
     return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // Handle initial page load with hash and browser navigation
+  useEffect(() => {
+    // Check for hash on initial load
+    const hash = window.location.hash.slice(1)
+    if (hash) {
+      // Delay to ensure DOM is ready
+      setTimeout(() => {
+        scrollToSection(hash)
+      }, 100)
+    }
+    
+    // Handle browser back/forward navigation
+    const handlePopState = () => {
+      const hash = window.location.hash.slice(1)
+      if (hash) {
+        scrollToSection(hash)
+      }
+    }
+    
+    window.addEventListener('popstate', handlePopState)
+    return () => window.removeEventListener('popstate', handlePopState)
   }, [])
 
   // Package manager specific commands
@@ -1713,6 +1744,321 @@ Configuration: /path/to/project/bwc.config.json (project)
           </div>
         </section>
 
+        {/* Proxy Support */}
+        <section className="mb-12" id="proxy-support">
+          <h2 className="text-2xl font-bold mb-4">🌐 Proxy Support</h2>
+          <p className="text-muted-foreground mb-6">
+            BWC CLI automatically detects and uses corporate proxy settings for enterprise networks behind firewalls.
+          </p>
+
+          <div className="space-y-6">
+            {/* Overview */}
+            <div className="bg-gradient-to-r from-blue-500/10 to-green-500/10 border border-primary/20 rounded-lg p-6">
+              <h3 className="font-semibold mb-3 flex items-center gap-2">
+                <Shield className="h-5 w-5" />
+                🏢 Enterprise Network Support
+              </h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                BWC CLI seamlessly works behind corporate firewalls and proxy servers through automatic environment variable detection.
+              </p>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <h4 className="font-medium mb-2">✅ Supported Features:</h4>
+                  <ul className="text-sm text-muted-foreground space-y-1">
+                    <li>• HTTP_PROXY & HTTPS_PROXY detection</li>
+                    <li>• NO_PROXY bypass with wildcards</li>
+                    <li>• Proxy authentication support</li>
+                    <li>• Custom CA certificates</li>
+                    <li>• Debug logging for troubleshooting</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-medium mb-2">🎯 Works With:</h4>
+                  <ul className="text-sm text-muted-foreground space-y-1">
+                    <li>• Corporate proxy servers</li>
+                    <li>• Authenticated proxies</li>
+                    <li>• Self-signed certificates</li>
+                    <li>• Multiple proxy configurations</li>
+                    <li>• Domain bypass rules</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Environment Variables */}
+            <div className="border border-border/50 rounded-lg p-6">
+              <h3 className="font-semibold mb-3">Environment Variables</h3>
+              <p className="text-muted-foreground mb-4">
+                BWC CLI automatically detects these standard proxy environment variables:
+              </p>
+              <div className="relative">
+                <pre className="p-4 rounded-md bg-background/50 overflow-x-auto">
+                  <code className="text-sm">{`# HTTP proxy (case insensitive)
+export HTTP_PROXY=http://proxy.company.com:8080
+export http_proxy=http://proxy.company.com:8080
+
+# HTTPS proxy (recommended for security)
+export HTTPS_PROXY=https://proxy.company.com:8080
+export https_proxy=https://proxy.company.com:8080
+
+# Bypass proxy for specific domains
+export NO_PROXY=localhost,127.0.0.1,*.company.com,github.com
+export no_proxy=localhost,127.0.0.1,*.company.com,github.com
+
+# Custom CA certificates for corporate proxies
+export NODE_EXTRA_CA_CERTS=/path/to/corporate-ca.crt
+export SSL_CERT_FILE=/path/to/certificate-bundle.crt`}</code>
+                </pre>
+                <Button
+                  onClick={() => copyToClipboard(`export HTTPS_PROXY=https://proxy.company.com:8080
+export NO_PROXY=localhost,*.company.com
+export NODE_EXTRA_CA_CERTS=/path/to/corporate-ca.crt`, 30)}
+                  className="absolute top-2 right-2"
+                  size="sm"
+                  variant="ghost"
+                >
+                  {copiedIndex === 30 ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                </Button>
+              </div>
+            </div>
+
+            {/* Usage Examples */}
+            <div className="border border-border/50 rounded-lg p-6">
+              <h3 className="font-semibold mb-3">Usage Examples</h3>
+              <p className="text-muted-foreground mb-4">
+                BWC CLI automatically uses proxy settings when environment variables are configured:
+              </p>
+              
+              <div className="space-y-4">
+                {/* Basic Usage */}
+                <div className="bg-background/50 p-4 rounded-lg">
+                  <h4 className="font-medium mb-2">Basic Proxy Usage</h4>
+                  <div className="relative">
+                    <pre className="p-3 rounded-md bg-background/60 overflow-x-auto">
+                      <code className="text-sm">{`# Set proxy and run commands normally
+export HTTPS_PROXY=http://proxy.company.com:8080
+bwc add --command all-tools
+
+# Output shows proxy detection:
+# ℹ Using proxy: HTTPS: http://proxy.company.com:8080
+# ✓ Successfully fetched registry`}</code>
+                    </pre>
+                    <Button
+                      onClick={() => copyToClipboard(`export HTTPS_PROXY=http://proxy.company.com:8080
+bwc add --command all-tools`, 31)}
+                      className="absolute top-2 right-2"
+                      size="sm"
+                      variant="ghost"
+                    >
+                      {copiedIndex === 31 ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Authentication */}
+                <div className="bg-background/50 p-4 rounded-lg">
+                  <h4 className="font-medium mb-2">Proxy with Authentication</h4>
+                  <div className="relative">
+                    <pre className="p-3 rounded-md bg-background/60 overflow-x-auto">
+                      <code className="text-sm">{`# Basic authentication in proxy URL
+export HTTPS_PROXY=http://username:password@proxy.company.com:8080
+bwc list --mcps
+
+# URL-encoded passwords for special characters
+export HTTPS_PROXY=http://user:p%40ssw0rd@proxy.company.com:8080
+bwc add --agent python-pro`}</code>
+                    </pre>
+                    <Button
+                      onClick={() => copyToClipboard(`export HTTPS_PROXY=http://username:password@proxy.company.com:8080
+bwc list --mcps`, 32)}
+                      className="absolute top-2 right-2"
+                      size="sm"
+                      variant="ghost"
+                    >
+                      {copiedIndex === 32 ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Domain Bypass */}
+                <div className="bg-background/50 p-4 rounded-lg">
+                  <h4 className="font-medium mb-2">Domain Bypass with NO_PROXY</h4>
+                  <div className="relative">
+                    <pre className="p-3 rounded-md bg-background/60 overflow-x-auto">
+                      <code className="text-sm">{`# Bypass proxy for internal domains
+export HTTPS_PROXY=http://proxy.company.com:8080
+export NO_PROXY=localhost,127.0.0.1,*.internal.com,github.com
+bwc add --agent react-wizard
+
+# BWC will bypass proxy for github.com but use it for other domains`}</code>
+                    </pre>
+                    <Button
+                      onClick={() => copyToClipboard(`export HTTPS_PROXY=http://proxy.company.com:8080
+export NO_PROXY=localhost,*.internal.com,github.com
+bwc add --agent react-wizard`, 33)}
+                      className="absolute top-2 right-2"
+                      size="sm"
+                      variant="ghost"
+                    >
+                      {copiedIndex === 33 ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Certificate Handling */}
+            <div className="border border-border/50 rounded-lg p-6">
+              <h3 className="font-semibold mb-3">Corporate Certificate Handling</h3>
+              <p className="text-muted-foreground mb-4">
+                Handle self-signed certificates and corporate CAs:
+              </p>
+              <div className="relative">
+                <pre className="p-3 rounded-md bg-background/50 overflow-x-auto">
+                  <code className="text-sm">{`# Add corporate CA certificate (recommended)
+export NODE_EXTRA_CA_CERTS=/path/to/corporate-ca-bundle.crt
+export HTTPS_PROXY=https://proxy.company.com:8080
+bwc status
+
+# Alternative: Use SSL_CERT_FILE
+export SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
+export HTTPS_PROXY=https://proxy.company.com:8080
+bwc add --mcp postgres --docker-mcp
+
+# For testing only (NOT recommended for production)
+export NODE_TLS_REJECT_UNAUTHORIZED=0
+export HTTPS_PROXY=https://proxy.company.com:8080
+bwc list --agents`}</code>
+                </pre>
+                <Button
+                  onClick={() => copyToClipboard(`export NODE_EXTRA_CA_CERTS=/path/to/corporate-ca-bundle.crt
+export HTTPS_PROXY=https://proxy.company.com:8080
+bwc status`, 34)}
+                  className="absolute top-2 right-2"
+                  size="sm"
+                  variant="ghost"
+                >
+                  {copiedIndex === 34 ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                </Button>
+              </div>
+              <div className="mt-3 p-3 bg-amber-500/10 rounded-md">
+                <p className="text-sm">
+                  ⚠️ <strong>Security Note:</strong> Never use <code className="bg-muted px-1 rounded">NODE_TLS_REJECT_UNAUTHORIZED=0</code> in production. 
+                  Always configure proper CA certificates for corporate proxies.
+                </p>
+              </div>
+            </div>
+
+            {/* Debugging */}
+            <div className="border border-border/50 rounded-lg p-6">
+              <h3 className="font-semibold mb-3">Debugging Proxy Issues</h3>
+              <p className="text-muted-foreground mb-4">
+                Troubleshoot proxy connectivity problems:
+              </p>
+
+              <div className="space-y-4">
+                {/* Step-by-step debugging */}
+                <div className="bg-blue-500/10 p-4 rounded-lg">
+                  <h4 className="font-medium mb-2">🔍 Step-by-Step Debugging</h4>
+                  <ol className="text-sm space-y-2">
+                    <li><strong>1. Verify proxy settings:</strong></li>
+                    <div className="ml-4 mb-2">
+                      <pre className="p-2 rounded bg-background/60 text-xs">
+                        <code>{`echo $HTTPS_PROXY
+echo $NO_PROXY`}</code>
+                      </pre>
+                    </div>
+
+                    <li><strong>2. Test BWC with proxy detection:</strong></li>
+                    <div className="ml-4 mb-2">
+                      <pre className="p-2 rounded bg-background/60 text-xs">
+                        <code>{`bwc list --agents
+# Look for "Using proxy:" message in output`}</code>
+                      </pre>
+                    </div>
+
+                    <li><strong>3. Test direct connectivity:</strong></li>
+                    <div className="ml-4 mb-2">
+                      <pre className="p-2 rounded bg-background/60 text-xs">
+                        <code>{`curl -I https://buildwithclaude.com
+# Should return HTTP 200 if proxy works`}</code>
+                      </pre>
+                    </div>
+
+                    <li><strong>4. Check certificate issues:</strong></li>
+                    <div className="ml-4">
+                      <pre className="p-2 rounded bg-background/60 text-xs">
+                        <code>{`curl -v https://buildwithclaude.com
+# Look for SSL certificate verification errors`}</code>
+                      </pre>
+                    </div>
+                  </ol>
+                </div>
+
+                {/* Common Error Messages */}
+                <div className="bg-red-500/10 p-4 rounded-lg">
+                  <h4 className="font-medium mb-2">🚨 Common Error Messages</h4>
+                  <div className="space-y-3 text-sm">
+                    <div>
+                      <code className="text-xs bg-background/60 p-1 rounded">ECONNREFUSED</code>
+                      <p className="text-muted-foreground mt-1">Proxy server unreachable. Check proxy URL and network connectivity.</p>
+                    </div>
+                    <div>
+                      <code className="text-xs bg-background/60 p-1 rounded">certificate verify failed</code>
+                      <p className="text-muted-foreground mt-1">SSL certificate issue. Add corporate CA with NODE_EXTRA_CA_CERTS.</p>
+                    </div>
+                    <div>
+                      <code className="text-xs bg-background/60 p-1 rounded">Proxy authentication required</code>
+                      <p className="text-muted-foreground mt-1">Add username:password to proxy URL or configure credentials.</p>
+                    </div>
+                    <div>
+                      <code className="text-xs bg-background/60 p-1 rounded">getaddrinfo ENOTFOUND</code>
+                      <p className="text-muted-foreground mt-1">DNS resolution failed. Check proxy hostname or NO_PROXY configuration.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* NO_PROXY Patterns */}
+            <div className="border border-border/50 rounded-lg p-6">
+              <h3 className="font-semibold mb-3">NO_PROXY Patterns</h3>
+              <p className="text-muted-foreground mb-4">
+                Bypass proxy for specific domains using these patterns:
+              </p>
+              <div className="relative">
+                <pre className="p-3 rounded-md bg-background/50 overflow-x-auto">
+                  <code className="text-sm">{`# Exact domain match
+NO_PROXY=example.com
+
+# All subdomains (wildcard)
+NO_PROXY=*.company.com
+
+# Multiple domains (comma-separated)
+NO_PROXY=localhost,127.0.0.1,example.com,*.internal.net
+
+# IP addresses and ranges
+NO_PROXY=192.168.1.0/24,10.0.0.0/8
+
+# Ports (if needed)
+NO_PROXY=api.company.com:8080
+
+# Complete enterprise example
+NO_PROXY=localhost,127.0.0.1,*.company.com,*.internal.net,github.com,docker.com`}</code>
+                </pre>
+                <Button
+                  onClick={() => copyToClipboard(`NO_PROXY=localhost,127.0.0.1,*.company.com,*.internal.net,github.com`, 35)}
+                  className="absolute top-2 right-2"
+                  size="sm"
+                  variant="ghost"
+                >
+                  {copiedIndex === 35 ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Troubleshooting */}
         <section className="mb-12" id="troubleshooting">
           <h2 className="text-2xl font-bold mb-4">Troubleshooting</h2>
@@ -1776,6 +2122,11 @@ Configuration: /path/to/project/bwc.config.json (project)
             <div className="border border-border/50 rounded-lg p-4">
               <h3 className="font-semibold mb-2">Failed to fetch registry</h3>
               <p className="text-muted-foreground">Check your internet connection. The CLI needs access to <code className="text-sm bg-muted px-2 py-1 rounded">buildwithclaude.com</code></p>
+            </div>
+            <div className="border border-border/50 rounded-lg p-4">
+              <h3 className="font-semibold mb-2">Corporate proxy/firewall issues</h3>
+              <p className="text-muted-foreground mb-2">Configure proxy environment variables: <code className="text-sm bg-muted px-2 py-1 rounded">HTTPS_PROXY=http://proxy:8080</code></p>
+              <p className="text-sm text-muted-foreground">See the <Link href="#proxy-support" className="text-primary hover:underline">Proxy Support</Link> section above for detailed configuration.</p>
             </div>
             <div className="border border-border/50 rounded-lg p-4">
               <h3 className="font-semibold mb-2">Permission denied</h3>

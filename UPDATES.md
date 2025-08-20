@@ -2,6 +2,20 @@
 
 All notable changes to the Claude Code Subagents & Commands Collection will be documented in this file.
 
+## 2025-08-20
+
+### Added
+- **Corporate Proxy Support**: BWC CLI now automatically detects and uses HTTP_PROXY, HTTPS_PROXY, and NO_PROXY environment variables
+- **Enterprise Network Compatibility**: Enhanced network connectivity for users behind corporate firewalls and proxy servers
+- **Proxy Debug Logging**: Automatic detection and logging of proxy configuration for better troubleshooting
+- **NO_PROXY Support**: Bypass proxy for specific domains using wildcard patterns (e.g., `*.internal.com`)
+- **Comprehensive Testing**: Added 27 unit tests covering all proxy functionality scenarios
+
+### Improved
+- **Network Reliability**: Better handling of corporate network configurations and authentication
+- **User Experience**: Clear proxy status messages and debugging information
+- **Documentation**: Comprehensive proxy setup guide with troubleshooting tips
+
 ## 2025-08-19
 
 ### Added

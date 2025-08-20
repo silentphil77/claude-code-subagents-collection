@@ -5,6 +5,7 @@ import { ConfigManager } from '../config/manager.js'
 import { RegistryClient } from '../registry/client.js'
 import { logger } from '../utils/logger.js'
 import { writeFile } from '../utils/files.js'
+import { isProxyConfigured, getProxyDescription } from '../utils/proxy.js'
 import { installMCPServer, configureInClaudeCode } from '../utils/mcp-installer.js'
 import { addServerToMCPJson } from '../utils/mcp-json.js'
 import { UserInputHandler } from '../utils/user-input-handler.js'
@@ -39,6 +40,11 @@ export function createAddCommand() {
       try {
         const configManager = ConfigManager.getInstance()
         const registryClient = new RegistryClient(configManager)
+        
+        // Log proxy configuration if present
+        if (isProxyConfigured()) {
+          logger.info(`Using proxy: ${getProxyDescription()}`)
+        }
 
         // Handle explicit scope overrides
         const forceUserLevel = options.user
