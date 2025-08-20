@@ -571,6 +571,75 @@ View all servers at [buildwithclaude.com/mcp-servers](https://buildwithclaude.co
 - `version-control-git` - Git and version control commands
 - `miscellaneous` - Other specialized commands
 
+## Proxy Support
+
+BWC CLI automatically respects standard proxy environment variables for all network requests:
+
+### Environment Variables
+
+```bash
+# HTTP proxy
+export HTTP_PROXY=http://proxy.example.com:8080
+export http_proxy=http://proxy.example.com:8080
+
+# HTTPS proxy (recommended)
+export HTTPS_PROXY=https://proxy.example.com:8080
+export https_proxy=https://proxy.example.com:8080
+
+# No proxy list (comma-separated)
+export NO_PROXY=localhost,127.0.0.1,example.com,*.internal.net
+export no_proxy=localhost,127.0.0.1,example.com,*.internal.net
+
+# Custom CA certificates (for corporate proxies)
+export NODE_EXTRA_CA_CERTS=/path/to/ca-bundle.crt
+```
+
+### Usage Examples
+
+```bash
+# Use with proxy
+HTTPS_PROXY=http://proxy.example.com:8080 bwc add --command all-tools
+
+# Bypass proxy for specific domains
+NO_PROXY=localhost,github.com bwc list
+
+# With authentication
+HTTPS_PROXY=http://username:password@proxy.example.com:8080 bwc add
+```
+
+### Features
+
+- **Automatic Detection**: BWC CLI automatically detects and uses proxy settings from environment variables
+- **NO_PROXY Support**: Bypass proxy for specific domains using the NO_PROXY environment variable
+- **Authentication**: Supports basic authentication in proxy URLs
+- **SSL Certificates**: Respects NODE_EXTRA_CA_CERTS for custom certificate authorities
+- **Fallback**: Uses HTTP_PROXY for HTTPS requests if HTTPS_PROXY is not set
+
+### Debugging Proxy Issues
+
+If you encounter connection issues behind a proxy:
+
+1. **Verify proxy settings**:
+   ```bash
+   echo $HTTPS_PROXY
+   echo $NO_PROXY
+   ```
+
+2. **Test with verbose output**:
+   ```bash
+   HTTPS_PROXY=http://proxy:8080 bwc list --mcps
+   ```
+   Look for the "Using proxy:" message to confirm proxy detection.
+
+3. **Check certificate issues**:
+   ```bash
+   # For self-signed certificates
+   export NODE_TLS_REJECT_UNAUTHORIZED=0  # Only for testing!
+   
+   # Better: Add your CA certificate
+   export NODE_EXTRA_CA_CERTS=/path/to/corporate-ca.crt
+   ```
+
 ## Troubleshooting
 
 ### Configuration not found

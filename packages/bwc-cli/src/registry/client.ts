@@ -1,6 +1,7 @@
 import got from 'got'
 import { Registry, RegistrySchema, Subagent, Command, MCPServer } from './types.js'
 import { ConfigManager } from '../config/manager.js'
+import { getGotProxyOptions } from '../utils/proxy.js'
 
 export class RegistryClient {
   private static instance: RegistryClient | null = null
@@ -19,9 +20,10 @@ export class RegistryClient {
 
   async fetchRegistry(): Promise<Registry> {
     const registryUrl = await this.configManager.getRegistryUrl()
+    const proxyOptions = getGotProxyOptions(registryUrl)
     
     try {
-      const response = await got(registryUrl).json()
+      const response = await got(registryUrl, proxyOptions).json()
       return RegistrySchema.parse(response)
     } catch (error) {
       if (error instanceof Error) {
@@ -76,9 +78,10 @@ export class RegistryClient {
   async fetchFileContent(fileUrl: string): Promise<string> {
     const baseUrl = 'https://raw.githubusercontent.com/davepoon/claude-code-subagents-collection/main/'
     const fullUrl = baseUrl + fileUrl
+    const proxyOptions = getGotProxyOptions(fullUrl)
     
     try {
-      return await got(fullUrl).text()
+      return await got(fullUrl, proxyOptions).text()
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Failed to fetch file content: ${error.message}`)

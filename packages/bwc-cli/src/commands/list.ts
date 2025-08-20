@@ -3,6 +3,7 @@ import chalk from 'chalk'
 import { ConfigManager } from '../config/manager.js'
 import { RegistryClient } from '../registry/client.js'
 import { logger } from '../utils/logger.js'
+import { isProxyConfigured, getProxyDescription } from '../utils/proxy.js'
 import { SOURCE_INDICATORS, EXECUTION_INDICATORS } from '../registry/mcp-types.js'
 import { 
   checkDockerMCPStatus, 
