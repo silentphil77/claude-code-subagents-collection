@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
-import { Copy, Check, Terminal, Package, Zap, Settings, ArrowLeft, ChevronRight } from 'lucide-react'
+import { Copy, Check, Terminal, Package, Zap, Settings, ArrowLeft, ChevronRight, Shield } from 'lucide-react'
 import Link from 'next/link'
 
 interface PackageManagerSwitcherProps {
