@@ -85,6 +85,13 @@ export default function CLIPage() {
         top: offsetPosition,
         behavior: 'smooth'
       })
+      
+      // Update URL with hash without triggering navigation
+      if (window.history.pushState) {
+        window.history.pushState(null, '', `#${id}`)
+      } else {
+        window.location.hash = id
+      }
     }
   }
 
@@ -110,6 +117,29 @@ export default function CLIPage() {
     handleScroll() // Initial check
     
     return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // Handle initial page load with hash and browser navigation
+  useEffect(() => {
+    // Check for hash on initial load
+    const hash = window.location.hash.slice(1)
+    if (hash) {
+      // Delay to ensure DOM is ready
+      setTimeout(() => {
+        scrollToSection(hash)
+      }, 100)
+    }
+    
+    // Handle browser back/forward navigation
+    const handlePopState = () => {
+      const hash = window.location.hash.slice(1)
+      if (hash) {
+        scrollToSection(hash)
+      }
+    }
+    
+    window.addEventListener('popstate', handlePopState)
+    return () => window.removeEventListener('popstate', handlePopState)
   }, [])
 
   // Package manager specific commands
