@@ -1,5 +1,17 @@
 # bwc-cli
 
+## 1.2.2
+
+### Patch Changes
+
+- [#39](https://github.com/davepoon/claude-code-subagents-collection/pull/39) [`4cbf479`](https://github.com/davepoon/claude-code-subagents-collection/commit/4cbf4794bf62f075075864de53ca7b0782203dbb) Thanks [@davepoon](https://github.com/davepoon)! - Add corporate proxy support for enterprise networks
+
+  - Added automatic support for HTTP_PROXY, HTTPS_PROXY, and NO_PROXY environment variables
+  - Enhanced network connectivity for enterprise/corporate environments behind firewalls
+  - Added comprehensive proxy detection and logging for better user experience
+  - Improved debugging with automatic proxy configuration messages
+  - Added comprehensive test coverage for proxy functionality
+
 ## 1.2.1
 
 ### Patch Changes
