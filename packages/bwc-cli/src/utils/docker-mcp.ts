@@ -17,6 +17,86 @@ export interface DockerMCPServer {
 }
 
 /**
+ * Strip ANSI escape codes from a string
+ */
+function stripAnsi(str: string): string {
+  // eslint-disable-next-line no-control-regex
+  return str.replace(/\u001b\[[0-9;]*m/g, '')
+}
+
+/**
+ * Parse Docker MCP catalog output
+ * Supports both formats for backwards compatibility:
+ *
+ * Old format (single line):
+ *   server-name: description text
+ *
+ * New format (indented with ANSI codes):
+ *   [1mserver-name[0m  (2 spaces indent)
+ *     Description text that may span  (4 spaces indent)
+ *     multiple lines.
+ */
+function parseCatalogOutput(stdout: string): Array<{ name: string; description: string }> {
+  const lines = stdout.split('\n')
+  const servers: Array<{ name: string; description: string }> = []
+
+  let currentServer: { name: string; description: string } | null = null
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i]
+    const stripped = stripAnsi(line).trim()
+
+    // Skip empty lines, headers, and separator lines
+    if (!stripped || stripped.includes('MCP Server Directory') ||
+        stripped.includes('servers available') || stripped.match(/^[─-]+$/)) {
+      continue
+    }
+
+    // Try old format first: "server-name: description"
+    const oldFormatMatch = stripped.match(/^([a-zA-Z0-9_-]+):\s*(.+)$/)
+    if (oldFormatMatch) {
+      // Old format detected
+      servers.push({
+        name: oldFormatMatch[1],
+        description: oldFormatMatch[2]
+      })
+      continue
+    }
+
+    // New format: indentation-based
+    // Server names have 2 spaces indent, descriptions have 4+ spaces
+    const leadingSpaces = line.match(/^( *)/)?.[1].length || 0
+
+    if (leadingSpaces === 2 && stripped.length > 0) {
+      // This is a server name (2 spaces indent)
+      if (currentServer && currentServer.name) {
+        // Save the previous server
+        servers.push(currentServer)
+      }
+
+      // Start a new server
+      currentServer = {
+        name: stripped,
+        description: ''
+      }
+    } else if (currentServer && leadingSpaces >= 4 && stripped.length > 0) {
+      // This is a description line (4+ spaces indent)
+      if (currentServer.description) {
+        currentServer.description += ' '
+      }
+      currentServer.description += stripped
+    }
+  }
+
+  // Don't forget the last server (for new format)
+  if (currentServer && currentServer.name) {
+    servers.push(currentServer)
+  }
+
+  return servers
+}
+
+/**
  * Check if Docker is installed and running
  */
 export async function isDockerAvailable(): Promise<boolean> {
@@ -75,22 +155,11 @@ export async function setupDockerMCPGateway(scope: 'local' | 'project' | 'user' 
 export async function listAvailableDockerMCPServers(): Promise<string[]> {
   try {
     const { stdout } = await execa(getDockerCommand(), ['mcp', 'catalog', 'show'])
-    
-    // Parse the catalog output
-    // Format: "server-name: description"
-    const lines = stdout.split('\n')
-    const servers: string[] = []
-    
-    for (const line of lines) {
-      const match = line.match(/^([a-zA-Z0-9_-]+):/)
-      if (match) {
-        servers.push(match[1])
-      }
-    }
-    
-    return servers
+    const parsed = parseCatalogOutput(stdout)
+    return parsed.map(s => s.name)
   } catch (error: any) {
     logger.warn('Failed to fetch Docker MCP catalog')
+    logger.debug(`Error details: ${error.message}`)
     return []
   }
 }
@@ -154,16 +223,10 @@ export async function disableDockerMCPServer(name: string): Promise<void> {
 export async function getDockerMCPServerInfo(name: string): Promise<string | null> {
   try {
     const { stdout } = await execa(getDockerCommand(), ['mcp', 'catalog', 'show'])
-    
-    // Find the server description in the catalog
-    const lines = stdout.split('\n')
-    for (const line of lines) {
-      if (line.startsWith(`${name}:`)) {
-        return line.substring(name.length + 1).trim()
-      }
-    }
-    
-    return null
+    const servers = parseCatalogOutput(stdout)
+
+    const server = servers.find(s => s.name === name)
+    return server ? server.description : null
   } catch {
     return null
   }
@@ -208,30 +271,28 @@ export async function checkDockerMCPStatus(): Promise<{
 export async function searchDockerMCPServers(query: string): Promise<DockerMCPServer[]> {
   try {
     const { stdout } = await execa(getDockerCommand(), ['mcp', 'catalog', 'show'])
-    
-    const lines = stdout.split('\n')
+    const servers = parseCatalogOutput(stdout)
+
     const results: DockerMCPServer[] = []
     const searchTerm = query.toLowerCase()
-    
-    for (const line of lines) {
-      const match = line.match(/^([a-zA-Z0-9_-]+):\s*(.+)$/)
-      if (match) {
-        const [, name, description] = match
-        // Search in both name and description
-        if (name.toLowerCase().includes(searchTerm) || description.toLowerCase().includes(searchTerm)) {
-          results.push({ 
-            name, 
-            description,
-            category: categorizeDockerMCPServer(name, description),
-            dockerHubUrl: `https://hub.docker.com/r/mcp/${name}`
-          })
-        }
+
+    for (const server of servers) {
+      // Search in both name and description
+      if (server.name.toLowerCase().includes(searchTerm) ||
+          server.description.toLowerCase().includes(searchTerm)) {
+        results.push({
+          name: server.name,
+          description: server.description,
+          category: categorizeDockerMCPServer(server.name, server.description),
+          dockerHubUrl: `https://hub.docker.com/r/mcp/${server.name}`
+        })
       }
     }
-    
+
     return results
   } catch (error: any) {
     logger.warn('Failed to search Docker MCP catalog')
+    logger.debug(`Error details: ${error.message}`)
     return []
   }
 }
@@ -242,16 +303,10 @@ export async function searchDockerMCPServers(query: string): Promise<DockerMCPSe
 export async function getDockerMCPServerFullInfo(name: string): Promise<{ name: string; description: string } | null> {
   try {
     const { stdout } = await execa(getDockerCommand(), ['mcp', 'catalog', 'show'])
-    
-    const lines = stdout.split('\n')
-    for (const line of lines) {
-      const match = line.match(/^([a-zA-Z0-9_-]+):\s*(.+)$/)
-      if (match && match[1] === name) {
-        return { name: match[1], description: match[2] }
-      }
-    }
-    
-    return null
+    const servers = parseCatalogOutput(stdout)
+
+    const server = servers.find(s => s.name === name)
+    return server || null
   } catch {
     return null
   }
@@ -263,20 +318,10 @@ export async function getDockerMCPServerFullInfo(name: string): Promise<{ name: 
 export async function getAllDockerMCPServers(): Promise<Array<{ name: string; description: string }>> {
   try {
     const { stdout } = await execa(getDockerCommand(), ['mcp', 'catalog', 'show'])
-    
-    const lines = stdout.split('\n')
-    const servers: Array<{ name: string; description: string }> = []
-    
-    for (const line of lines) {
-      const match = line.match(/^([a-zA-Z0-9_-]+):\s*(.+)$/)
-      if (match) {
-        servers.push({ name: match[1], description: match[2] })
-      }
-    }
-    
-    return servers
+    return parseCatalogOutput(stdout)
   } catch (error: any) {
     logger.warn('Failed to fetch Docker MCP catalog')
+    logger.debug(`Error details: ${error.message}`)
     return []
   }
 }
