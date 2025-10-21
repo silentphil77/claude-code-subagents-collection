@@ -3,6 +3,7 @@ import { MCPServer, MCPInstallationMethod } from '../registry/types.js'
 import { logger } from './logger.js'
 import chalk from 'chalk'
 import { execClaudeCLI, isClaudeCLIAvailable } from './claude-cli.js'
+import { getDockerCommand } from './platform.js'
 
 /**
  * Install an MCP server based on the installation method
@@ -40,7 +41,7 @@ async function installDockerServer(
 ): Promise<void> {
   // First check if Docker is available
   try {
-    await execa('docker', ['--version'])
+    await execa(getDockerCommand(), ['--version'])
   } catch {
     throw new Error('Docker is not installed or not running. Please install Docker Desktop and ensure it is running.')
   }

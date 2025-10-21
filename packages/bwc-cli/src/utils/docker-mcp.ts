@@ -2,6 +2,7 @@ import { execa } from 'execa'
 import { logger } from './logger.js'
 import { execClaudeCLI } from './claude-cli.js'
 import { categorizeDockerMCPServer, getCategoryInfo, sortServersByCategory } from './mcp-categorizer.js'
+import { getDockerCommand } from './platform.js'
 
 /**
  * Docker MCP Utilities
@@ -20,7 +21,7 @@ export interface DockerMCPServer {
  */
 export async function isDockerAvailable(): Promise<boolean> {
   try {
-    const { stdout } = await execa('docker', ['--version'])
+    const { stdout } = await execa(getDockerCommand(), ['--version'])
     return stdout.includes('Docker version')
   } catch {
     return false
@@ -32,7 +33,7 @@ export async function isDockerAvailable(): Promise<boolean> {
  */
 export async function isDockerMCPAvailable(): Promise<boolean> {
   try {
-    const { stdout } = await execa('docker', ['mcp', '--version'])
+    const { stdout } = await execa(getDockerCommand(), ['mcp', '--version'])
     return true
   } catch {
     return false
@@ -52,7 +53,7 @@ export async function setupDockerMCPGateway(scope: 'local' | 'project' | 'user' 
       'docker-toolkit',
       '--scope', scope,
       '--',
-      'docker', 'mcp', 'gateway', 'run'
+      getDockerCommand(), 'mcp', 'gateway', 'run'
     ]
     
     const { stdout } = await execClaudeCLI(args)
@@ -73,7 +74,7 @@ export async function setupDockerMCPGateway(scope: 'local' | 'project' | 'user' 
  */
 export async function listAvailableDockerMCPServers(): Promise<string[]> {
   try {
-    const { stdout } = await execa('docker', ['mcp', 'catalog', 'show'])
+    const { stdout } = await execa(getDockerCommand(), ['mcp', 'catalog', 'show'])
     
     // Parse the catalog output
     // Format: "server-name: description"
@@ -99,7 +100,7 @@ export async function listAvailableDockerMCPServers(): Promise<string[]> {
  */
 export async function listInstalledDockerMCPServers(): Promise<string[]> {
   try {
-    const { stdout } = await execa('docker', ['mcp', 'server', 'list'])
+    const { stdout } = await execa(getDockerCommand(), ['mcp', 'server', 'list'])
     
     // Parse comma-separated list
     if (!stdout || stdout.trim() === '') {
@@ -118,9 +119,9 @@ export async function listInstalledDockerMCPServers(): Promise<string[]> {
  */
 export async function enableDockerMCPServer(name: string): Promise<void> {
   logger.info(`Enabling Docker MCP server: ${name}`)
-  
+
   try {
-    await execa('docker', ['mcp', 'server', 'enable', name])
+    await execa(getDockerCommand(), ['mcp', 'server', 'enable', name])
     logger.success(`Server "${name}" enabled in Docker MCP Toolkit`)
     
     // Check if it's actually running
@@ -138,9 +139,9 @@ export async function enableDockerMCPServer(name: string): Promise<void> {
  */
 export async function disableDockerMCPServer(name: string): Promise<void> {
   logger.info(`Disabling Docker MCP server: ${name}`)
-  
+
   try {
-    await execa('docker', ['mcp', 'server', 'disable', name])
+    await execa(getDockerCommand(), ['mcp', 'server', 'disable', name])
     logger.success(`Server "${name}" disabled in Docker MCP Toolkit`)
   } catch (error: any) {
     throw new Error(`Failed to disable server "${name}": ${error.message}`)
@@ -152,7 +153,7 @@ export async function disableDockerMCPServer(name: string): Promise<void> {
  */
 export async function getDockerMCPServerInfo(name: string): Promise<string | null> {
   try {
-    const { stdout } = await execa('docker', ['mcp', 'catalog', 'show'])
+    const { stdout } = await execa(getDockerCommand(), ['mcp', 'catalog', 'show'])
     
     // Find the server description in the catalog
     const lines = stdout.split('\n')
@@ -206,7 +207,7 @@ export async function checkDockerMCPStatus(): Promise<{
  */
 export async function searchDockerMCPServers(query: string): Promise<DockerMCPServer[]> {
   try {
-    const { stdout } = await execa('docker', ['mcp', 'catalog', 'show'])
+    const { stdout } = await execa(getDockerCommand(), ['mcp', 'catalog', 'show'])
     
     const lines = stdout.split('\n')
     const results: DockerMCPServer[] = []
@@ -240,7 +241,7 @@ export async function searchDockerMCPServers(query: string): Promise<DockerMCPSe
  */
 export async function getDockerMCPServerFullInfo(name: string): Promise<{ name: string; description: string } | null> {
   try {
-    const { stdout } = await execa('docker', ['mcp', 'catalog', 'show'])
+    const { stdout } = await execa(getDockerCommand(), ['mcp', 'catalog', 'show'])
     
     const lines = stdout.split('\n')
     for (const line of lines) {
@@ -261,7 +262,7 @@ export async function getDockerMCPServerFullInfo(name: string): Promise<{ name: 
  */
 export async function getAllDockerMCPServers(): Promise<Array<{ name: string; description: string }>> {
   try {
-    const { stdout } = await execa('docker', ['mcp', 'catalog', 'show'])
+    const { stdout } = await execa(getDockerCommand(), ['mcp', 'catalog', 'show'])
     
     const lines = stdout.split('\n')
     const servers: Array<{ name: string; description: string }> = []
