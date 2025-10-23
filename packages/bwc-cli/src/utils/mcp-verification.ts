@@ -1,6 +1,7 @@
 import { execa } from 'execa'
 import { logger } from './logger.js'
 import { execClaudeCLI } from './claude-cli.js'
+import { getDockerCommand } from './platform.js'
 
 /**
  * MCP Server Verification Utilities
@@ -149,7 +150,7 @@ async function isDockerGatewayConfigured(): Promise<boolean> {
  */
 async function getDockerMCPServers(): Promise<string[]> {
   try {
-    const { stdout } = await execa('docker', ['mcp', 'server', 'list'])
+    const { stdout } = await execa(getDockerCommand(), ['mcp', 'server', 'list'])
     // Output is comma-separated: "fetch, github-official, playwright"
     const servers = stdout.split(',').map(s => s.trim()).filter(s => s)
     return servers
@@ -182,7 +183,7 @@ function generateClaudeCLIFixCommands(name: string, config: MCPServerConfig): st
  */
 export async function isDockerInstalled(): Promise<boolean> {
   try {
-    const { stdout } = await execa('docker', ['--version'])
+    const { stdout } = await execa(getDockerCommand(), ['--version'])
     return stdout.includes('Docker version')
   } catch {
     return false
@@ -194,7 +195,7 @@ export async function isDockerInstalled(): Promise<boolean> {
  */
 export async function isDockerMCPAvailable(): Promise<boolean> {
   try {
-    await execa('docker', ['mcp', '--version'])
+    await execa(getDockerCommand(), ['mcp', '--version'])
     return true
   } catch {
     return false

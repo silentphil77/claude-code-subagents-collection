@@ -9,6 +9,7 @@ import { checkDockerMCPStatus, listInstalledDockerMCPServers } from '../utils/do
 import { execClaudeCLI } from '../utils/claude-cli.js'
 import { execa } from 'execa'
 import { verifyMCPServers, formatVerificationIssues, type MCPVerificationResult } from '../utils/mcp-verification.js'
+import { getDockerCommand } from '../utils/platform.js'
 
 interface StatusReport {
   configScope: {
@@ -227,7 +228,7 @@ async function checkDockerMCP(): Promise<any> {
   
   if (status.dockerInstalled) {
     try {
-      const { stdout } = await execa('docker', ['--version'])
+      const { stdout } = await execa(getDockerCommand(), ['--version'])
       const versionMatch = stdout.match(/Docker version ([0-9.]+)/)
       if (versionMatch) {
         result.dockerVersion = versionMatch[1]
