@@ -4,7 +4,7 @@ category: framework-svelte
 allowed-tools: Bash(npm *), Write
 ---
 
-# /svelte:storybook-migrate
+# /svelte-storybook-migrate
 
 Migrate Storybook configurations and stories to newer versions, including Svelte CSF v5 and @storybook/sveltekit framework.
 

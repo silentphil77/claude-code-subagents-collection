@@ -3,7 +3,7 @@ description: Audit and improve accessibility in Svelte/SvelteKit applications, e
 category: framework-svelte
 ---
 
-# /svelte:a11y
+# /svelte-a11y
 
 Audit and improve accessibility in Svelte/SvelteKit applications, ensuring WCAG compliance and inclusive user experiences.
 

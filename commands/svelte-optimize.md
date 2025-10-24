@@ -3,7 +3,7 @@ description: Optimize Svelte/SvelteKit applications for performance, including b
 category: framework-svelte
 ---
 
-# /svelte:optimize
+# /svelte-optimize
 
 Optimize Svelte/SvelteKit applications for performance, including bundle size reduction, rendering optimization, and loading performance.
 

@@ -3,7 +3,7 @@ description: Help debug Svelte and SvelteKit issues by analyzing error messages,
 category: framework-svelte
 ---
 
-# /svelte:debug
+# /svelte-debug
 
 Help debug Svelte and SvelteKit issues by analyzing error messages, stack traces, and common problems.
 

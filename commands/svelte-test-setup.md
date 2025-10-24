@@ -3,7 +3,7 @@ description: Set up comprehensive testing infrastructure for Svelte/SvelteKit pr
 category: framework-svelte
 ---
 
-# /svelte:test-setup
+# /svelte-test-setup
 
 Set up comprehensive testing infrastructure for Svelte/SvelteKit projects, including unit testing, component testing, and E2E testing frameworks.
 

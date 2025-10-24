@@ -3,7 +3,7 @@ description: General-purpose Storybook assistance for SvelteKit projects, includ
 category: framework-svelte
 ---
 
-# /svelte:storybook
+# /svelte-storybook
 
 General-purpose Storybook assistance for SvelteKit projects, including setup guidance, best practices, and common tasks.
 

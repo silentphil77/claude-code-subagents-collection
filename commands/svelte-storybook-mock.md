@@ -3,7 +3,7 @@ description: Mock SvelteKit modules and functionality in Storybook stories for i
 category: framework-svelte
 ---
 
-# /svelte:storybook-mock
+# /svelte-storybook-mock
 
 Mock SvelteKit modules and functionality in Storybook stories for isolated component development.
 

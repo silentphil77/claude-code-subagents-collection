@@ -4,7 +4,7 @@ category: framework-svelte
 allowed-tools: Glob
 ---
 
-# /svelte:storybook-setup
+# /svelte-storybook-setup
 
 Initialize and configure Storybook for SvelteKit projects with optimal settings and structure.
 

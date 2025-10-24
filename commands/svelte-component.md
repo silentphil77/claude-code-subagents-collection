@@ -3,7 +3,7 @@ description: Create new Svelte components with best practices, proper structure,
 category: framework-svelte
 ---
 
-# /svelte:component
+# /svelte-component
 
 Create new Svelte components with best practices, proper structure, and optional TypeScript support.
 
