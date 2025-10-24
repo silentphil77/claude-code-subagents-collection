@@ -1,5 +1,15 @@
 # bwc-cli
 
+## 1.2.3
+
+### Patch Changes
+
+- [`bbd0149`](https://github.com/davepoon/claude-code-subagents-collection/commit/bbd0149536a6917c1ed68c666f5c48a454ef3f8d) Thanks [@davepoon](https://github.com/davepoon)! - Fix WSL2 support and Docker MCP catalog parser compatibility
+
+  - Added WSL2 support for Docker commands to work in Windows Subsystem for Linux environments
+  - Updated Docker MCP catalog parser to support both old and new Docker catalog formats
+  - Improved compatibility with different Docker Desktop versions
+
 ## 1.2.2
 
 ### Patch Changes
