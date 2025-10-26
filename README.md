@@ -4,7 +4,10 @@
 [![npm version](https://img.shields.io/npm/v/bwc-cli.svg)](https://www.npmjs.com/package/bwc-cli)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
-[![GitHub stars](https://img.shields.io/github/stars/davepoon/claude-code-subagents-collection.svg?style=social&label=Star)](https://github.com/davepoon/claude-code-subagents-collection)
+![Claude 4.5 sonnet](https://img.shields.io/badge/Claude-4.5%20sonnet-F4C7A8?style=for-the-badge&logo=claude&logoColor=D97757&labelColor=141413)
+![Claude 4.5 sonnet](https://img.shields.io/badge/Claude-4.5%20sonnet-F4C7A8?style=for-the-badge&logo=claude&logoColor=D97757&labelColor=141413)
+
+
 
 A comprehensive collection of specialized AI subagents and slash commands for [Claude Code](https://docs.anthropic.com/en/docs/claude-code), designed to enhance development workflows with domain-specific expertise and powerful automation.
 
